@@ -6,6 +6,10 @@
 package ROV;
 
 import ROV.SerialCom.SerialRW;
+import I2CCom.*;
+import com.pi4j.io.i2c.I2CBus;
+import com.pi4j.io.i2c.I2CDevice;
+import com.pi4j.io.i2c.I2CFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
@@ -23,10 +27,14 @@ public class ROVMain
 {
 
     private static Thread serialRW;
+    private static Thread I2CComHandler;
     static boolean dataIsRecieved = false;
     static boolean testIsDone = false;
     static SerialPort serialPort;
     protected static DataHandler dh;
+    protected static I2CHandler I2CH;
+
+    public final static int ARDUINO_DUMMY_SIGNAL_ADDRESS = 9;
 
     /**
      * @param args the command line arguments
@@ -34,8 +42,12 @@ public class ROVMain
     public static void main(String[] args)
     {
         dh = new DataHandler();
+        I2CH = new I2CHandler(dh);
+
         Semaphore semSerial = new Semaphore(1);
         serialRW = new Thread(new SerialRW(semSerial));
+
+        int inputData = 0;
 
         serialRW.start();
 
@@ -59,26 +71,72 @@ public class ROVMain
 //        }
         }
 
-        while (!testIsDone)
-        {
-            System.out.println("Acquire access to SerialRW");
-            try
-            {
-               semSerial.acquire();
-            } catch (Exception e)
-            {
-                System.out.println(e + "Failed to acquire access to SerialRW semaphore");
-            }
-            System.out.println("Reading counter = " + dh.getCounter());
-            System.out.println("Seting counter to: 5" );
-            dh.setCounter(5);
-            System.out.println("Reading counter = " + dh.getCounter());
-            
-            System.out.println("Releasing access to SerialRW");
-            semSerial.release();
-            System.out.println("Done releasing");
-            testIsDone = true;
-        }
+//        // ////////////////////////Robin's test area//////////////////////
+//        byte dataToSend[] = new byte[]
+//        {
+//            0x03
+//        };
+//        System.out.println("///////////////////////////");
+//        System.out.println("Starting to send data");
+//        I2CH.sendI2CData(dataToSend);
+//        System.out.println("Data is sent");
+//        System.out.println("///////////////////////////");
+////        while (true)
+////        {
+//
+////            try
+////            {
+////                System.out.println("Creatingbus");
+////                I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
+////                System.out.println("Creatingdevice");
+////                I2CDevice device = bus.getDevice(ARDUINO_DUMMY_SIGNAL_ADDRESS);
+////
+////                device.write((byte) 0x03);
+////                 Thread.sleep(200);
+////                //Thread.sleep(2000);
+////                System.out.println("Signal is sent");
+////                int r = device.read(inputData);
+////                System.out.println("Data recieved is: " + r);
+//////                if (r == 0x09)
+//////                {
+//////                    System.out.println("Data recieved is: " + r);
+//////                } else
+//////                {
+//////                    System.out.println("Data was not 0x09");
+//////                }
+////
+////                Thread.sleep(5000);
+////                device.write((byte) 0x00);
+////                System.out.println("Reset signal is sent");
+////                Thread.sleep(5000);
+////
+////            } catch (Exception e)
+////            {
+////            }
+////        }
+//////        while (!testIsDone)
+//////        {
+//////            System.out.println("Acquire access to SerialRW");
+//////            try
+//////            {
+//////               semSerial.acquire();
+//////            } catch (Exception e)
+//////            {
+//////                System.out.println(e + "Failed to acquire access to SerialRW semaphore");
+//////            }
+//////            System.out.println("Reading counter = " + dh.getCounter());
+//////            System.out.println("Seting counter to: 5" );
+//////            dh.setCounter(5);
+//////            System.out.println("Reading counter = " + dh.getCounter());
+//////            
+//////            System.out.println("Releasing access to SerialRW");
+//////            semSerial.release();
+//////            System.out.println("Done releasing");
+//////            testIsDone = true;
+//////        }
+//    
+//
+//    // ////////////////////////End of Robin's test area//////////////////////
     }
 
     /*
@@ -115,29 +173,4 @@ public class ROVMain
             }
         }
     }
-
-//    public void writeToSeriell()
-//    {
-//        if (dataIsRecieved)
-//        {
-//            ConcurrentHashMap<String, String> tempList = new ConcurrentHashMap<>();
-//            tempList.entrySet().addAll(dh.dataToRemote.entrySet());
-//
-//            for (Map.Entry e : tempList.entrySet())
-//            {
-//                String key = (String) e.getKey();
-//                String value = (String) e.getValue();
-//                String data = ("<" + key + ":" + value + ">");
-//                try
-//                {
-//                    Thread.sleep(10);
-//                } catch (Exception x)
-//                {
-//                }
-//                this.write(comPort, 9600, data);
-//                //wsd.writeData("Com3", arduinoBaudRate, data);
-//
-//            }
-//        }
-//    }
 }

@@ -13,6 +13,7 @@ public class DataHandler
 {
 
     private int counter = 0;
+    private boolean i2cRequest = false;
 
     public int getCounter()
     {
@@ -23,4 +24,9 @@ public class DataHandler
     {
         this.counter = counter;
     }
+
+  
+
+  
+
 }
