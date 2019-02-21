@@ -57,120 +57,37 @@ public class ROVMain
         {
             System.out.println(portNames[i]);
 
-//        serialPort = new SerialPort("COM3");
+        }
+//        // ////////////////////////Robin's test area//////////////////////
+//        I2CH.requestDataFrom("ArduinoIO");
+//        System.out.println("Data is gotten");
+//
+//        System.out.println("Depth to seabed: " + dh.getDepthToSeabed() + " m");
+//        System.out.println("Speed through water: " + dh.getSpeedThroughWather() + " knots");
 //        try
 //        {
-//            serialPort.openPort();//Open port
-//            serialPort.setParams(115200, 8, 1, 0);//Set params
-//            int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;//Prepare mask
-//            serialPort.setEventsMask(mask);//Set mask
-//            serialPort.addEventListener(new SerialPortReader());//Add SerialPortEventListener
-//        } catch (SerialPortException ex)
+//            Thread.sleep(10000);
+//        } catch (Exception e)
 //        {
-//            System.out.println(ex);
 //        }
-        }
-
-//        // ////////////////////////Robin's test area//////////////////////
+//
 //        byte dataToSend[] = new byte[]
 //        {
-//            0x03
+//            0x00
 //        };
-//        System.out.println("///////////////////////////");
-//        System.out.println("Starting to send data");
-//        I2CH.sendI2CData(dataToSend);
-//        System.out.println("Data is sent");
-//        System.out.println("///////////////////////////");
-////        while (true)
-////        {
 //
-////            try
-////            {
-////                System.out.println("Creatingbus");
-////                I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
-////                System.out.println("Creatingdevice");
-////                I2CDevice device = bus.getDevice(ARDUINO_DUMMY_SIGNAL_ADDRESS);
-////
-////                device.write((byte) 0x03);
-////                 Thread.sleep(200);
-////                //Thread.sleep(2000);
-////                System.out.println("Signal is sent");
-////                int r = device.read(inputData);
-////                System.out.println("Data recieved is: " + r);
-//////                if (r == 0x09)
-//////                {
-//////                    System.out.println("Data recieved is: " + r);
-//////                } else
-//////                {
-//////                    System.out.println("Data was not 0x09");
-//////                }
-////
-////                Thread.sleep(5000);
-////                device.write((byte) 0x00);
-////                System.out.println("Reset signal is sent");
-////                Thread.sleep(5000);
-////
-////            } catch (Exception e)
-////            {
-////            }
-////        }
-//////        while (!testIsDone)
-//////        {
-//////            System.out.println("Acquire access to SerialRW");
-//////            try
-//////            {
-//////               semSerial.acquire();
-//////            } catch (Exception e)
-//////            {
-//////                System.out.println(e + "Failed to acquire access to SerialRW semaphore");
-//////            }
-//////            System.out.println("Reading counter = " + dh.getCounter());
-//////            System.out.println("Seting counter to: 5" );
-//////            dh.setCounter(5);
-//////            System.out.println("Reading counter = " + dh.getCounter());
-//////            
-//////            System.out.println("Releasing access to SerialRW");
-//////            semSerial.release();
-//////            System.out.println("Done releasing");
-//////            testIsDone = true;
-//////        }
+//        System.out.println(
+//                "///////////////////////////");
+//        System.out.println(
+//                "Starting to send data");
+//        I2CH.sendI2CData(dataToSend);
+//
+//        System.out.println(
+//                "Data is sent");
+//        System.out.println(
+//                "///////////////////////////");
 //    
 //
-//    // ////////////////////////End of Robin's test area//////////////////////
-    }
-
-    /*
- * In this class must implement the method serialEvent, through it we learn about 
- * events that happened to our port. But we will not report on all events but only 
- * those that we put in the mask. In this case the arrival of the data and change the 
- * status lines CTS and DSR
-     */
-    static class SerialPortReader implements SerialPortEventListener
-    {
-
-        @Override
-        public void serialEvent(SerialPortEvent event)
-        {
-            if (event.isRXCHAR())
-            {//If data is available
-                if (event.getEventValue() >= 10)
-                {
-//Check bytes count in the input buffer
-//Read data, if 10 bytes available 
-                    try
-                    {
-                        System.out.println("Resiving data");
-                        String buffer = serialPort.readString();
-                        String dataStream = buffer;
-                        System.out.println("Data is:" + dataStream);
-                        dataIsRecieved = true;
-                    } catch (SerialPortException ex)
-                    {
-                        System.out.println(ex);
-                    }
-                }
-
-            }
-        }
+// ////////////////////////End of Robin's test area//////////////////////
     }
 }
