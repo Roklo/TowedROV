@@ -64,47 +64,47 @@ public class ROVMain
             System.out.println(portNames[i]);
 
         }
-        // ////////////////////////Robin's test area//////////////////////
-//        I2CH.requestDataFrom("ArduinoIO");
-//        System.out.println("Data is gotten");
+//        // ////////////////////////Robin's test area//////////////////////
+////        I2CH.requestDataFrom("ArduinoIO");
+////        System.out.println("Data is gotten");
+////
+////        System.out.println("Depth to seabed: " + dh.getDepthToSeabed() + " m");
+////        System.out.println("Speed through water: " + dh.getSpeedThroughWather() + " knots");
+////        try
+////        {
+////            Thread.sleep(10000);
+////        } catch (Exception e)
+////        {
+////        }
+////
+//        byte dataToSend[] = new byte[]
+//        {
+//            0x00
+//        };
 //
-//        System.out.println("Depth to seabed: " + dh.getDepthToSeabed() + " m");
-//        System.out.println("Speed through water: " + dh.getSpeedThroughWather() + " knots");
 //        try
 //        {
-//            Thread.sleep(10000);
+//            Thread.sleep(5000);
+//            System.out.println(
+//                    "///////////////////////////");
+//            System.out.println(
+//                    "Starting to send data");
+//            I2CH.sendI2CCommand(dataToSend, "ActuatorSB_setTarget", 3200);
+//            Thread.sleep(1000);
+//            while (I2CH.getI2cSendRequest())
+//            {
+//                Thread.sleep(250);
+//            }
 //        } catch (Exception e)
 //        {
+//            System.out.println("Exception: " + e);
 //        }
 //
-        byte dataToSend[] = new byte[]
-        {
-            0x00
-        };
-
-        try
-        {
-            Thread.sleep(5000);
-            System.out.println(
-                    "///////////////////////////");
-            System.out.println(
-                    "Starting to send data");
-            I2CH.sendI2CCommand(dataToSend, "ActuatorSB_setTarget", 3200);
-            Thread.sleep(1000);
-            while (I2CH.getI2cSendRequest())
-            {
-                Thread.sleep(250);
-            }
-        } catch (Exception e)
-        {
-            System.out.println("Exception: " + e);
-        }
-
-        System.out.println(
-                "Data is sent");
-        System.out.println(
-                "///////////////////////////");
-
-        ////////////////////////End of Robin's test area//////////////////////
+//        System.out.println(
+//                "Data is sent");
+//        System.out.println(
+//                "///////////////////////////");
+//
+//        ////////////////////////End of Robin's test area//////////////////////
     }
 }
