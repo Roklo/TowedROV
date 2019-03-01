@@ -7,6 +7,7 @@ package ROV;
 
 import ROV.SerialCom.SerialRW;
 import I2CCom.*;
+import ROV.TCPCom.Server;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
@@ -26,6 +27,7 @@ import jssc.SerialPortList;
 public class ROVMain
 {
 
+    private final static int serverAddress = 9000;
     private static Thread serialRW;
     private static Thread I2CComHandler;
     static boolean dataIsRecieved = false;
@@ -33,6 +35,8 @@ public class ROVMain
     static SerialPort serialPort;
     protected static DataHandler dh;
     protected static I2CHandler I2CH;
+
+    private static Thread Server;
 
     public final static int ARDUINO_DUMMY_SIGNAL_ADDRESS = 9;
 
@@ -44,13 +48,15 @@ public class ROVMain
         dh = new DataHandler();
         I2CH = new I2CHandler(dh);
 
-        Semaphore semSerial = new Semaphore(1);
-        serialRW = new Thread(new SerialRW(semSerial));
+        Server = new Thread(new Server(serverAddress));
+        Server.start();
+        Server.setName("Server");
 
+//        Semaphore semSerial = new Semaphore(1);
+//        serialRW = new Thread(new SerialRW(semSerial));
         int inputData = 0;
 
-        serialRW.start();
-
+        //serialRW.start();
         System.out.println(System.getProperty("os.name"));
         String[] portNames = SerialPortList.getPortNames();
         for (int i = 0; i < portNames.length; i++)
@@ -58,7 +64,7 @@ public class ROVMain
             System.out.println(portNames[i]);
 
         }
-//        // ////////////////////////Robin's test area//////////////////////
+        // ////////////////////////Robin's test area//////////////////////
 //        I2CH.requestDataFrom("ArduinoIO");
 //        System.out.println("Data is gotten");
 //
@@ -71,23 +77,34 @@ public class ROVMain
 //        {
 //        }
 //
-//        byte dataToSend[] = new byte[]
-//        {
-//            0x00
-//        };
-//
-//        System.out.println(
-//                "///////////////////////////");
-//        System.out.println(
-//                "Starting to send data");
-//        I2CH.sendI2CData(dataToSend);
-//
-//        System.out.println(
-//                "Data is sent");
-//        System.out.println(
-//                "///////////////////////////");
-//    
-//
-// ////////////////////////End of Robin's test area//////////////////////
+        byte dataToSend[] = new byte[]
+        {
+            0x00
+        };
+
+        try
+        {
+            Thread.sleep(5000);
+            System.out.println(
+                    "///////////////////////////");
+            System.out.println(
+                    "Starting to send data");
+            I2CH.sendI2CCommand(dataToSend, "ActuatorSB_setTarget", 3200);
+            Thread.sleep(1000);
+            while (I2CH.getI2cSendRequest())
+            {
+                Thread.sleep(250);
+            }
+        } catch (Exception e)
+        {
+            System.out.println("Exception: " + e);
+        }
+
+        System.out.println(
+                "Data is sent");
+        System.out.println(
+                "///////////////////////////");
+
+        ////////////////////////End of Robin's test area//////////////////////
     }
 }

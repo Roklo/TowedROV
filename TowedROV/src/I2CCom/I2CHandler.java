@@ -14,7 +14,7 @@ import ROV.DataHandler;
 public class I2CHandler
 {
 
-    boolean i2cRequest = false;
+    boolean I2cSendRequest = false;
     boolean dataRequest = false;
     String dataRequestDevice;
 
@@ -22,18 +22,19 @@ public class I2CHandler
     protected static DataHandler dh;
 
     private byte[] recievedDataArray;
+
+    //Send variables
     private byte[] dataByteArray;
-    private byte address;
+    String command;
+    int value = 0;
 
     public I2CHandler(DataHandler dh)
     {
         this.dh = dh;
         I2CRW = new Thread(new I2CRW(this, dh));
         I2CRW.start();
-        I2CRW.setName("I2CComHandler");
+        I2CRW.setName("I2C_RW");
     }
-    
-    
 
     public boolean getDataRequest()
     {
@@ -55,21 +56,15 @@ public class I2CHandler
         this.dataRequestDevice = dataRequestDevice;
     }
 
-   
-    
-    
-    
-    
-
-    public boolean getI2cRequest()
+    public boolean getI2cSendRequest()
     {
 
-        return i2cRequest;
+        return I2cSendRequest;
     }
 
-    public void setI2cRequest(boolean i2cRequest)
+    public void setI2cSendRequest(boolean i2cRequest)
     {
-        this.i2cRequest = i2cRequest;
+        this.I2cSendRequest = i2cRequest;
     }
 
     public byte[] getCurrentDataByteArray()
@@ -77,11 +72,37 @@ public class I2CHandler
         return dataByteArray;
     }
 
-    public synchronized void sendI2CData(byte[] dataByteArray)
+    public String getCommand()
     {
+        return command;
+    }
+
+    public void setCommand(String Command)
+    {
+        this.command = Command;
+    }
+
+    public int getValue()
+    {
+        return value;
+    }
+
+    public void setValue(int value)
+    {
+        this.value = value;
+    }
+
+    public synchronized void sendI2CCommand(byte[] dataByteArray,
+            String command, int value)
+    {
+        
         this.dataByteArray = dataByteArray;
-        setI2cRequest(true);
-        while (getI2cRequest())
+        this.command = command;
+        this.value = value;
+        
+
+        setI2cSendRequest(true);
+        while (getI2cSendRequest())
         {
             System.out.println("Waiting...");
             //Waiting for all data to be sent
@@ -90,17 +111,17 @@ public class I2CHandler
     }
 
     public synchronized byte[] requestDataFrom(String device)
-    {              
+    {
         byte[] dataRecieved = null;
-        
+
         setDataRequestDevice(device);
         setDataRequest(true);
-        
-        while(getDataRequest())
+
+        while (getDataRequest())
         {
             System.out.println("Waiting for data...");
         }
-        
+
         return recievedDataArray;
     }
 }

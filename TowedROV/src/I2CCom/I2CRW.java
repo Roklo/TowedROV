@@ -33,6 +33,10 @@ public class I2CRW implements Runnable
     private final static int actuatorSB_ADDRESS = 11;
     private final static int actuatorPS_ADDRESS = 12;
 
+    //Polulu JRK drive commands  
+    private final static int setTarget = 0xC0;  //Sets the desired position
+    private final static int motorOff = 0xFF;   //Stops the motor in its current pos
+
     String start_char = "<";
     String end_char = ">";
     String sep_char = ":";
@@ -69,14 +73,28 @@ public class I2CRW implements Runnable
         {
             try
             {
-                if (I2CH.getI2cRequest())
+                if (I2CH.getI2cSendRequest())
                 {
                     byte[] dataByteArray = I2CH.getCurrentDataByteArray();
-                    for (byte x : dataByteArray)
+                    String command = I2CH.getCommand();
+                    int value = I2CH.getValue();
+                    String key = command;
+
+                    switch (key)
                     {
-                        arduinoDummy.write((byte) x);
-                        //Thread.sleep(1);
+                        case "ActuatorSB_setTarget":
+                            actuatorSB.write(setTarget, (byte)value);
+                            break;
+                        case "ActuatorSB_stopMotor":
+                            actuatorSB.write(motorOff, (byte)0x00);
+                            break;
                     }
+
+//                    for (byte x : dataByteArray)
+//                    {
+//                        arduinoDummy.write((byte) x);
+//                        //Thread.sleep(1);
+//                    }
 
 //                    device.write((byte) 0x03);
 //                    Thread.sleep(200);
@@ -89,7 +107,7 @@ public class I2CRW implements Runnable
 //                    device.write((byte) 0x00);
 //                    System.out.println("Reset signal is sent");
 //                    Thread.sleep(5000);
-                    I2CH.setI2cRequest(false);
+                    I2CH.setI2cSendRequest(false);
                 }
             } catch (Exception e)
             {
@@ -148,7 +166,6 @@ public class I2CRW implements Runnable
                     valueNames[4] = "AuxIn3";
                     valueNames[5] = "AuxIn4";
                     valueNames[6] = "AuxIn5";
-                   
 
                     for (int i = 0; i < data.length; i++)
                     {
