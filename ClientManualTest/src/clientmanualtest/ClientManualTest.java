@@ -28,13 +28,16 @@ public class ClientManualTest
         long lastTime = 0;
         BufferedReader inFromUser = new BufferedReader(
                 new InputStreamReader(System.in));
-        try (Socket clientSocket = new Socket("localhost", 9000))
+        boolean finished = false;
+        while (!finished)
         {
-            boolean finished = false;
-            while (!finished)
+            try (Socket clientSocket = new Socket("localhost", 9000))
             {
+                clientSocket.setSoTimeout(1000);
+
                 PrintWriter outToServer = new PrintWriter(
                         clientSocket.getOutputStream(), true);
+
                 BufferedReader inFromServer
                         = new BufferedReader(new InputStreamReader(
                                 clientSocket.getInputStream()));
@@ -44,21 +47,30 @@ public class ClientManualTest
                 outToServer.println(sentence);
                 modifiedSentence = inFromServer.readLine();
                 elapsedTimerNano = (System.nanoTime() - lastTime);
-                System.out.println("FROM SERVER: " + modifiedSentence);
-
-                elapsedTimer = elapsedTimerNano / 1000000;
-                System.out.println("Ping: " + elapsedTimer + "ms");
-
-                elapsedTimer = 0;
-                if (modifiedSentence.equalsIgnoreCase("Congrats!") || inFromUser.equals("exit"))
+                if (!modifiedSentence.equals("") || !modifiedSentence.equals(null))
                 {
-                    finished = true;
-                    clientSocket.close();
+                    System.out.println(modifiedSentence);
+
+                    elapsedTimer = elapsedTimerNano / 1000000;
+                    System.out.println("Ping: " + elapsedTimer + "ms");
+
+                    elapsedTimer = 0;
+                    if (modifiedSentence.equalsIgnoreCase("Congrats!") || inFromUser.equals("exit"))
+                    {
+                        finished = true;
+                        clientSocket.close();
+                    }
+                } else
+                {
+                    System.out.println("Nothing recived from server...");
                 }
+            } catch (SocketTimeoutException ex)
+            {
+                System.out.println("Error: Read timed out");
+            } catch (Exception e)
+            {
+                System.out.println("An error occured." + e);
             }
-        } catch (Exception e)
-        {
-            System.out.println("An error occured." + e);
         }
     }
 }

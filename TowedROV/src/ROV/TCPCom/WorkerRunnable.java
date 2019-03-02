@@ -13,8 +13,8 @@ import java.net.Socket;
  * @author <Robin S. Thorholm>
  * Code taken from:
  * http://tutorials.jenkov.com/java-multithreaded-servers/multithreaded-server.html
- * 
- * 
+ *
+ *
  * Access this website to test if the server is active: http://localhost:9000/
  */
 public class WorkerRunnable implements Runnable
@@ -31,6 +31,8 @@ public class WorkerRunnable implements Runnable
 
     public void run()
     {
+        boolean clientOnline = true;
+
         try
         {
             BufferedReader inFromClient = new BufferedReader(
@@ -39,35 +41,45 @@ public class WorkerRunnable implements Runnable
 
             PrintWriter outToClient = new PrintWriter(
                     this.clientSocket.getOutputStream(), true);
-
-            InputStream input = clientSocket.getInputStream();
-            OutputStream output = clientSocket.getOutputStream();
-            
-            
-            //String inputData = inFromClient.toString();
-
-            String inputData = inFromClient.readLine();
-            
-            switch (inputData)
+            while (clientOnline)
             {
-                case "ping":
-                    output.write(("<ping:true>").getBytes());
-                    outToClient.println("<ping:true>");
-            }
 
-            long time = System.currentTimeMillis();
-            output.write(("HTTP/1.1 200 OK\n\nWorkerRunnable: "
-                    + this.serverText + " - "
-                    + time
-                    + "").getBytes());
-            output.write(("\nServer is online").getBytes());
-            output.close();
-            input.close();
-            System.out.println("Request processed: " + time);
+                InputStream input = clientSocket.getInputStream();
+                OutputStream output = clientSocket.getOutputStream();
+
+                //String inputData = inFromClient.toString();
+                String inputData = inFromClient.readLine();
+
+                switch (inputData)
+                {
+                    case "ping":
+                        output.write(("<ping:true>").getBytes());
+                        outToClient.println("<ping:true>");
+                        break;
+                    case "exit":
+                        output.close();
+                        input.close();
+                        clientOnline = false;
+                        break;
+                    default:
+                        outToClient.println("Error: Not a command");
+                        break;
+
+                }
+
+//            long time = System.currentTimeMillis();
+//            output.write(("HTTP/1.1 200 OK\n\nWorkerRunnable: "
+//                    + this.serverText + " - "
+//                    + time
+//                    + "").getBytes());
+//            output.write(("\nServer is online").getBytes());
+//           System.out.println("Request processed: " + time);
+            }
         } catch (IOException e)
         {
             //report exception somewhere.
             e.printStackTrace();
         }
+
     }
 }
