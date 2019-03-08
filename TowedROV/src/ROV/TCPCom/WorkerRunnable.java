@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import ROV.*;
 
 /**
  *
@@ -22,17 +23,19 @@ public class WorkerRunnable implements Runnable
 
     protected Socket clientSocket = null;
     protected String serverText = null;
+    DataHandler dh = null;
 
-    public WorkerRunnable(Socket clientSocket, String serverText)
+    public WorkerRunnable(Socket clientSocket, String serverText, DataHandler dh)
     {
         this.clientSocket = clientSocket;
         this.serverText = serverText;
+        this.dh = dh;
     }
 
     public void run()
     {
         boolean clientOnline = true;
-
+        boolean welcomeMessageIsSent = false;
         try
         {
             BufferedReader inFromClient = new BufferedReader(
@@ -41,30 +44,43 @@ public class WorkerRunnable implements Runnable
 
             PrintWriter outToClient = new PrintWriter(
                     this.clientSocket.getOutputStream(), true);
+
+            InputStream input = clientSocket.getInputStream();
+            OutputStream output = clientSocket.getOutputStream();
+
             while (clientOnline)
             {
 
-                InputStream input = clientSocket.getInputStream();
-                OutputStream output = clientSocket.getOutputStream();
+                welcomeMessageIsSent = true;
 
-                //String inputData = inFromClient.toString();
-                String inputData = inFromClient.readLine();
-
-                switch (inputData)
+                if (inFromClient.ready())
                 {
-                    case "ping":
-                        output.write(("<ping:true>").getBytes());
-                        outToClient.println("<ping:true>");
-                        break;
-                    case "exit":
-                        output.close();
-                        input.close();
-                        clientOnline = false;
-                        break;
-                    default:
-                        outToClient.println("Error: Not a command");
-                        break;
+                    String inputData = inFromClient.readLine();
+                    switch (inputData)
+                    {
+                        case "cmd_lightIntensity":
 
+                            break;
+
+                        case "fb_depthToSeabedEcho":
+                            outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthToSeabedEcho() + ">");
+                            break;
+
+                        case "ping":
+                            //output.write(("<ping:true>").getBytes());
+                            outToClient.println("<ping:true>" + welcomeMessageIsSent);
+                            welcomeMessageIsSent = true;
+                            break;
+                        case "exit":
+                            output.close();
+                            input.close();
+                            clientOnline = false;
+                            break;
+                        default:
+                            outToClient.println("Error: Not a command");
+                            break;
+
+                    }
                 }
 
 //            long time = System.currentTimeMillis();
@@ -75,9 +91,11 @@ public class WorkerRunnable implements Runnable
 //            output.write(("\nServer is online").getBytes());
 //           System.out.println("Request processed: " + time);
             }
+
         } catch (IOException e)
         {
             //report exception somewhere.
+            System.out.println("Exception: " + e);
             e.printStackTrace();
         }
 

@@ -48,7 +48,7 @@ public class ROVMain
         dh = new DataHandler();
         I2CH = new I2CHandler(dh);
 
-        Server = new Thread(new Server(serverAddress));
+        Server = new Thread(new Server(serverAddress, dh));
         Server.start();
         Server.setName("Server");
 
