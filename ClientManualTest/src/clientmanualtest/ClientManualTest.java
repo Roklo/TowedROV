@@ -26,54 +26,76 @@ public class ClientManualTest
         double elapsedTimer = 0;
         double elapsedTimerNano = 0;
         long lastTime = 0;
+        boolean connectionResetError = false;
+
         BufferedReader inFromUser = new BufferedReader(
                 new InputStreamReader(System.in));
         boolean finished = false;
+        boolean connectionEstablished = false;
 
-        try
+        while (!finished)
         {
-            Socket clientSocket = new Socket("localhost", 9000);
-
-            //clientSocket.setSoTimeout(1000);
-            PrintWriter outToServer = new PrintWriter(
-                    clientSocket.getOutputStream(), true);
-
-            BufferedReader inFromServer
-                    = new BufferedReader(new InputStreamReader(
-                            clientSocket.getInputStream()));
-            while (!finished)
+            try
             {
-                sentence = inFromUser.readLine();
-
-                lastTime = System.nanoTime();
-                outToServer.println(sentence);
-                modifiedSentence = inFromServer.readLine();
-                elapsedTimerNano = (System.nanoTime() - lastTime);
-                if (!modifiedSentence.equals("") || !modifiedSentence.equals(null))
+                if (connectionResetError)
                 {
-                    System.out.println(modifiedSentence);
-
-                    elapsedTimer = elapsedTimerNano / 1000000;
-                    System.out.println("Ping: " + elapsedTimer + "ms");
-                    System.out.println("This would be " + (Math.ceil(1000000 / elapsedTimer)) + " times pr second");
-
-                    elapsedTimer = 0;
-                    if (modifiedSentence.equalsIgnoreCase("Congrats!") || inFromUser.equals("exit"))
+                    for (int sec = 5; sec >= 0; sec--)
                     {
-                        finished = true;
-                        clientSocket.close();
+                        System.out.println("Trying to reconnect in " + sec + " sec...");
+                        Thread.sleep(1000);
                     }
-                } else
-                {
-                    System.out.println("Nothing recived from server...");
                 }
+                Socket clientSocket = new Socket("localhost", 9000);
+
+                //clientSocket.setSoTimeout(1000);
+                PrintWriter outToServer = new PrintWriter(
+                        clientSocket.getOutputStream(), true);
+
+                BufferedReader inFromServer
+                        = new BufferedReader(new InputStreamReader(
+                                clientSocket.getInputStream()));
+                System.out.println("Connection established...");
+                connectionResetError = false;
+                connectionEstablished = true;
+                while (connectionEstablished)
+                {
+                    sentence = inFromUser.readLine();
+
+                    lastTime = System.nanoTime();
+                    outToServer.println(sentence);
+                    modifiedSentence = inFromServer.readLine();
+                    elapsedTimerNano = (System.nanoTime() - lastTime);
+                    if (!modifiedSentence.equals("") || !modifiedSentence.equals(null))
+                    {
+                        System.out.println(modifiedSentence);
+
+                        elapsedTimer = elapsedTimerNano / 1000000;
+                        System.out.println("Ping: " + elapsedTimer + "ms");
+                        System.out.println("This would be " + (1000 / elapsedTimer) + " times pr. second");
+
+                        elapsedTimer = 0;
+                        if (modifiedSentence.equalsIgnoreCase("Congrats!") || inFromUser.equals("exit"))
+                        {
+                            connectionEstablished = false;
+                            finished = true;
+                            clientSocket.close();
+                        }
+                    } else
+                    {
+                        System.out.println("Nothing recived from server...");
+                    }
+                }
+            } catch (SocketTimeoutException ex)
+            {
+                System.out.println("Error: Read timed out");
+            } catch (SocketException ex)
+            {
+                System.out.println("An error occured: Connection reset");
+                connectionResetError = true;
+            } catch (Exception e)
+            {
+                System.out.println("An error occured: " + e);
             }
-        } catch (SocketTimeoutException ex)
-        {
-            System.out.println("Error: Read timed out");
-        } catch (Exception e)
-        {
-            System.out.println("An error occured." + e);
         }
     }
 

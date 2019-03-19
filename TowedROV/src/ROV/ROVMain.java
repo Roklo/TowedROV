@@ -7,6 +7,7 @@ package ROV;
 
 import ROV.SerialCom.SerialRW;
 import I2CCom.*;
+import ROV.AlarmSystem.AlarmHandler;
 import ROV.TCPCom.Server;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
@@ -30,13 +31,16 @@ public class ROVMain
     private final static int serverAddress = 9000;
     private static Thread serialRW;
     private static Thread I2CComHandler;
+    
     static boolean dataIsRecieved = false;
     static boolean testIsDone = false;
     static SerialPort serialPort;
     protected static DataHandler dh;
     protected static I2CHandler I2CH;
+    
 
     private static Thread Server;
+    private static Thread alarmHandler;
 
     public final static int ARDUINO_DUMMY_SIGNAL_ADDRESS = 9;
 
@@ -45,9 +49,30 @@ public class ROVMain
      */
     public static void main(String[] args)
     {
-        dh = new DataHandler();
-        I2CH = new I2CHandler(dh);
+        String osName = System.getProperty("os.name");
 
+        String[] portNames = SerialPortList.getPortNames();
+        for (int i = 0; i < portNames.length; i++)
+        {
+            System.out.println(portNames[i]);
+
+        }
+        if (!osName.contains("Windows"))
+        {
+            
+            I2CH = new I2CHandler(dh);
+        }
+        else
+        {
+            System.out.println("OS is windows, does not start raspberry libraries");
+        }
+        dh = new DataHandler();
+        
+        alarmHandler = new Thread(new AlarmHandler(dh));
+        alarmHandler.start();
+        alarmHandler.setName("AlarmHandler");
+
+        
         Server = new Thread(new Server(serverAddress, dh));
         Server.start();
         Server.setName("Server");
@@ -57,13 +82,6 @@ public class ROVMain
         int inputData = 0;
 
         //serialRW.start();
-        System.out.println(System.getProperty("os.name"));
-        String[] portNames = SerialPortList.getPortNames();
-        for (int i = 0; i < portNames.length; i++)
-        {
-            System.out.println(portNames[i]);
-
-        }
 //        // ////////////////////////Robin's test area//////////////////////
 ////        I2CH.requestDataFrom("ArduinoIO");
 ////        System.out.println("Data is gotten");

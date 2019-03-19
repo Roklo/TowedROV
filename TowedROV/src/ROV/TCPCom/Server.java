@@ -1,6 +1,7 @@
 package ROV.TCPCom;
 
 import ROV.*;
+import ROV.AlarmSystem.AlarmHandler;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
@@ -19,11 +20,13 @@ public class Server implements Runnable
     protected boolean isStopped = false;
     protected Thread runningThread = null;
     DataHandler dh = null;
+    AlarmHandler alarmHandler = null;
 
     public Server(int port, DataHandler dh)
     {
         this.serverPort = port;
         this.dh = dh;
+        this.alarmHandler = alarmHandler;
     }
 
     public void run()

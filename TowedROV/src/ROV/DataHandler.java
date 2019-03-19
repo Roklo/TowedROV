@@ -34,6 +34,7 @@ public class DataHandler
     int cmd_pid_gain = 0;
     
     boolean cmd_emergencySurface = false;
+    boolean cmd_ack = false;
 
     // Sensor values
     int fb_depthToSeabedEcho = 12;
@@ -66,7 +67,22 @@ public class DataHandler
     private boolean i2cRequest = false;
 
     public HashMap<String, String> data = new HashMap<>();
+    
+    public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
 
+    public boolean isCmd_ack()
+    {
+        return cmd_ack;
+    }
+
+    public void setCmd_ack(boolean cmd_ack)
+    {
+        this.cmd_ack = cmd_ack;
+    }
+
+    
+    
+    
     //Sensor values getters and setters
 
     public int getFb_depthToSeabedEcho()
@@ -288,6 +304,133 @@ public class DataHandler
     {
         this.fb_waterLeakChannel_4 = fb_waterLeakChannel_4;
     }
+
+    public int getCmd_lightIntensity()
+    {
+        return cmd_lightIntensity;
+    }
+
+    public void setCmd_lightIntensity(int cmd_lightIntensity)
+    {
+        this.cmd_lightIntensity = cmd_lightIntensity;
+    }
+
+    public int getCmd_actuatorPS()
+    {
+        return cmd_actuatorPS;
+    }
+
+    public void setCmd_actuatorPS(int cmd_actuatorPS)
+    {
+        this.cmd_actuatorPS = cmd_actuatorPS;
+    }
+
+    public int getCmd_actuatorSB()
+    {
+        return cmd_actuatorSB;
+    }
+
+    public void setCmd_actuatorSB(int cmd_actuatorSB)
+    {
+        this.cmd_actuatorSB = cmd_actuatorSB;
+    }
+
+    public int getCmd_depth()
+    {
+        return cmd_depth;
+    }
+
+    public void setCmd_depth(int cmd_depth)
+    {
+        this.cmd_depth = cmd_depth;
+    }
+
+    public int getCmd_cameraPitch()
+    {
+        return cmd_cameraPitch;
+    }
+
+    public void setCmd_cameraPitch(int cmd_cameraPitch)
+    {
+        this.cmd_cameraPitch = cmd_cameraPitch;
+    }
+
+    public int getCmd_cameraRoll()
+    {
+        return cmd_cameraRoll;
+    }
+
+    public void setCmd_cameraRoll(int cmd_cameraRoll)
+    {
+        this.cmd_cameraRoll = cmd_cameraRoll;
+    }
+
+    public byte getCmd_cameraMode()
+    {
+        return cmd_cameraMode;
+    }
+
+    public void setCmd_cameraMode(byte cmd_cameraMode)
+    {
+        this.cmd_cameraMode = cmd_cameraMode;
+    }
+
+    public int getCmd_pid_p()
+    {
+        return cmd_pid_p;
+    }
+
+    public void setCmd_pid_p(int cmd_pid_p)
+    {
+        this.cmd_pid_p = cmd_pid_p;
+    }
+
+    public int getCmd_pid_i()
+    {
+        return cmd_pid_i;
+    }
+
+    public void setCmd_pid_i(int cmd_pid_i)
+    {
+        this.cmd_pid_i = cmd_pid_i;
+    }
+
+    public int getCmd_pid_d()
+    {
+        return cmd_pid_d;
+    }
+
+    public void setCmd_pid_d(int cmd_pid_d)
+    {
+        this.cmd_pid_d = cmd_pid_d;
+    }
+
+    public int getCmd_pid_gain()
+    {
+        return cmd_pid_gain;
+    }
+
+    public void setCmd_pid_gain(int cmd_pid_gain)
+    {
+        this.cmd_pid_gain = cmd_pid_gain;
+    }
+
+    public boolean isCmd_emergencySurface()
+    {
+        return cmd_emergencySurface;
+    }
+
+    public void setCmd_emergencySurface(boolean cmd_emergencySurface)
+    {
+        this.cmd_emergencySurface = cmd_emergencySurface;
+    }
+    
+    
+    
+    
+    
+    
+    
     
 
     //Alarm flags
@@ -328,4 +471,12 @@ public class DataHandler
             }
         }
     }
+    
+    public void handleDataFromTCP(String data)
+    {
+        
+        
+        
+    }
+            
 }

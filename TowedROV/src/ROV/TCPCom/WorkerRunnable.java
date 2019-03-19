@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import ROV.*;
+import ROV.AlarmSystem.AlarmHandler;
+import java.util.Map;
 
 /**
  *
@@ -24,12 +26,18 @@ public class WorkerRunnable implements Runnable
     protected Socket clientSocket = null;
     protected String serverText = null;
     DataHandler dh = null;
+    AlarmHandler alarmHandler = null;
+
+    String start_char = "<";
+    String end_char = ">";
+    String sep_char = ":";
 
     public WorkerRunnable(Socket clientSocket, String serverText, DataHandler dh)
     {
         this.clientSocket = clientSocket;
         this.serverText = serverText;
         this.dh = dh;
+        this.alarmHandler = alarmHandler;
     }
 
     public void run()
@@ -55,11 +63,49 @@ public class WorkerRunnable implements Runnable
 
                 if (inFromClient.ready())
                 {
+                    String key = "";
+                    String value = "";
                     String inputData = inFromClient.readLine();
-                    switch (inputData)
+                    if (inputData.contains("<") || inputData.contains(">"))
+                    {
+                        inputData = inputData.substring(inputData.indexOf(start_char) + 1);
+                        inputData = inputData.substring(0, inputData.indexOf(end_char));
+                        inputData = inputData.replace("?", "");
+                        String[] data = inputData.split(sep_char);
+                        key = data[0];
+                        value = data[1];
+                    } else
+                    {
+                        key = (String) inputData;
+                    }
+
+                    switch (key)
                     {
                         case "cmd_lightIntensity":
+                            dh.setCmd_lightIntensity(parseStringToInt(value));
+                            System.out.println("Light intensity is: " + dh.getCmd_lightIntensity());
+                            outToClient.println("Server: OK");
 
+                            break;
+
+                        case "getAlarms":
+                            String completeAlarmListString = "<";
+                            
+                            for (Map.Entry e : dh.completeAlarmListDh.entrySet())
+                            {
+                                key = (String) e.getKey();
+                                if(e.getValue().equals(true))
+                                {
+                                    value = "true";
+                                }
+                                else
+                                {
+                                    value = "false";
+                                }
+                                
+                                completeAlarmListString = completeAlarmListString + key + ":" + value + ":";
+                            }
+                            outToClient.println(completeAlarmListString + ">");
                             break;
 
                         case "fb_depthToSeabedEcho":
@@ -71,11 +117,47 @@ public class WorkerRunnable implements Runnable
                             outToClient.println("<ping:true>" + welcomeMessageIsSent);
                             welcomeMessageIsSent = true;
                             break;
+                        case "waterCh1":
+                            if (dh.isFb_waterLeakChannel_1())
+                            {
+                                dh.setFb_waterLeakChannel_1(false);
+
+                            } else
+                            {
+                                dh.setFb_waterLeakChannel_1(true);
+                            }
+                            outToClient.println("WaterLeak: " + dh.isFb_waterLeakChannel_1());
+
+                            break;
+
+                        case "ack":
+                            if (dh.isCmd_ack())
+                            {
+                                dh.setCmd_ack(false);
+                            } else
+                            {
+                                dh.setCmd_ack(true);
+                            }
+                            outToClient.println("Ack: " + dh.isCmd_ack());
+                            break;
+
+                        case "inhibit_waterLeakSensor_1_Alarm":
+                            if (alarmHandler.inhibitedAlarms.get("inhibit_waterLeakSensor_1_Alarm"))
+                            {
+                                alarmHandler.inhibitedAlarms.put("inhibit_waterLeakSensor_1_Alarm", false);
+                            } else
+                            {
+                                alarmHandler.inhibitedAlarms.put("inhibit_waterLeakSensor_1_Alarm", true);
+                            }
+
+                            break;
+
                         case "exit":
                             output.close();
                             input.close();
                             clientOnline = false;
                             break;
+
                         default:
                             outToClient.println("Error: Not a command");
                             break;
@@ -98,6 +180,20 @@ public class WorkerRunnable implements Runnable
             System.out.println("Exception: " + e);
             e.printStackTrace();
         }
-
     }
+
+    private Integer parseStringToInt(String value)
+    {
+        Integer result = 0;
+        try
+        {
+            result = Integer.valueOf(value);
+        } catch (Exception e)
+        {
+            System.out.println("Exception while parsing to integer");
+        }
+
+        return result;
+    }
+
 }
