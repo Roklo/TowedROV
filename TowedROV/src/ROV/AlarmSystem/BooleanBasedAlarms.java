@@ -26,6 +26,7 @@ public class BooleanBasedAlarms implements Runnable
     String alarmName;
     DataHandler dh;
     AlarmHandler alarmHandler;
+    
 
     public BooleanBasedAlarms(DataHandler dh, AlarmHandler alarmHandler, String input, int setPoint, String alarmName,
             boolean HAlarm, boolean ack, boolean inhibit)

@@ -15,24 +15,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DataHandler
 {
+
     // Calibration values
     int pressureSensorOffset = 0;
-    
 
     // Command values
     int cmd_lightIntensity = 0;
     int cmd_actuatorPS = 0;
     int cmd_actuatorSB = 0;
+    int cmd_actuatorPSMaxPos = 0;
+    int cmd_actuatorPSMinPos = 0;
+    int cmd_actuatorSBMaxPos = 0;
+    int cmd_actuatorSBMinPos = 0;
+    
+    int cmd_pressureAtSeaLevel = 0;
+
     int cmd_depth = 0;
     int cmd_cameraPitch = 0;
     int cmd_cameraRoll = 0;
     byte cmd_cameraMode = 0;
-    
-    int cmd_pid_p = 0;
-    int cmd_pid_i = 0;
-    int cmd_pid_d = 0;
-    int cmd_pid_gain = 0;
-    
+
+    double cmd_pid_p = 0;
+    double cmd_pid_i = 0;
+    double cmd_pid_d = 0;
+    double cmd_pid_gain = 0;
+
     boolean cmd_emergencySurface = false;
     boolean cmd_ack = false;
 
@@ -55,20 +62,61 @@ public class DataHandler
     int fb_roll = 0;
     int fb_yaw = 0;
     int fb_heading = 0;
-    
+
     boolean fb_waterLeakChannel_1 = false;
     boolean fb_waterLeakChannel_2 = false;
     boolean fb_waterLeakChannel_3 = false;
     boolean fb_waterLeakChannel_4 = false;
-    
-    //Class variables
 
+    //Class variables
     private int counter = 0;
     private boolean i2cRequest = false;
 
     public HashMap<String, String> data = new HashMap<>();
-    
+
     public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
+
+    public int getCmd_actuatorPSMaxPos()
+    {
+        return cmd_actuatorPSMaxPos;
+    }
+
+    public void setCmd_actuatorPSMaxPos(int cmd_actuatorPSMaxPos)
+    {
+        this.cmd_actuatorPSMaxPos = cmd_actuatorPSMaxPos;
+    }
+
+    public int getCmd_actuatorPSMinPos()
+    {
+        return cmd_actuatorPSMinPos;
+    }
+
+    public void setCmd_actuatorPSMinPos(int cmd_actuatorPSMinPos)
+    {
+        this.cmd_actuatorPSMinPos = cmd_actuatorPSMinPos;
+    }
+
+    public int getCmd_actuatorSBMaxPos()
+    {
+        return cmd_actuatorSBMaxPos;
+    }
+
+    public void setCmd_actuatorSBMaxPos(int cmd_actuatorSBMaxPos)
+    {
+        this.cmd_actuatorSBMaxPos = cmd_actuatorSBMaxPos;
+    }
+
+    public int getCmd_actuatorSBMinPos()
+    {
+        return cmd_actuatorSBMinPos;
+    }
+
+    public void setCmd_actuatorSBMinPos(int cmd_actuatorSVMinPos)
+    {
+        this.cmd_actuatorSBMinPos = cmd_actuatorSVMinPos;
+    }
+    
+    
 
     public boolean isCmd_ack()
     {
@@ -80,11 +128,7 @@ public class DataHandler
         this.cmd_ack = cmd_ack;
     }
 
-    
-    
-    
     //Sensor values getters and setters
-
     public int getFb_depthToSeabedEcho()
     {
         return fb_depthToSeabedEcho;
@@ -375,42 +419,42 @@ public class DataHandler
         this.cmd_cameraMode = cmd_cameraMode;
     }
 
-    public int getCmd_pid_p()
+    public double getCmd_pid_p()
     {
         return cmd_pid_p;
     }
 
-    public void setCmd_pid_p(int cmd_pid_p)
+    public void setCmd_pid_p(double cmd_pid_p)
     {
         this.cmd_pid_p = cmd_pid_p;
     }
 
-    public int getCmd_pid_i()
+    public double getCmd_pid_i()
     {
         return cmd_pid_i;
     }
 
-    public void setCmd_pid_i(int cmd_pid_i)
+    public void setCmd_pid_i(double cmd_pid_i)
     {
         this.cmd_pid_i = cmd_pid_i;
     }
 
-    public int getCmd_pid_d()
+    public double getCmd_pid_d()
     {
         return cmd_pid_d;
     }
 
-    public void setCmd_pid_d(int cmd_pid_d)
+    public void setCmd_pid_d(double cmd_pid_d)
     {
         this.cmd_pid_d = cmd_pid_d;
     }
 
-    public int getCmd_pid_gain()
+    public double getCmd_pid_gain()
     {
         return cmd_pid_gain;
     }
 
-    public void setCmd_pid_gain(int cmd_pid_gain)
+    public void setCmd_pid_gain(double cmd_pid_gain)
     {
         this.cmd_pid_gain = cmd_pid_gain;
     }
@@ -424,14 +468,6 @@ public class DataHandler
     {
         this.cmd_emergencySurface = cmd_emergencySurface;
     }
-    
-    
-    
-    
-    
-    
-    
-    
 
     //Alarm flags
     //Alarm getters and setters
@@ -471,12 +507,10 @@ public class DataHandler
             }
         }
     }
-    
+
     public void handleDataFromTCP(String data)
     {
-        
-        
-        
+
     }
-            
+
 }

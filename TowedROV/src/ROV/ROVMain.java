@@ -68,6 +68,7 @@ public class ROVMain
         }
         dh = new DataHandler();
         
+        
         alarmHandler = new Thread(new AlarmHandler(dh));
         alarmHandler.start();
         alarmHandler.setName("AlarmHandler");
