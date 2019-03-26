@@ -10,6 +10,7 @@ import java.net.Socket;
 import ROV.*;
 import ROV.AlarmSystem.AlarmHandler;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -290,6 +291,18 @@ public class WorkerRunnable implements Runnable
                             outToClient.println("<get_cmd_pid_gain:" + dh.getCmd_pid_gain() + ">");
                             break;
 
+                        case "get_ROVComPorts":                            
+                            String portListString = "<";
+                            for (Entry e : dh.comPortList.entrySet())
+                            {
+                                String comPortKey = (String) e.getKey();
+                                String comPortValue = (String) e.getValue();
+                                portListString = portListString + comPortKey + ":" + comPortValue + ":";
+                            }
+                            portListString = portListString + ">";
+                            outToClient.println(portListString);
+                            break;
+
                         //Other  commands
                         case "ping":
                             //output.write(("<ping:true>").getBytes());
@@ -353,7 +366,9 @@ public class WorkerRunnable implements Runnable
 
                         case "startupCalibration":
                             StartupCalibration = new StartupCalibration(dh);
+                            outToClient.println("Starting calibration...");
                             String data = StartupCalibration.doStartupCalibration();
+                            outToClient.println("Server: " + data);
                             break;
 
                         case "exit":

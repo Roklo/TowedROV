@@ -27,7 +27,7 @@ public class StartupCalibration
         calibrateActuators();
         testLights();
 
-        return "kake";
+        return "Calibration complete...";
     }
 
     public void calibrateActuators()
@@ -142,6 +142,7 @@ public class StartupCalibration
             }
 
         }
+
     }
 
 //Calibrate depth sensor here:

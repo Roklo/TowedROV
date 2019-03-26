@@ -1,0 +1,10 @@
+#define CALIBRATION__MAGN_USE_EXTENDED true
+const float magn_ellipsoid_center[3] = {139.591, -221.073, -25.4776};
+const float magn_ellipsoid_transform[3][3] = {{0.949644, 0.0794874, -0.00746759}, {0.0794874, 0.856318, 0.0429088}, {-0.00746759, 0.0429088, 0.945709}};
+
+NEW
+
+
+#define CALIBRATION__MAGN_USE_EXTENDED true
+const float magn_ellipsoid_center[3] = {197,056, -283,360, -25,1475};
+const float magn_ellipsoid_transform[3][3] = {{0,936102, -0,0512778, 0,00726566}, {-0,0512778, 0,958557, -0,000535394}, {0,00726566, -0,000535394, 0,860614}};

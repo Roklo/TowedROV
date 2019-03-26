@@ -71,6 +71,8 @@ public class DataHandler
     //Class variables
     private int counter = 0;
     private boolean i2cRequest = false;
+    
+    public HashMap<String, String> comPortList = new HashMap<>();
 
     public HashMap<String, String> data = new HashMap<>();
 
@@ -480,6 +482,8 @@ public class DataHandler
     {
         this.counter = counter;
     }
+    
+   
 
     public void handleDataFromI2C()
     {

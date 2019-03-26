@@ -6,8 +6,10 @@
 package ROV;
 
 import ROV.SerialCom.SerialRW;
+import ROV.*;
 import I2CCom.*;
 import ROV.AlarmSystem.AlarmHandler;
+import ROV.SerialCom.SerialDataHandler;
 import ROV.TCPCom.Server;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
@@ -37,6 +39,8 @@ public class ROVMain
     static SerialPort serialPort;
     protected static DataHandler dh;
     protected static I2CHandler I2CH;
+    protected static SerialDataHandler sdh;
+            
     
 
     private static Thread Server;
@@ -67,6 +71,7 @@ public class ROVMain
             System.out.println("OS is windows, does not start raspberry libraries");
         }
         dh = new DataHandler();
+        sdh = new SerialDataHandler(dh);
         
         
         alarmHandler = new Thread(new AlarmHandler(dh));
@@ -77,6 +82,9 @@ public class ROVMain
         Server = new Thread(new Server(serverAddress, dh));
         Server.start();
         Server.setName("Server");
+        
+        sdh.findComPorts();
+        
 
 //        Semaphore semSerial = new Semaphore(1);
 //        serialRW = new Thread(new SerialRW(semSerial));
