@@ -31,13 +31,22 @@ public class DataHandler
     public float altitude;
     public float angle;
     public float speed;
-    public float latitude;
-    public float longitude;
+    public double latitude;
+    public double longitude;
     public float depth;
     public float temperature;
-    public float roll;
-    public float pitch;
-    public float yaw;
+    
+    
+    //Feedback from IMU
+    public int roll;
+    public int pitch;
+    public int heading;
+    
+    // Feedback from ROV
+    public int rovDepth;
+    
+    // Feedback from GUI
+    public boolean startLogging = true;
 
     public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
 
@@ -53,14 +62,14 @@ public class DataHandler
         altitude = (float) 0.00;
         angle = (float) 0.00;
         speed = (float) 0.00;
-        latitude = (float) 0.00;
-        longitude = (float) 0.00;
+
+        latitude =  62.536819;
+        longitude = 6.223951;
         depth = (float) 0.01;
         temperature = (float) 0.01;
-        roll = (float) 0.00;
-        pitch = (float) 0.00;
-        yaw = (float) 0.00;
-        
+        roll = 0;
+        pitch = 0;
+        heading = 100;
 
     }
 
@@ -148,22 +157,23 @@ public class DataHandler
         this.speed = speed;
     }
 
-    public float get_Latitude()
+    public double get_Latitude()
     {
+        set_Latitude(latitude+0.0005);
         return latitude;
     }
 
-    public void set_Latitude(float latitude)
+    public void set_Latitude(double latitude)
     {
         this.latitude = latitude;
     }
 
-    public float get_Longitude()
+    public double get_Longitude()
     {
         return longitude;
     }
 
-    public void set_Longitude(float longitude)
+    public void set_Longitude(double longitude)
     {
         this.longitude = longitude;
     }
@@ -187,35 +197,35 @@ public class DataHandler
     {
         this.temperature = temperature;
     }
-    
-    public Float get_Roll()
+
+    public int get_Roll()
     {
         return roll;
     }
-    
-    public void set_Roll(Float roll)
+
+    public void set_Roll(int roll)
     {
         this.roll = roll;
     }
-    
-    public Float get_Pitch()
+
+    public int get_Pitch()
     {
         return pitch;
     }
-    
-    public void set_Pitch(Float pitch)
+
+    public void set_Pitch(int pitch)
     {
         this.pitch = pitch;
     }
-    
-    public Float get_Yaw()
+
+    public int get_Heading()
     {
-        return yaw;
+        return heading;
     }
-    
-    public void set_Yaw(Float yaw)
+
+    public void get_Heading(int heading)
     {
-        this.yaw = yaw;
+        this.heading = heading;
     }
 
     /**
@@ -256,13 +266,13 @@ public class DataHandler
                     this.temperature = Float.parseFloat(value);
                     break;
                 case "Roll":
-                    this.roll = Float.parseFloat(value);
+                    this.roll = Integer.parseInt(value);
                     break;
                 case "Pitch":
-                    this.pitch = Float.parseFloat(value);
-                break;
-                case "Yaw":
-                    this.yaw = Float.parseFloat(value);
+                    this.pitch = Integer.parseInt(value);
+                    break;
+                case "Heading":
+                    this.heading = Integer.parseInt(value);
                     break;
             }
         }
