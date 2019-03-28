@@ -1564,8 +1564,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-//        actuatorDutyCycleBar1.setValue(data.getBarValue());
-        System.out.println(data.getPitchAngle());
+        //actuatorDutyCycleBar1.setValue(data.getBarValue());
+        //System.out.println(data.getPitchAngle());
         this.showImage(data.getVideoImage());
         headingLabel.setText("Heading: " + data.getHeading());
         longitudeLabel.setText("Longitude: " + data.getLongitude());

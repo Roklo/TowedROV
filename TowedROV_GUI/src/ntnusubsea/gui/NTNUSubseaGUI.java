@@ -5,6 +5,8 @@
  */
 package ntnusubsea.gui;
 
+import basestation_rov.LogFileHandler;
+import basestation_rov.ReadSerialData;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,17 +14,23 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 
 /**
- * Main class that launches the application and schedules 
- * the different threads
+ * Main class that launches the application and schedules the different threads
  *
  * @author Marius Nonsvik
  */
-public class NTNUSubseaGUI {
+public class NTNUSubseaGUI
+{
+
+    private static Thread readSerialData;
+    private static Thread LogFileHandler;
+    protected static String ipAddress = "localHost";
+    protected static int sendPort = 5057;
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         Data data = new Data();
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         DataLogger logger = new DataLogger(data);
@@ -33,8 +41,8 @@ public class NTNUSubseaGUI {
         NmeaReceiver nmea = new NmeaReceiver(data);
         UDPClient stream = new UDPClient(data);
         BufferedImage banan;
-        ScheduledExecutorService executor = 
-        Executors.newScheduledThreadPool(8);
+        ScheduledExecutorService executor
+                = Executors.newScheduledThreadPool(8);
         SwingUtilities.invokeLater(frame);
         SwingUtilities.invokeLater(sonar);
         SwingUtilities.invokeLater(io);
@@ -55,13 +63,21 @@ public class NTNUSubseaGUI {
         executor.scheduleAtFixedRate(stream,
                 0, 20, TimeUnit.MILLISECONDS);
         Runtime.getRuntime()
-                .addShutdownHook(new Thread(new Runnable() {
+                .addShutdownHook(new Thread(new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         executor.shutdown();
                         encoder.finishVideo();
                     }
                 },
                         "Shutdown-thread"));
+
+        readSerialData = new Thread(new ReadSerialData(data, "COM9", 4800));
+        LogFileHandler = new Thread(new LogFileHandler(data));
+
+        readSerialData.start();
+        LogFileHandler.start();
     }
 }

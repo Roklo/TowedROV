@@ -113,7 +113,7 @@ public class UDPClient implements Runnable {
                 receivedData = null;
                 bais = null;
                 test++;
-                System.out.println(endTime - startTime);
+                //System.out.println(endTime - startTime);
             }
 
         } catch (SocketException ex) {

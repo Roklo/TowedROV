@@ -10,7 +10,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Observable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,19 +25,44 @@ import java.util.logging.Logger;
  *
  * @author Marius Nonsvik
  */
-public final class Data extends Observable {
+public final class Data extends Observable
+{
 
-    private float depth = 0;
+    private int arduinoBaudRate = 115200;
+    private byte[] dataFromArduino = new byte[11];
+    private boolean dataFromArduinoAvailable = false;
+    private byte requestCodeFromArduino;
+    private boolean threadStatus = true;
+    private boolean dataUpdated = false;
+
+    // Feedback from GPS
+    public int satellites = 0;
+    public float altitude = 0;
+    public float angle = 0;
+    public float speed = 0;
+    public float latitude = (float) 62.536819;
+    public float longitude = (float) 6.223951;
+    public float depth = (float) 0.01;
+    public float temperature = (float) 0.01;
+
+    //Feedback from IMU
+    public float roll = 0;
+    public float pitch = 0;
+    public float heading = 100;
+
+    // Feedback from ROV
+    public int rovDepth;
+
+    // Feedback from GUI
+    public boolean startLogging = false;
+
+    public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
+
     private float seafloorRov = 0;
     private float seafloorBoat = 0;
     private float pitchAngle = 0;
     private float wingAngle = 0;
     private float rollAngle = 0;
-    private float heading = 0;
-    private float latitude = 0;
-    private float longitude = 0;
-    private float temperature = 0;
-    private float speed;
     private float pressure = 0;
     private float channel1 = 0;
     private float channel2 = 0;
@@ -58,8 +85,10 @@ public final class Data extends Observable {
     /**
      * Creates an object of the class Data.
      */
-    public Data() {
-        try {
+    public Data()
+    {
+        try
+        {
             BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt"));
             defaultIP = br.readLine();
             labels.add(0, br.readLine());
@@ -78,10 +107,10 @@ public final class Data extends Observable {
             channelValues[2] = channel3;
             channelValues[3] = channel4;
 //            videoImage = ImageIO.read(new File("C:\\Users\\marno\\OneDrive\\Documents\\NetBeansProjects\\NTNUSubsea GUI\\src\\ntnusubsea\\gui\\Images\\rsz_rovside.png"));
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**
@@ -89,7 +118,8 @@ public final class Data extends Observable {
      *
      * @param ip The default connection IP
      */
-    public synchronized void setDefaultIP(String ip) {
+    public synchronized void setDefaultIP(String ip)
+    {
         defaultIP = ip;
         setChanged();
         notifyObservers();
@@ -100,19 +130,23 @@ public final class Data extends Observable {
      *
      * @return The default connection IP
      */
-    public synchronized String getDefaultIP() {
+    public synchronized String getDefaultIP()
+    {
         return defaultIP;
     }
 
-    public synchronized String getKp() {
+    public synchronized String getKp()
+    {
         return Kp;
     }
 
-    public synchronized String getKi() {
+    public synchronized String getKi()
+    {
         return Ki;
     }
 
-    public synchronized String getKd() {
+    public synchronized String getKd()
+    {
         return Kd;
     }
 
@@ -128,7 +162,8 @@ public final class Data extends Observable {
      * @param c7 Channel 7 label
      * @param c8 Channel 8 label
      */
-    public synchronized void setIOLabels(String c1, String c2, String c3, String c4, String c5, String c6, String c7, String c8) {
+    public synchronized void setIOLabels(String c1, String c2, String c3, String c4, String c5, String c6, String c7, String c8)
+    {
         labels.set(0, c1);
         labels.set(1, c2);
         labels.set(2, c3);
@@ -148,16 +183,21 @@ public final class Data extends Observable {
      * @param channel Index of channel to return
      * @return String containing label and value
      */
-    public synchronized String getChannel(int channel) {
-        if (channel > 0 && channel < 9) {
-            if (channel < 5) {
+    public synchronized String getChannel(int channel)
+    {
+        if (channel > 0 && channel < 9)
+        {
+            if (channel < 5)
+            {
                 String channelString = labels.get(channel - 1) + ": ";
                 channelString += channelValues[channel - 1];
                 return channelString;
-            } else {
+            } else
+            {
                 return labels.get(channel - 1);
             }
-        } else {
+        } else
+        {
             return null;
         }
     }
@@ -168,10 +208,13 @@ public final class Data extends Observable {
      * @param channel Index of channel
      * @return Value of the channel as float
      */
-    public synchronized float getChannelValue(int channel) {
-        if (channel < 0 && channel > 5) {
+    public synchronized float getChannelValue(int channel)
+    {
+        if (channel < 0 && channel > 5)
+        {
             return channelValues[channel - 1];
-        } else {
+        } else
+        {
             return (float) 0.001;
         }
     }
@@ -182,8 +225,10 @@ public final class Data extends Observable {
      * @param value Value of the channel
      * @param channel Index of the channel
      */
-    public synchronized void setChannel(float value, int channel) {
-        if (channel < 0 && channel > 5) {
+    public synchronized void setChannel(float value, int channel)
+    {
+        if (channel < 0 && channel > 5)
+        {
             channelValues[channel - 1] = value;
         }
         setChanged();
@@ -195,7 +240,8 @@ public final class Data extends Observable {
      *
      * @param angle Current pitch angle of the ROV
      */
-    public synchronized void setPitchAngle(float angle) {
+    public synchronized void setPitchAngle(float angle)
+    {
         pitchAngle = angle;
         setChanged();
         notifyObservers();
@@ -206,7 +252,8 @@ public final class Data extends Observable {
      *
      * @return Current pitch angle of the ROV
      */
-    public synchronized float getPitchAngle() {
+    public synchronized float getPitchAngle()
+    {
         return pitchAngle;
     }
 
@@ -215,7 +262,8 @@ public final class Data extends Observable {
      *
      * @param angle Current roll angle of the ROV
      */
-    public synchronized void setRollAngle(float angle) {
+    public synchronized void setRollAngle(float angle)
+    {
         rollAngle = angle;
         setChanged();
         notifyObservers();
@@ -226,7 +274,8 @@ public final class Data extends Observable {
      *
      * @return Current roll angle of the ROV
      */
-    public synchronized float getRollAngle() {
+    public synchronized float getRollAngle()
+    {
         return rollAngle;
     }
 
@@ -235,7 +284,8 @@ public final class Data extends Observable {
      *
      * @param angle Current wing angle of the ROV
      */
-    public synchronized void setWingAngle(float angle) {
+    public synchronized void setWingAngle(float angle)
+    {
         wingAngle = angle;
         setChanged();
         notifyObservers();
@@ -246,7 +296,8 @@ public final class Data extends Observable {
      *
      * @return Current wing angle of the ROV
      */
-    public synchronized float getWingAngle() {
+    public synchronized float getWingAngle()
+    {
         return wingAngle;
     }
 
@@ -255,7 +306,8 @@ public final class Data extends Observable {
      *
      * @param heading Current heading of the ROV
      */
-    public synchronized void setHeading(float heading) {
+    public synchronized void setHeading(float heading)
+    {
         this.heading = heading;
         setChanged();
         notifyObservers();
@@ -266,7 +318,8 @@ public final class Data extends Observable {
      *
      * @return Current heading of the ROV
      */
-    public synchronized float getHeading() {
+    public synchronized float getHeading()
+    {
         return heading;
     }
 
@@ -275,7 +328,8 @@ public final class Data extends Observable {
      *
      * @param latitude Current latitude of the ROV
      */
-    public synchronized void setLatitude(float latitude) {
+    public synchronized void setLatitude(float latitude)
+    {
         this.latitude = latitude;
         setChanged();
         notifyObservers();
@@ -286,7 +340,8 @@ public final class Data extends Observable {
      *
      * @return Current latitude of the ROV
      */
-    public synchronized float getLatitude() {
+    public synchronized float getLatitude()
+    {
         return latitude;
     }
 
@@ -295,7 +350,8 @@ public final class Data extends Observable {
      *
      * @param longitude Current longitude of the ROV
      */
-    public synchronized void setLongitude(float longitude) {
+    public synchronized void setLongitude(float longitude)
+    {
         this.longitude = longitude;
         setChanged();
         notifyObservers();
@@ -306,7 +362,8 @@ public final class Data extends Observable {
      *
      * @return Current longitude of the ROV
      */
-    public synchronized float getLongitude() {
+    public synchronized float getLongitude()
+    {
         return longitude;
     }
 
@@ -315,7 +372,8 @@ public final class Data extends Observable {
      *
      * @param depth Current depth of the ROV
      */
-    public synchronized void setDepth(float depth) {
+    public synchronized void setDepth(float depth)
+    {
         this.depth = depth;
         setChanged();
         notifyObservers();
@@ -326,7 +384,8 @@ public final class Data extends Observable {
      *
      * @return Current depth of the ROV
      */
-    public synchronized float getDepth() {
+    public synchronized float getDepth()
+    {
         return depth;
     }
 
@@ -335,7 +394,8 @@ public final class Data extends Observable {
      *
      * @param depth Depth beneath the ROV
      */
-    public synchronized void setSeafloorRov(float depth) {
+    public synchronized void setSeafloorRov(float depth)
+    {
         seafloorRov = depth;
         setChanged();
         notifyObservers();
@@ -346,7 +406,8 @@ public final class Data extends Observable {
      *
      * @return Depth beneath the ROV
      */
-    public synchronized float getSeafloorRov() {
+    public synchronized float getSeafloorRov()
+    {
         return seafloorRov;
     }
 
@@ -355,7 +416,8 @@ public final class Data extends Observable {
      *
      * @param depth Depth beneath the vessel
      */
-    public synchronized void setSeafloorBoat(float depth) {
+    public synchronized void setSeafloorBoat(float depth)
+    {
         seafloorBoat = depth;
         setChanged();
         notifyObservers();
@@ -366,7 +428,8 @@ public final class Data extends Observable {
      *
      * @return Depth beneath the vessel
      */
-    public synchronized float getSeafloorBoat() {
+    public synchronized float getSeafloorBoat()
+    {
         return seafloorBoat;
     }
 
@@ -375,7 +438,8 @@ public final class Data extends Observable {
      *
      * @param image New image in the video stream
      */
-    public synchronized void setVideoImage(BufferedImage image) {
+    public synchronized void setVideoImage(BufferedImage image)
+    {
         videoImage = null;
         videoImage = image;
         setChanged();
@@ -388,7 +452,8 @@ public final class Data extends Observable {
      *
      * @param status Current status of the actuators
      */
-    public synchronized void setActuatorStatus(byte status) {
+    public synchronized void setActuatorStatus(byte status)
+    {
         this.actuatorStatus = status;
         setChanged();
         notifyObservers();
@@ -400,10 +465,13 @@ public final class Data extends Observable {
      *
      * @return Current status of the actuators
      */
-    public synchronized boolean getActuatorStatus() {
-        if (actuatorStatus == 1) {
+    public synchronized boolean getActuatorStatus()
+    {
+        if (actuatorStatus == 1)
+        {
             return true;
-        } else {
+        } else
+        {
             return false;
         }
     }
@@ -414,7 +482,8 @@ public final class Data extends Observable {
      *
      * @param leak Current leak status of the ROV
      */
-    public synchronized void setLeakStatus(byte leak) {
+    public synchronized void setLeakStatus(byte leak)
+    {
         leakStatus = leak;
         setChanged();
         notifyObservers();
@@ -426,10 +495,13 @@ public final class Data extends Observable {
      *
      * @return Current leak status of the ROV
      */
-    public synchronized boolean getLeakStatus() {
-        if (leakStatus == 1) {
+    public synchronized boolean getLeakStatus()
+    {
+        if (leakStatus == 1)
+        {
             return true;
-        } else {
+        } else
+        {
             return false;
         }
     }
@@ -439,7 +511,8 @@ public final class Data extends Observable {
      *
      * @param temp Temperature of the water
      */
-    public synchronized void setTemperature(float temp) {
+    public synchronized void setTemperature(float temp)
+    {
         temperature = temp;
         setChanged();
         notifyObservers();
@@ -450,7 +523,8 @@ public final class Data extends Observable {
      *
      * @return Temperature of the water
      */
-    public synchronized float getTemperature() {
+    public synchronized float getTemperature()
+    {
         return temperature;
     }
 
@@ -459,7 +533,8 @@ public final class Data extends Observable {
      *
      * @param pres Pressure surrounding the ROV
      */
-    public synchronized void setPressure(float pres) {
+    public synchronized void setPressure(float pres)
+    {
         pressure = pres;
         setChanged();
         notifyObservers();
@@ -470,7 +545,8 @@ public final class Data extends Observable {
      *
      * @return Current pressure around the ROV
      */
-    public synchronized float getPressure() {
+    public synchronized float getPressure()
+    {
         return pressure;
     }
 
@@ -479,7 +555,8 @@ public final class Data extends Observable {
      *
      * @param speed Current speed of the vessel
      */
-    public synchronized void setSpeed(float speed) {
+    public synchronized void setSpeed(float speed)
+    {
         this.speed = speed;
         setChanged();
         notifyObservers();
@@ -490,7 +567,8 @@ public final class Data extends Observable {
      *
      * @return Current speed of the vessel
      */
-    public synchronized float getSpeed() {
+    public synchronized float getSpeed()
+    {
         return speed;
     }
 
@@ -499,7 +577,8 @@ public final class Data extends Observable {
      *
      * @return Current image in the video stream
      */
-    public synchronized BufferedImage getVideoImage() {
+    public synchronized BufferedImage getVideoImage()
+    {
         return videoImage;
     }
 
@@ -508,7 +587,8 @@ public final class Data extends Observable {
      *
      * @return the state of the photoMode variable, true or false
      */
-    public boolean isPhotoMode() {
+    public boolean isPhotoMode()
+    {
         return photoMode;
     }
 
@@ -517,7 +597,8 @@ public final class Data extends Observable {
      *
      * @param photoMode the state of the photoMode variable, true or false
      */
-    public void setPhotoMode(boolean photoMode) {
+    public void setPhotoMode(boolean photoMode)
+    {
         this.photoMode = photoMode;
     }
 
@@ -526,7 +607,8 @@ public final class Data extends Observable {
      *
      * @return the photo mode delay
      */
-    public int getPhotoModeDelay() {
+    public int getPhotoModeDelay()
+    {
         return photoModeDelay;
     }
 
@@ -535,7 +617,8 @@ public final class Data extends Observable {
      *
      * @param photoMode the photo mode delay
      */
-    public void setPhotoModeDelay(int photoModeDelay) {
+    public void setPhotoModeDelay(int photoModeDelay)
+    {
         this.photoModeDelay = photoModeDelay;
     }
 
@@ -544,7 +627,8 @@ public final class Data extends Observable {
      *
      * @return the camera pitch value
      */
-    public int getCameraPitchValue() {
+    public int getCameraPitchValue()
+    {
         return cameraPitchValue;
     }
 
@@ -553,8 +637,215 @@ public final class Data extends Observable {
      *
      * @param photoMode the camera pitch value
      */
-    public void setCameraPitchValue(int cameraPitchValue) {
+    public void setCameraPitchValue(int cameraPitchValue)
+    {
         this.cameraPitchValue = cameraPitchValue;
+    }
+
+    // CODE BELOW ADDED FROM THE OTHER PROJECT
+    /**
+     * Checks status of thread
+     *
+     * @return thread status
+     */
+    public boolean shouldThreadRun()
+    {
+        return threadStatus;
+    }
+
+    /**
+     * Sets the thread status
+     *
+     * @param threadStatus
+     */
+    public void setThreadStatus(boolean threadStatus)
+    {
+        this.threadStatus = threadStatus;
+    }
+
+    public byte[] getDataFromArduino()
+    {
+        return dataFromArduino;
+    }
+
+    /**
+     *
+     * @return true if new data available, false if not
+     */
+    public synchronized boolean isDataFromArduinoAvailable()
+    {
+        return this.dataFromArduinoAvailable;
+    }
+
+    public synchronized boolean isDataUpdated()
+    {
+        return dataUpdated;
+    }
+
+    public synchronized void setDataUpdated(boolean dataUpdated)
+    {
+        this.dataUpdated = dataUpdated;
+    }
+
+    public int get_Satellites()
+    {
+        return satellites;
+    }
+
+    public void set_Satellites(int satellites)
+    {
+        this.satellites = satellites;
+    }
+
+    public float get_Altitude()
+    {
+        return altitude;
+    }
+
+    public void set_Altitude(float altitude)
+    {
+        this.altitude = altitude;
+    }
+
+    public float get_Angle()
+    {
+        return angle;
+    }
+
+    public void set_Angle(float angle)
+    {
+        this.angle = angle;
+    }
+
+    public float get_Speed()
+    {
+        return speed;
+    }
+
+    public void set_Speed(float speed)
+    {
+        this.speed = speed;
+    }
+
+    public float get_Latitude()
+    {
+        this.set_Latitude((float) (latitude + 0.0005));
+        return latitude;
+    }
+
+    public void set_Latitude(float latitude)
+    {
+        this.latitude = latitude;
+    }
+
+    public float get_Longitude()
+    {
+        return longitude;
+    }
+
+    public void set_Longitude(float longitude)
+    {
+        this.longitude = longitude;
+    }
+
+    public float get_Depth()
+    {
+        return depth;
+    }
+
+    public void set_Depth(Float depth)
+    {
+        this.depth = depth;
+    }
+
+    public float get_Temperature()
+    {
+        return temperature;
+    }
+
+    public void set_Temperature(Float temperature)
+    {
+        this.temperature = temperature;
+    }
+
+    public float get_Roll()
+    {
+        return roll;
+    }
+
+    public void set_Roll(int roll)
+    {
+        this.roll = roll;
+    }
+
+    public float get_Pitch()
+    {
+        return pitch;
+    }
+
+    public void set_Pitch(int pitch)
+    {
+        this.pitch = pitch;
+    }
+
+    public float get_Heading()
+    {
+        return heading;
+    }
+
+    public void get_Heading(int heading)
+    {
+        this.heading = heading;
+    }
+
+    /**
+     * Compare keys to controll values coming in from arduino, and puts correct
+     * value to correct variable.
+     */
+    public synchronized void handleDataFromRemote()
+    {
+        for (Map.Entry e : data.entrySet())
+        {
+            String key = (String) e.getKey();
+            String value = (String) e.getValue();
+
+            switch (key)
+            {
+                case "Satellites":
+                    this.satellites = Integer.parseInt(value);
+                    break;
+                case "Altitude":
+                    this.altitude = Float.parseFloat(value);
+                    break;
+                case "Angle":
+                    this.angle = Float.parseFloat(value);
+                    break;
+                case "Speed":
+                    this.speed = Float.parseFloat(value);
+                    break;
+                case "Latitude":
+                    this.latitude = Float.parseFloat(value);
+                    break;
+                case "Longitude":
+                    this.longitude = Float.parseFloat(value);
+                    break;
+                case "Depth":
+                    this.depth = Float.parseFloat(value);
+                    break;
+                case "Temp":
+                    this.temperature = Float.parseFloat(value);
+                    break;
+                case "Roll":
+                    this.roll = Integer.parseInt(value);
+                    break;
+                case "Pitch":
+                    this.pitch = Integer.parseInt(value);
+                    break;
+                case "Heading":
+                    this.heading = Integer.parseInt(value);
+                    break;
+            }
+        }
     }
 
 }

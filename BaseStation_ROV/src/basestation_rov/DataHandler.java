@@ -17,34 +17,31 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataHandler
 {
 
-    private int arduinoBaudRate;
-
-    private byte[] dataFromArduino;
+    private int arduinoBaudRate = 115200;
+    private byte[] dataFromArduino = new byte[11];
     private boolean dataFromArduinoAvailable = false;
     private byte requestCodeFromArduino;
     private boolean threadStatus = true;
-
     private boolean dataUpdated = false;
 
     // Feedback from GPS
-    public int satellites;
-    public float altitude;
-    public float angle;
-    public float speed;
-    public double latitude;
-    public double longitude;
-    public float depth;
-    public float temperature;
-    
-    
+    public int satellites = 0;
+    public float altitude = 0;
+    public float angle = 0;
+    public float speed = 0;
+    public double latitude = 62.536819;
+    public double longitude = 6.223951;
+    public float depth = (float) 0.01;
+    public float temperature = (float) 0.01;
+
     //Feedback from IMU
-    public int roll;
-    public int pitch;
-    public int heading;
-    
+    public int roll = 0;
+    public int pitch = 0;
+    public int heading = 100;
+
     // Feedback from ROV
     public int rovDepth;
-    
+
     // Feedback from GUI
     public boolean startLogging = true;
 
@@ -52,25 +49,6 @@ public class DataHandler
 
     public DataHandler()
     {
-
-        this.dataFromArduino = new byte[11];
-        dataFromArduinoAvailable = false;
-
-        arduinoBaudRate = 115200;
-
-        satellites = 0;
-        altitude = (float) 0.00;
-        angle = (float) 0.00;
-        speed = (float) 0.00;
-
-        latitude =  62.536819;
-        longitude = 6.223951;
-        depth = (float) 0.01;
-        temperature = (float) 0.01;
-        roll = 0;
-        pitch = 0;
-        heading = 100;
-
     }
 
     /**
@@ -159,7 +137,7 @@ public class DataHandler
 
     public double get_Latitude()
     {
-        set_Latitude(latitude+0.0005);
+        set_Latitude(latitude + 0.0005);
         return latitude;
     }
 

@@ -20,7 +20,6 @@ public class BaseStation_ROV
     protected static DataHandler dh;
     private static Thread readSerialData;
     private static Thread LogFileHandler;
-
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
 
