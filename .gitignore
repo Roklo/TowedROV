@@ -19,4 +19,5 @@
 /TowedROV/dist/
 /ClientManualTest/nbproject/private/
 /ClientManualTest/build/
-TowedROV_GUI/ROV Data Log.txt
+/TowedROV_GUI/ROV Data Log.txt
+/nbproject/private/* 
