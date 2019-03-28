@@ -91,13 +91,13 @@ public class LogFileHandler implements Runnable
                         }
                     }
 
-//                    timeDifference = System.currentTimeMillis() - lastTime;
-//                    if (timeDifference >= pointFreqMillis)
-//                    {
-//                        logShipPosition(writer);
-//                        lastTime = System.currentTimeMillis();
-//                    }
-                    logPhotoPosition(writer2);
+                    timeDifference = System.currentTimeMillis() - lastTime;
+                    if (timeDifference >= pointFreqMillis)
+                    {
+                        logShipPosition(writer);
+                        lastTime = System.currentTimeMillis();
+                    }
+//                    logPhotoPosition(writer2);
 //                    if(###PhotoIsTaken)
 //                    {
 //                        
