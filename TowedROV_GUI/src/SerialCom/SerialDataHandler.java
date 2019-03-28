@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ROV.SerialCom;
+package SerialCom;
 
-import ROV.DataHandler;
+import ntnusubsea.gui.Data;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import jssc.SerialPort;
@@ -22,13 +22,13 @@ public class SerialDataHandler
 
     String comPort = "";
     SerialPort serialPort;
-    DataHandler dh;
+    Data dh;
 
     String start_char = "<";
     String end_char = ">";
     String sep_char = ":";
 
-    public SerialDataHandler(DataHandler dh)
+    public SerialDataHandler(Data dh)
     {
         this.dh = dh;
     }

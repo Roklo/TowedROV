@@ -40,7 +40,8 @@ public class LogFileHandler implements Runnable
 
     int shipTrackPointNumb = 1;
     int photoLocationNumb = 1;
-    String logStorageLocation = "C:\\Users\\rocio\\Google Drive\\NTNU\\3.År\\2.Semester\\Bachelor oppgave\\";
+    String logStorageLocation = System.getProperty("user.dir");
+//"C:\\Users\\rocio\\Google Drive\\NTNU\\3.År\\2.Semester\\Bachelor oppgave\\";
     String photoPosLog = "";
     String shipPosLog = "";
     boolean setupIsDone = false;
@@ -52,7 +53,8 @@ public class LogFileHandler implements Runnable
 
     public void run()
     {
-
+        System.out.println(logStorageLocation);
+        System.out.println("Wait");
         while (true)
         {
             try
@@ -92,13 +94,13 @@ public class LogFileHandler implements Runnable
                         }
                     }
 
-//                    timeDifference = System.currentTimeMillis() - lastTime;
-//                    if (timeDifference >= pointFreqMillis)
-//                    {
-//                        logShipPosition(writer);
-//                        lastTime = System.currentTimeMillis();
-//                    }
-                    logPhotoPosition(writer2);
+                    timeDifference = System.currentTimeMillis() - lastTime;
+                    if (timeDifference >= pointFreqMillis)
+                    {
+                        logShipPosition(writer);
+                        lastTime = System.currentTimeMillis();
+                    }
+                    //logPhotoPosition(writer2);
 //                    if(###PhotoIsTaken)
 //                    {
 //                        
@@ -125,11 +127,11 @@ public class LogFileHandler implements Runnable
 
             double normalizedHeading = Math.atan2(Math.sin(rovHeadingRelToShip), Math.cos(rovHeadingRelToShip));
             double rovHeadingRelToShipSin = sin(normalizedHeading * PI / 180);
-            double rovHeadingRelToShipSinRest = 0; 
+            double rovHeadingRelToShipSinRest = 0;
 
             if (rovHeadingRelToShipSin < 0)
             {
-                rovHeadingRelToShipSinRest =  1 + rovHeadingRelToShipSin ;
+                rovHeadingRelToShipSinRest = 1 + rovHeadingRelToShipSin;
 
             }
 

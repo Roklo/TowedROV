@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ROV.SerialCom;
+package SerialCom;
 
-import ROV.*;
+import ntnusubsea.gui.Data;
 import java.util.concurrent.ConcurrentHashMap;
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -23,7 +23,7 @@ public class ReadSeriellData implements Runnable
     int baudRate = 0;
     SerialPort serialPort;
 
-    DataHandler dh = null;
+    Data dh = null;
 
     /**
      *
@@ -32,7 +32,7 @@ public class ReadSeriellData implements Runnable
      * @param comPort
      * @param baudRate
      */
-    public ReadSeriellData(DataHandler dh, String comPort, int baudRate)
+    public ReadSeriellData(Data dh, String comPort, int baudRate)
     {
         this.comPort = comPort;
         this.baudRate = baudRate;

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ROV.SerialCom;
+package SerialCom;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import ROV.DataHandler;
+import ntnusubsea.gui.Data;
 
 /**
  *
@@ -18,7 +18,7 @@ import ROV.DataHandler;
 public class WriteSerialData implements Runnable
 {
 
-    DataHandler dh;
+    Data dh;
     //SerialDataHandler sdh;
     String comPort;
     int baudRate;
