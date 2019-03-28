@@ -142,6 +142,13 @@ public class StartupCalibration
             }
 
         }
+        try
+        {
+            Thread.sleep(5000);
+            dh.cmd_lightIntensity = 0;
+        } catch (Exception e)
+        {
+        }
 
     }
 
