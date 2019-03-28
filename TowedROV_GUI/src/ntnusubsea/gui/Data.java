@@ -52,6 +52,8 @@ public final class Data extends Observable {
     private String Kd;
     private long timer = System.currentTimeMillis();
     private boolean photoMode = false;
+    private int photoModeDelay = 1;
+    private int cameraPitchValue = 0;
 
     /**
      * Creates an object of the class Data.
@@ -503,19 +505,56 @@ public final class Data extends Observable {
 
     /**
      * Returns the state of the photoMode variable
-     * 
+     *
      * @return the state of the photoMode variable, true or false
      */
     public boolean isPhotoMode() {
         return photoMode;
     }
-    
+
     /**
      * Sets the state of the photoMode variable
-     * 
+     *
      * @param photoMode the state of the photoMode variable, true or false
      */
     public void setPhotoMode(boolean photoMode) {
         this.photoMode = photoMode;
     }
+
+    /**
+     * Returns the photo mode delay
+     *
+     * @return the photo mode delay
+     */
+    public int getPhotoModeDelay() {
+        return photoModeDelay;
+    }
+
+    /**
+     * Sets the photo mode delay
+     *
+     * @param photoMode the photo mode delay
+     */
+    public void setPhotoModeDelay(int photoModeDelay) {
+        this.photoModeDelay = photoModeDelay;
+    }
+
+    /**
+     * Returns the camera pitch value
+     *
+     * @return the camera pitch value
+     */
+    public int getCameraPitchValue() {
+        return cameraPitchValue;
+    }
+
+    /**
+     * Sets the camera pitch value
+     *
+     * @param photoMode the camera pitch value
+     */
+    public void setCameraPitchValue(int cameraPitchValue) {
+        this.cameraPitchValue = cameraPitchValue;
+    }
+
 }

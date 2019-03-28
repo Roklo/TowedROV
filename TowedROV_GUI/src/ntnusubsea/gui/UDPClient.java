@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.net.InetAddress;
 
 /**
  * This class handles incoming images from a DatagramPacket. It receives the
@@ -35,6 +36,7 @@ public class UDPClient implements Runnable {
     static BufferedImage videoImage;
     //static Socket videoSocket;
     private int photoNumber = 1;
+    boolean lastPhotoMode = false;
     private boolean debug = false;
     private Data data;
     private int test = 0;
@@ -96,6 +98,16 @@ public class UDPClient implements Runnable {
                         System.out.println("Exception occured :" + e.getMessage());
                     }
                     System.out.println("Image were saved to disk succesfully at C:/ROV_Photos");
+                }
+
+                if (data.isPhotoMode() != lastPhotoMode) {
+                    InetAddress returnIP = receivePacket.getAddress();
+                    int returnPort = receivePacket.getPort();
+                    String s1 = "photoMode:" + String.valueOf(data.isPhotoMode());
+                    byte arr[] = s1.getBytes();
+                    DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, returnIP, returnPort);
+                    videoSocket.send(sendPacket);
+                    lastPhotoMode = data.isPhotoMode();
                 }
 
                 receivedData = null;
