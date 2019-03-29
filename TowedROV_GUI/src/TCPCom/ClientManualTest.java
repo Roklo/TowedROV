@@ -158,6 +158,7 @@ public class ClientManualTest implements Runnable
         try
         {
             outToServer.println(sentence);
+            System.out.println("Data is sent...");
             outToServer.flush();
             serverResponse = inFromServer.readLine();
 
@@ -179,6 +180,7 @@ public class ClientManualTest implements Runnable
 
         inFromServer = new BufferedReader(new InputStreamReader(
                 clientSocket.getInputStream()));
+        System.out.println("Connected...");
 
 //        this.ps = new PrintStream(outputStream);
 //        this.IP = IP;

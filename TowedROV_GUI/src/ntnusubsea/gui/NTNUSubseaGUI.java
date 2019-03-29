@@ -90,21 +90,29 @@ public class NTNUSubseaGUI
         long timeDifference = 0;
         long lastTime = 0;
         long timeDelay = 5000;
+        boolean connected = false;
 
         while (true)
         {
-
+            try
             {
-                timeDifference = System.currentTimeMillis() - lastTime;
+                if (!connected)
+                {
+                    cmt.connect("localhost");
+                    connected = true;
+
+                }
+            } catch (Exception e)
+            {
             }
+
+            timeDifference = System.currentTimeMillis() - lastTime;
+
             if (timeDifference >= timeDelay)
             {
                 try
                 {
-                    
-                    System.out.println("kake");
-                    //cmt.connect("localhost");
-                    
+                    System.out.println(cmt.sendData("ping"));
                 } catch (Exception e)
                 {
                 }
