@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
+import TCPCom.*;
 
 /**
  * Main class that launches the application and schedules the different threads
@@ -23,6 +24,7 @@ public class NTNUSubseaGUI
 
     private static Thread readSerialData;
     private static Thread LogFileHandler;
+    //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
 
@@ -31,6 +33,8 @@ public class NTNUSubseaGUI
      */
     public static void main(String[] args)
     {
+        ClientManualTest cmt = new ClientManualTest();
+
         Data data = new Data();
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         DataLogger logger = new DataLogger(data);
@@ -62,6 +66,9 @@ public class NTNUSubseaGUI
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(stream,
                 0, 20, TimeUnit.MILLISECONDS);
+
+        executor.scheduleAtFixedRate(cmt,
+                0, 100, TimeUnit.MILLISECONDS);
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(new Runnable()
                 {
@@ -79,5 +86,31 @@ public class NTNUSubseaGUI
 
         readSerialData.start();
         LogFileHandler.start();
+
+        long timeDifference = 0;
+        long lastTime = 0;
+        long timeDelay = 5000;
+
+        while (true)
+        {
+
+            {
+                timeDifference = System.currentTimeMillis() - lastTime;
+            }
+            if (timeDifference >= timeDelay)
+            {
+                try
+                {
+                    
+                    System.out.println("kake");
+                    //cmt.connect("localhost");
+                    
+                } catch (Exception e)
+                {
+                }
+
+                lastTime = System.currentTimeMillis();
+            }
+        }
     }
 }
