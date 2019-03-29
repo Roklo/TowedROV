@@ -1,0 +1,117 @@
+$SDDPT,1.2,*7A
+Depth: 1Starting
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$YXMTW,23.8,C*1B
+Temperature in celcius: 23.80
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+$SDDPT,1.2,*7A
+Depth: 1.20
+Transducer offset: 7.00
+$SDDBT,4.1,f,1.2,M,0.6,F*06
+Depth below Transducer: 1.20
+
+
+
+
+
+
+
+
+
+
+
+$VWVLW,0.0,N,0.0,N*4C
+$SDDPT,,*57
+Depth: 0.00
+Transducer offset: 57.00
+$SDDBT,,f,,M,,F*28
+Depth below Transducer: 0.00
+
+
+$VWVLW,0.0,N,0.0,N*4C
+$SDDPT,,*57
+Depth: 0.00
+Transducer offset: 57.00
+$SDDBT,,f,,M,,F*28
+Depth below Transducer: 0.00
+
+
+$VWVHW,,T,,M,3.55,N,6.56,K*52
+Speed in Knots: 3.55
+Speed in Km/h: 6.56
+$VWVLW,0.0,N,0.0,N*4C
+$SDDPT,,*57
+Depth: 0.00
+Transducer offset: 57.00
+$SDDBT,,f,,M,,F*28
+Depth below Transducer: 0.00
+
+
+$YXMTW,24.6,C*12
+Temperature in celcius: 24.60
+$VWVLW,0.0,N,0.0,N*4C
+$SDDPT,,*57
+Depth: 0.00
+Transducer offset: 57.00
+$SDDBT,,f,,M,,F*28
+Depth below Transducer: 0.00
+
+
+$VWVHW,,T,,M,6.97,N,12.89,K*6E
+Speed in Knots: 6.97
+Speed in Km/h: 12.89
+$VWVLW,0.0,N,0.0,N*4C
+$SDDPT,,*57
+Depth: 0.00
+Transducer offset: 57.00
+$SDDBT,,f,,M,,F*28
+Depth below Transducer: 0.00
+
+
