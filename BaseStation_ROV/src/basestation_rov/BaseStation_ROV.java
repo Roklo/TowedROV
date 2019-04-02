@@ -9,7 +9,7 @@ package basestation_rov;
  * Main class responsible for reading arduino values, and send necessary data to
  * ROV and GUI.
  *
- * @author Bjørnar
+ * @author <Bjørnar M. Tennfjord>
  */
 public class BaseStation_ROV
 {

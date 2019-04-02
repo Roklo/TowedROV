@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package basestation_rov;
+package SerialCom;
 
+
+import ntnusubsea.gui.Data;
 import java.util.concurrent.ConcurrentHashMap;
 import jssc.SerialPort;
 import jssc.SerialPortList;
@@ -22,12 +24,12 @@ public class ReadSerialData implements Runnable
     boolean portIsOpen = false;
     String comPort = "";
     int baudRate = 0;
-    DataHandler dh = null;
+    Data dh = null;
 
     private static volatile double depth;
     private static volatile double tempC;
 
-    public ReadSerialData(DataHandler dh, String comPort, int baudRate)
+    public ReadSerialData(Data dh, String comPort, int baudRate)
     {
         this.comPort = comPort;
         this.baudRate = baudRate;

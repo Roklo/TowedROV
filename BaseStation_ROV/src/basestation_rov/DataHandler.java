@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Shared recource for the base station program, responsible for handling all
  * data used in the application.
  *
- * @author Bjørnar
+ * @author <Bjørnar M. Tennfjord>
  */
 public class DataHandler
 {
