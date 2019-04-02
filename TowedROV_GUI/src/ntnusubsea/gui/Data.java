@@ -647,7 +647,7 @@ public final class Data extends Observable
         this.cameraPitchValue = cameraPitchValue;
     }
 
-    // CODE BELOW ADDED FROM THE OTHER PROJECT
+    // CODE BELOW ADDED FROM THE BASESTATION PROJECT
     /**
      * Checks status of thread
      *
