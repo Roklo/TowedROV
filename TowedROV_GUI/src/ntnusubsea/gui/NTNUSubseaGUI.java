@@ -35,11 +35,11 @@ public class NTNUSubseaGUI
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         DataLogger logger = new DataLogger(data);
         TCPClient client = new TCPClient(data);
+        UDPClient stream = new UDPClient(data);
         IOControlFrame io = new IOControlFrame(data, client);
-        ROVFrame frame = new ROVFrame(sonar, data, client, io);
+        ROVFrame frame = new ROVFrame(sonar, data, client, io, stream);
         VideoEncoder encoder = new VideoEncoder(data);
         NmeaReceiver nmea = new NmeaReceiver(data);
-        UDPClient stream = new UDPClient(data);
         BufferedImage banan;
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);
