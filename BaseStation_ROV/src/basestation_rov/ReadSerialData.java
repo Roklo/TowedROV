@@ -14,7 +14,7 @@ import jssc.SerialPortException;
  * Respnsible for reading serial data from the GPS, Sonar and IMU values on the
  * base station
  *
- * @author Bjørnar
+ * @author <Bjørnar M. Tennfjord>
  */
 public class ReadSerialData implements Runnable
 {

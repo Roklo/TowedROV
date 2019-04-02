@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,10 @@ import java.util.logging.Logger;
  */
 public final class Data extends Observable
 {
+    
+    public HashMap<String, String> comPortList = new HashMap<>();
+    public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
+    
 
     private int arduinoBaudRate = 115200;
     private byte[] dataFromArduino = new byte[11];
@@ -54,7 +59,7 @@ public final class Data extends Observable
     public int rovDepth;
 
     // Feedback from GUI
-    public boolean startLogging = false;
+    public boolean startLogging = true;
 
     public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
 
@@ -642,7 +647,7 @@ public final class Data extends Observable
         this.cameraPitchValue = cameraPitchValue;
     }
 
-    // CODE BELOW ADDED FROM THE OTHER PROJECT
+    // CODE BELOW ADDED FROM THE BASESTATION PROJECT
     /**
      * Checks status of thread
      *

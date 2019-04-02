@@ -3,6 +3,7 @@
 /Java_Code/ShipProject/GUISystem/nbproject/private/
 /Vision_system/dist/
 *.log
+*.csv
 /Java_Code/ShipProject/Controller_TEST/nbproject/private/
 /Java_Code/ShipProject/ShipSystem/build/
 /Java_Code/ShipProject/ShipSystem/dist/
@@ -19,4 +20,6 @@
 /TowedROV/dist/
 /ClientManualTest/nbproject/private/
 /ClientManualTest/build/
-TowedROV_GUI/ROV Data Log.txt
+/TowedROV_GUI/ROV Data Log.txt
+/nbproject/private/* 
+/BaseStation_ROV/nbproject/private/

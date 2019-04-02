@@ -8,7 +8,7 @@ package I2CCom;
 import ROV.DataHandler;
 
 /**
- *
+ *kake
  * @author <Robin S. Thorholm>
  */
 public class I2CHandler
