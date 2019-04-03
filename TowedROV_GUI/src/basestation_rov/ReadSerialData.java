@@ -15,7 +15,7 @@ import ntnusubsea.gui.Data;
  * Respnsible for reading serial data from the GPS, Sonar and IMU values on the
  * base station
  *
- * @author Bjørnar
+ * @author <Bjørnar M. Tennfjord>
  */
 public class ReadSerialData implements Runnable
 {
@@ -71,12 +71,12 @@ public class ReadSerialData implements Runnable
 
     public void sendDepth()
     {
-        data.set_Depth((float) depth);
+        data.setDepth((float) depth);
     }
 
     public void sendTempC()
     {
-        data.set_Temperature((float) tempC);
+        data.setTemperature((float) tempC);
     }
 
     public void readData(String comPort, int baudRate)

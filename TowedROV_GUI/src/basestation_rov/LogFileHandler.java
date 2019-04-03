@@ -116,9 +116,9 @@ public class LogFileHandler implements Runnable
     {
         try
         {
-            double shipsLatitude = data.get_Latitude();
-            double shipsLontitude = data.get_Longitude();
-            double rovHeadingRelToShip = data.get_Heading() - 180;
+            double shipsLatitude = data.getLatitude();
+            double shipsLontitude = data.getLongitude();
+            double rovHeadingRelToShip = data.getHeading() - 180;
             if (rovHeadingRelToShip < 0)
             {
                 rovHeadingRelToShip = rovHeadingRelToShip + 360;
@@ -138,19 +138,19 @@ public class LogFileHandler implements Runnable
             double rovLatitude = 0;
             double rovLongtitude = 0;
 
-            rovLatitude = data.get_Latitude() - (adjustedCoordinateRovOffset * rovHeadingRelToShipSinRest);
+            rovLatitude = data.getLatitude() - (adjustedCoordinateRovOffset * rovHeadingRelToShipSinRest);
             if (rovHeadingRelToShipSinRest != 0)
             {
-                rovLongtitude = data.get_Longitude() + (adjustedCoordinateRovOffset * rovHeadingRelToShipSin);
+                rovLongtitude = data.getLongitude() + (adjustedCoordinateRovOffset * rovHeadingRelToShipSin);
             } else
             {
-                rovLongtitude = data.get_Longitude();
+                rovLongtitude = data.getLongitude();
             }
 
             photoLocationTrack = "";
             photoLocationTrack = photoLocationNumb + ","
-                    + data.get_Latitude() + "," + data.get_Longitude() + ","
-                    + data.get_Speed() + "," + data.rovDepth;
+                    + data.getLatitude() + "," + data.getLongitude() + ","
+                    + data.getSpeed() + "," + data.rovDepth;
 
             bw.append(photoLocationTrack);
             bw.append('\n');
@@ -174,8 +174,8 @@ public class LogFileHandler implements Runnable
             // System.out.println("Waiting");
             shipTrack = "";
             shipTrack = shipTrackPointNumb + ","
-                    + data.get_Latitude() + "," + data.get_Longitude() + ","
-                    + data.get_Speed() + "," + data.rovDepth + "," + data.get_Heading();
+                    + data.getLatitude() + "," + data.getLongitude() + ","
+                    + data.getSpeed() + "," + data.rovDepth + "," + data.getHeading();
 
             bw.append(shipTrack);
             bw.append('\n');
