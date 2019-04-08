@@ -82,9 +82,9 @@ public class ROVMain
         Server = new Thread(new Server(serverAddress, dh));
         Server.start();
         Server.setName("Server");
-        
        
         
+
 
 //        Semaphore semSerial = new Semaphore(1);
 //        serialRW = new Thread(new SerialRW(semSerial));

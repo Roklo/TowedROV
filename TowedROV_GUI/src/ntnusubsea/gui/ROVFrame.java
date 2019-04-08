@@ -1300,7 +1300,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void seafloorModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seafloorModeButtonActionPerformed
         mode = 1;
-        System.out.println("Mode 1");
+        System.out.println("Mode 1 - Distance from seafloor");
     }//GEN-LAST:event_seafloorModeButtonActionPerformed
 
     private void lightSwitchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lightSwitchActionPerformed
@@ -1437,7 +1437,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void depthModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depthModeButtonActionPerformed
         mode = 0;
-        System.out.println("Mode 0");
+        System.out.println("Mode 0 - Depth");
     }//GEN-LAST:event_depthModeButtonActionPerformed
 
     private void jMenuIOControllerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuIOControllerActionPerformed

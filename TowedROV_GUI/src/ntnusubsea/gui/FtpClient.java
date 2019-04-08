@@ -77,7 +77,7 @@ public class FtpClient
                     .map(FTPFile::getName)
                     .collect(Collectors.toList());
 
-        } catch (IOException ex)
+        } catch (Exception ex)
         {
             System.out.println(ex.getMessage());
         }
@@ -117,7 +117,7 @@ public class FtpClient
             try
             {
                 ftp.disconnect();
-            } catch (IOException ex)
+            } catch (Exception ex)
             {
                 System.out.println(ex.getMessage());
             }
@@ -129,7 +129,7 @@ public class FtpClient
         try
         {
             ftp.disconnect();
-        } catch (IOException ex)
+        } catch (Exception ex)
         {
             System.out.println(ex.getMessage());
         }
