@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SerialCom;
+package basestation_rov;
 
 import ntnusubsea.gui.Data;
 import java.util.HashMap;
@@ -19,6 +19,8 @@ public class SerialDataHandler
 {
 
     private HashMap<String, String> portNamesList = new HashMap<>();
+    
+    
 
     String comPort = "";
     SerialPort serialPort;
@@ -35,7 +37,7 @@ public class SerialDataHandler
 
     public void initiateComPorts()
     {
-
+       
     }
 
     private void saveUsableComPorts()

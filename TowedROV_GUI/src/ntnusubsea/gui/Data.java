@@ -692,115 +692,64 @@ public final class Data extends Observable
         this.dataUpdated = dataUpdated;
     }
 
-    public int get_Satellites()
+    public synchronized int getSatellites()
     {
         return satellites;
     }
 
-    public void set_Satellites(int satellites)
+    public synchronized void setSatellites(int satellites)
     {
         this.satellites = satellites;
+        setChanged();
+        notifyObservers();
     }
 
-    public float get_Altitude()
+    public synchronized float getAltitude()
     {
         return altitude;
     }
 
-    public void set_Altitude(float altitude)
+    public synchronized void setAltitude(float altitude)
     {
         this.altitude = altitude;
+        setChanged();
+        notifyObservers();
     }
 
-    public float get_Angle()
+    public synchronized float getAngle()
     {
         return angle;
     }
 
-    public void set_Angle(float angle)
+    public synchronized void setAngle(float angle)
     {
         this.angle = angle;
+        setChanged();
+        notifyObservers();
     }
 
-    public float get_Speed()
-    {
-        return speed;
-    }
-
-    public void set_Speed(float speed)
-    {
-        this.speed = speed;
-    }
-
-    public float get_Latitude()
-    {
-        this.set_Latitude((float) (latitude + 0.0005));
-        return latitude;
-    }
-
-    public void set_Latitude(float latitude)
-    {
-        this.latitude = latitude;
-    }
-
-    public float get_Longitude()
-    {
-        return longitude;
-    }
-
-    public void set_Longitude(float longitude)
-    {
-        this.longitude = longitude;
-    }
-
-    public float get_Depth()
-    {
-        return depth;
-    }
-
-    public void set_Depth(Float depth)
-    {
-        this.depth = depth;
-    }
-
-    public float get_Temperature()
-    {
-        return temperature;
-    }
-
-    public void set_Temperature(Float temperature)
-    {
-        this.temperature = temperature;
-    }
-
-    public float get_Roll()
+    public synchronized float getRoll()
     {
         return roll;
     }
 
-    public void set_Roll(int roll)
+    public synchronized void setRoll(int roll)
     {
         this.roll = roll;
+        setChanged();
+        notifyObservers();
     }
 
-    public float get_Pitch()
+    public synchronized float getPitch()
     {
         return pitch;
     }
 
-    public void set_Pitch(int pitch)
+    public synchronized void setPitch(int pitch)
     {
         this.pitch = pitch;
-    }
-
-    public float get_Heading()
-    {
-        return heading;
-    }
-
-    public void get_Heading(int heading)
-    {
-        this.heading = heading;
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -817,37 +766,37 @@ public final class Data extends Observable
             switch (key)
             {
                 case "Satellites":
-                    this.satellites = Integer.parseInt(value);
+                    setSatellites(Integer.parseInt(value));
                     break;
                 case "Altitude":
-                    this.altitude = Float.parseFloat(value);
+                    setAltitude(Float.parseFloat(value));
                     break;
                 case "Angle":
-                    this.angle = Float.parseFloat(value);
+                    setAngle(Float.parseFloat(value));
                     break;
                 case "Speed":
-                    this.speed = Float.parseFloat(value);
+                    setSpeed(Float.parseFloat(value));
                     break;
                 case "Latitude":
-                    this.latitude = Float.parseFloat(value);
+                    setLatitude(Float.parseFloat(value));
                     break;
                 case "Longitude":
-                    this.longitude = Float.parseFloat(value);
+                    setLongitude(Float.parseFloat(value));
                     break;
                 case "Depth":
-                    this.depth = Float.parseFloat(value);
+                    setDepth(Float.parseFloat(value));
                     break;
                 case "Temp":
-                    this.temperature = Float.parseFloat(value);
+                    setTemperature(Float.parseFloat(value));
                     break;
                 case "Roll":
-                    this.roll = Integer.parseInt(value);
+                    setRoll(Integer.parseInt(value));
                     break;
                 case "Pitch":
-                    this.pitch = Integer.parseInt(value);
+                    setPitch(Integer.parseInt(value));
                     break;
                 case "Heading":
-                    this.heading = Integer.parseInt(value);
+                    setHeading(Integer.parseInt(value));
                     break;
             }
         }
