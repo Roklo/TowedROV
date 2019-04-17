@@ -1,0 +1,2 @@
+Par nummer 1 : 12V
+Par nummer 2 : 5V
