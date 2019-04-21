@@ -13,6 +13,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 import TCPCom.*;
+import basestation_rov.SerialDataHandler;
+import java.util.Map.Entry;
 
 /**
  * Main class that launches the application and schedules the different threads
@@ -24,6 +26,10 @@ public class NTNUSubseaGUI
 
     private static Thread readSerialData;
     private static Thread LogFileHandler;
+    private static Thread imuThread;
+    private static Thread gpsThread;
+    private static Thread echoSounderThread;
+
     //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
@@ -36,13 +42,14 @@ public class NTNUSubseaGUI
         ClientManualTest cmt = new ClientManualTest();
 
         Data data = new Data();
+        SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         DataLogger logger = new DataLogger(data);
         TCPClient client = new TCPClient(data);
         IOControlFrame io = new IOControlFrame(data, client);
         ROVFrame frame = new ROVFrame(sonar, data, client, io);
         VideoEncoder encoder = new VideoEncoder(data);
-        NmeaReceiver nmea = new NmeaReceiver(data);
+        //NmeaReceiver nmea = new NmeaReceiver(data);
         UDPClient stream = new UDPClient(data);
         BufferedImage banan;
         ScheduledExecutorService executor
@@ -60,8 +67,8 @@ public class NTNUSubseaGUI
                 3000, 1000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
                 20, 40, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(nmea,
-                0, 1000, TimeUnit.MILLISECONDS);
+        //executor.scheduleAtFixedRate(nmea,
+          //      0, 1000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(client,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(stream,
@@ -81,19 +88,78 @@ public class NTNUSubseaGUI
                 },
                         "Shutdown-thread"));
 
-        readSerialData = new Thread(new ReadSerialData(data, "COM9", 4800));
         LogFileHandler = new Thread(new LogFileHandler(data));
 
-        readSerialData.start();
         LogFileHandler.start();
 
         long timeDifference = 0;
         long lastTime = 0;
         long timeDelay = 5000;
         boolean connected = false;
+        boolean foundComPort = false;
+        boolean listedCom = false;
 
         while (true)
         {
+
+            if (!foundComPort)
+
+            {
+                System.out.println("Searching for com ports...");
+                sdh.findComPorts();
+                foundComPort = true;
+            }
+
+            if (!listedCom)
+            {
+                System.out.println("Com ports found:");
+
+                if (data.comPortList.isEmpty())
+                {
+                    System.out.println("None");
+                } else
+                {
+                    for (Entry e : data.comPortList.entrySet())
+                    {
+                        String comPortKey = (String) e.getKey();
+                        String comPortValue = (String) e.getValue();
+                        System.out.println(comPortKey + " : " + comPortValue);
+
+                    }
+                }
+                System.out.println("--End of com list--");
+                listedCom = true;
+                
+                for (Entry e : data.comPortList.entrySet())
+                {
+                    String comPortKey = (String) e.getKey();
+                    String comPortValue = (String) e.getValue();
+                    if (comPortValue.contains("IMU"))
+                    {
+                        imuThread = new Thread(new ReadSerialData(data,comPortKey, 115200));
+                        imuThread.start();
+                        imuThread.setName(comPortValue);
+                        
+                    }
+                    
+                    if(comPortValue.contains("GPS"))
+                    {
+                        gpsThread = new Thread(new ReadSerialData(data,comPortKey, 115200));
+                        gpsThread.start();
+                        gpsThread.setName(comPortValue);
+                              
+                    }
+                    
+                    if(comPortValue.contains("EchoSounder"))
+                    {
+                        echoSounderThread = new Thread(new ReadSerialData(data, comPortKey, 4800));
+                        echoSounderThread.start();
+                        echoSounderThread.setName(comPortValue);
+                    }
+                }
+
+            }
+
             try
             {
                 if (!connected)
@@ -102,6 +168,8 @@ public class NTNUSubseaGUI
                     connected = true;
 
                 }
+
+                System.out.println(data.comPortList);
             } catch (Exception e)
             {
             }
@@ -119,6 +187,9 @@ public class NTNUSubseaGUI
 
                 lastTime = System.currentTimeMillis();
             }
+            
+            System.out.println("Latitude: " + data.getLatitude() 
+                    + "    Roll: " + data.getRoll());
         }
     }
 }

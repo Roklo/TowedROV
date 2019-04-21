@@ -77,8 +77,9 @@ void output_angles()
     // LOG_PORT.println("Heading: " + String(roundedFilteredDegHeading));
     int roundedPitch = round(TO_DEG(pitch));
     int roundedRoll = round(TO_DEG(roll));
+    int roundedHeading = round(TO_DEG(filteredDegHeading));
 
-    String dataToSend = "<Roll:" + String(roundedRoll) + ":Pitch:" + String(roundedPitch) + ">";
+    String dataToSend = "<Heading:" + String(round(filteredDegHeading)) + ":Roll:" + String(roundedRoll) + ":Pitch:" + String(roundedPitch) + ">";
     //Serial.print("Send data over I2C: ");
     //Serial.println(dataToSend);
 

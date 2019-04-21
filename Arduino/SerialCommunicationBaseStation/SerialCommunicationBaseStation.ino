@@ -22,7 +22,7 @@ void setup()
 {
     
   Serial.begin(115200);
-  Serial.println("Signals from base station!");
+  Serial.println("<GPS:0>");
 
   GPS.begin(9600);
   

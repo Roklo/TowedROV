@@ -5,6 +5,8 @@
  */
 package basestation_rov;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import jssc.SerialPort;
 import jssc.SerialPortList;
@@ -25,6 +27,8 @@ public class ReadSerialData implements Runnable
     int baudRate = 0;
     Data data = null;
 
+    public HashMap<String, String> incommingData = new HashMap<>();
+
     private static volatile double depth;
     private static volatile double tempC;
 
@@ -40,7 +44,14 @@ public class ReadSerialData implements Runnable
     {
         while (true)
         {
-            readData(comPort, baudRate);
+            try
+            {
+                
+                readData(comPort, baudRate);
+            } catch (Exception e)
+            {
+            }
+
         }
     }
 
@@ -50,8 +61,8 @@ public class ReadSerialData implements Runnable
 
         if (portNames.length == 0)
         {
-            System.out.println("There are no serial-ports available!");
-            System.out.println("Press enter to exit...");
+           // System.out.println("There are no serial-ports available!");
+           // System.out.println("Press enter to exit...");
 
             try
             {
@@ -64,7 +75,7 @@ public class ReadSerialData implements Runnable
 
         for (int i = 0; i < portNames.length; i++)
         {
-            System.out.println(portNames[i]);
+            //System.out.println(portNames[i]);
         }
         return portNames;
     }
@@ -83,7 +94,7 @@ public class ReadSerialData implements Runnable
     {
 
         // long lastTime = System.nanoTime();
-        ConcurrentHashMap<String, String> SerialDataList = new ConcurrentHashMap<>();
+//        ConcurrentHashMap<String, String> SerialDataList = new ConcurrentHashMap<>();
 
         boolean recievedData = false;
         //Declare special symbol used in serial data stream from Arduino
@@ -99,7 +110,7 @@ public class ReadSerialData implements Runnable
             {
                 serialPort.openPort();
                 portIsOpen = true;
-                System.out.println(comPort + " is open");
+               // System.out.println(comPort + " is open");
             } catch (SerialPortException ex)
             {
                 System.out.println(ex);
@@ -121,23 +132,19 @@ public class ReadSerialData implements Runnable
             {
                 serialPort.setParams(baudRate, 8, 1, 0);
                 buffer = serialPort.readString();
-               
 
-
-                System.out.println(buffer);
+               // System.out.println(buffer);
 
                 boolean dataNotNull = false;
                 boolean dataHasFormat = false;
-                
+
                 if ((buffer != null))
                 {
                     dataHasFormat = true;
-                }
-                else
+                } else
                 {
                     dataHasFormat = false;
                     dataNotNull = false;
-         
 
                 }
 
@@ -152,13 +159,16 @@ public class ReadSerialData implements Runnable
 
                     for (int i = 0; i < data.length; i = i + 2)
                     {
-                        this.data.data.put(data[i], data[i + 1]);
+                        //this.data.data.put(data[i], data[i + 1]);
+                        incommingData.put(data[i], data[i + 1]);
+
                     }
 
-                    recievedData = true;
-                    this.data.handleDataFromRemote();
+                    //recievedData = true;
+                    //this.data.handleDataFromRemote();
+                    sendIncommingDataToDataHandler();
                 }
-                
+
 //            if (elapsedTimer != 0)
 //            {
 //                
@@ -175,7 +185,63 @@ public class ReadSerialData implements Runnable
             }
 
         }
-
     }
 
+    private void sendIncommingDataToDataHandler()
+    {
+        for (Map.Entry e : incommingData.entrySet())
+        {
+            String key = (String) e.getKey();
+            String value = (String) e.getValue();
+
+            switch (key)
+            {
+                case "Satellites":
+                    data.setSatellites(Integer.parseInt(value));
+                    // setSatellites(Integer.parseInt(value));
+                    break;
+                case "Altitude":
+                    data.setAltitude(Float.parseFloat(value));
+                    //setAltitude(Float.parseFloat(value));
+                    break;
+                case "Angle":
+                    data.setAngle(Float.parseFloat(value));
+                    //setAngle(Float.parseFloat(value));
+                    break;
+                case "Speed":
+                    data.setSpeed(Float.parseFloat(value));
+                    //setSpeed(Float.parseFloat(value));
+                    break;
+                case "Latitude":
+                    data.setLatitude(Float.parseFloat(value));
+                    //setLatitude(Float.parseFloat(value));
+                    break;
+                case "Longitude":
+                    data.setLongitude(Float.parseFloat(value));
+                    //setLongitude(Float.parseFloat(value));
+                    break;
+                case "Depth":
+                    data.setDepth(Float.parseFloat(value));
+                    //setDepth(Float.parseFloat(value));
+                    break;
+                case "Temp":
+                    data.setTemperature(Float.parseFloat(value));
+                    //setTemperature(Float.parseFloat(value));
+                    break;
+                case "Roll":
+                    data.setRoll(Integer.parseInt(value));
+                    //setRoll(Integer.parseInt(value));
+                    break;
+                case "Pitch":
+                    data.setPitch(Integer.parseInt(value));
+                    //setPitch(Integer.parseInt(value));
+                    break;
+                case "Heading":
+                    data.setHeading(Integer.parseInt(value));
+                    //setHeading(Integer.parseInt(value));
+                    break;
+            }
+        }
+
+    }
 }
