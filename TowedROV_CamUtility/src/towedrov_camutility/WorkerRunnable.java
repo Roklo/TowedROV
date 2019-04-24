@@ -95,7 +95,7 @@ public class WorkerRunnable implements Runnable
                         case "setCmd_CameraPitch":
                             data.setCameraPitchValue(parseStringToInt(value));
                             System.out.println("Camera Pitch set to: " + data.getCameraPitchValue());
-                            this.sendCommandsToArduino();
+                            this.sendCommandToArduino();
                             outToClient.println("<setCmd_CameraPitch:" + data.getCameraPitchValue() + ">");
                             break;
 
@@ -134,7 +134,7 @@ public class WorkerRunnable implements Runnable
         }
     }
 
-    private void sendCommandsToArduino()
+    private void sendCommandToArduino()
     {
         // send values to arduino with i2c.
     }

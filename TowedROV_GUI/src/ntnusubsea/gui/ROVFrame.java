@@ -1563,6 +1563,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 ftp.downloadFile("ftp/images/" + s, "C://ROV_Photos/" + s, "C://ROV_Photos/");
                 System.out.println(s);
             }
+
         } catch (Exception ex)
         {
             System.out.println(ex.getMessage());

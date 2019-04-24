@@ -23,3 +23,5 @@
 /TowedROV_GUI/ROV Data Log.txt
 /nbproject/private/* 
 /BaseStation_ROV/nbproject/private/
+/TowedROV_CamUtility/dist/
+TowedROV_GUI/build/
