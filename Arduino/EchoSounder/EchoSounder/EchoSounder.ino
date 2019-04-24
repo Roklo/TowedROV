@@ -45,7 +45,7 @@ void setup() {
   // Serial setup
   Serial.begin(4800);
   nmeaSerial.begin(4800);
-  Serial.println("Starting");
+  Serial.println("<EchoSounder:0>");
   // -------------------------------------------------------------------------------- -
   // I2C setup
   // join I2C bus (I2Cdev library doesn't do this automatically)

@@ -28,10 +28,9 @@ import java.util.logging.Logger;
  */
 public final class Data extends Observable
 {
-    
+
     public HashMap<String, String> comPortList = new HashMap<>();
     public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
-    
 
     private int arduinoBaudRate = 115200;
     private byte[] dataFromArduino = new byte[11];
@@ -45,8 +44,8 @@ public final class Data extends Observable
     public float altitude = 0;
     public float angle = 0;
     public float speed = 0;
-    public float latitude = (float) 62.536819;
-    public float longitude = (float) 6.223951;
+    public float latitude = (float) 0;
+    public float longitude = (float) 0;
     public float depth = (float) 0.01;
     public float temperature = (float) 0.01;
 
@@ -756,50 +755,47 @@ public final class Data extends Observable
      * Compare keys to controll values coming in from arduino, and puts correct
      * value to correct variable.
      */
-    public synchronized void handleDataFromRemote()
-    {
-        for (Map.Entry e : data.entrySet())
-        {
-            String key = (String) e.getKey();
-            String value = (String) e.getValue();
-
-            switch (key)
-            {
-                case "Satellites":
-                    setSatellites(Integer.parseInt(value));
-                    break;
-                case "Altitude":
-                    setAltitude(Float.parseFloat(value));
-                    break;
-                case "Angle":
-                    setAngle(Float.parseFloat(value));
-                    break;
-                case "Speed":
-                    setSpeed(Float.parseFloat(value));
-                    break;
-                case "Latitude":
-                    setLatitude(Float.parseFloat(value));
-                    break;
-                case "Longitude":
-                    setLongitude(Float.parseFloat(value));
-                    break;
-                case "Depth":
-                    setDepth(Float.parseFloat(value));
-                    break;
-                case "Temp":
-                    setTemperature(Float.parseFloat(value));
-                    break;
-                case "Roll":
-                    setRoll(Integer.parseInt(value));
-                    break;
-                case "Pitch":
-                    setPitch(Integer.parseInt(value));
-                    break;
-                case "Heading":
-                    setHeading(Integer.parseInt(value));
-                    break;
-            }
-        }
-    }
-
+//    public synchronized void handleDataFromRemote()
+//    {
+//        for (Map.Entry e : data.entrySet())
+//        {
+//            String key = (String) e.getKey();
+//            String value = (String) e.getValue();
+//
+//            switch (key)
+//            {
+//                case "Satellites":
+//                    setSatellites(Integer.parseInt(value));
+//                    break;
+//                case "Altitude":
+//                    setAltitude(Float.parseFloat(value));
+//                    break;
+//                case "Angle":
+//                    setAngle(Float.parseFloat(value));
+//                    break;
+//                case "Speed":
+//                    setSpeed(Float.parseFloat(value));
+//                    break;
+//                case "Latitude":
+//                    setLatitude(Float.parseFloat(value));
+//                    break;
+//                case "Longitude":
+//                    setLongitude(Float.parseFloat(value));
+//                    break;
+//                case "Depth":
+//                    setDepth(Float.parseFloat(value));
+//                    break;
+//                case "Temp":
+//                    setTemperature(Float.parseFloat(value));
+//                    break;
+//                case "Roll":
+//                    setRoll(Integer.parseInt(value));
+//                    break;
+//                case "Pitch":
+//                    setPitch(Integer.parseInt(value));
+//                    break;
+//                case "Heading":
+//                    setHeading(Integer.parseInt(value));
+//                    break;
+//            }
 }

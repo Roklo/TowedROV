@@ -19,8 +19,6 @@ public class SerialDataHandler
 {
 
     private HashMap<String, String> portNamesList = new HashMap<>();
-    
-    
 
     String comPort = "";
     SerialPort serialPort;
@@ -35,9 +33,14 @@ public class SerialDataHandler
         this.dh = dh;
     }
 
+    public SerialDataHandler(SerialDataHandler sdh)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     public void initiateComPorts()
     {
-       
+        
     }
 
     private void saveUsableComPorts()
@@ -56,64 +59,83 @@ public class SerialDataHandler
 
     public void findComPorts()
     {
-        String[] portNames = getAvailableComPorts();
-        for (int i = 0; i < portNames.length; i++)
+        int baudrate = 0;
+        int searchRuns = 0;
+        while (searchRuns != 2)
         {
-            portNamesList.put(portNames[i], "Unknown");
-        }
-
-        for (Entry e : portNamesList.entrySet())
-        {
-            String comPortKey = (String) e.getKey();
-            serialPort = new SerialPort(comPortKey);
-            try
+            String[] portNames = getAvailableComPorts();
+            for (int i = 0; i < portNames.length; i++)
             {
-                serialPort.openPort();
-                serialPort.setParams(9600, 8, 1, 0);
-                String buffer = "";
-                Thread.sleep(50);
-                buffer = serialPort.readString();
+                if (portNames[i].contains("COM"))
+                {
+                    portNamesList.put(portNames[i], "Unknown");
+                }
+            }
 
-                if (buffer != null)
+            if (searchRuns == 0)
+            {
+                baudrate = 115200;
+            }
+            if (searchRuns == 1)
+            {
+                baudrate = 4800;
+            }
+
+            for (Entry e : portNamesList.entrySet())
+            {
+                String comPortKey = (String) e.getKey();
+                serialPort = new SerialPort(comPortKey);
+
+                try
+                {
+                    serialPort.openPort();
+                    serialPort.setParams(baudrate, 8, 1, 0);
+                    String buffer = "";
+                    Thread.sleep(5000);
+                    buffer = serialPort.readString();
+
+                    if (buffer != null)
+                    {
+
+                        if (buffer.contains("<") && buffer.contains(">"))
+                        {
+                            buffer = buffer.substring(buffer.indexOf(start_char) + 1);
+                            buffer = buffer.substring(0, buffer.indexOf(end_char));
+                            buffer = buffer.replace("?", "");
+                            String[] data = buffer.split(sep_char);
+
+                            for (int i = 0; i < data.length; i = i + 2)
+                            {
+                                if (data[i].contains("Roll"))
+                                {
+                                    String key = (String) e.getKey();
+                                    portNamesList.put(key, "IMU");
+                                }
+                                if (data[i].contains("GPS"))
+                                {
+                                    String key = (String) e.getKey();
+                                    portNamesList.put(key, "GPS");
+                                }
+                                if (data[i].contains("EchoSounder"))
+                                {
+                                    String key = (String) e.getKey();
+                                    portNamesList.put(key, "EchoSounder");
+                                }
+                            }
+
+                        }
+                    }
+                    serialPort.closePort();
+
+                } catch (Exception ex)
                 {
 
-                    if (buffer.contains("<") && buffer.contains(">"))
-                    {
-                        buffer = buffer.substring(buffer.indexOf(start_char) + 1);
-                        buffer = buffer.substring(0, buffer.indexOf(end_char));
-                        buffer = buffer.replace("?", "");
-                        String[] data = buffer.split(sep_char);
-
-                        for (int i = 0; i < data.length; i = i + 2)
-                        {
-                            if (data[i].contains("Roll"))
-                            {
-                                String key = (String) e.getKey();
-                                portNamesList.put(key, "IMU");
-                            }
-                            if (data[i].contains("Latitude"))
-                            {
-                                String key = (String) e.getKey();
-                                portNamesList.put(key, "GPS");
-                            }
-                            if (data[i].contains("Depth"))
-                            {
-                                String key = (String) e.getKey();
-                                portNamesList.put(key, "EchoSounder");
-                            }
-                        }
-                        serialPort.closePort();
-
-                    }
                 }
-
-            } catch (Exception ex)
-            {
-
             }
-        }
-        saveUsableComPorts();
+            saveUsableComPorts();
+            searchRuns++;
 
+        }
     }
 
     private String[] getAvailableComPorts()
