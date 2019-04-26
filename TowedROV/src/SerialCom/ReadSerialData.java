@@ -194,6 +194,7 @@ public class ReadSerialData implements Runnable
 
             switch (key)
             {
+
                 case "D":
                     data.setFb_depth(Integer.parseInt(value));
                     break;
@@ -229,6 +230,19 @@ public class ReadSerialData implements Runnable
                     {
                         data.setDigitalInputChannel_6(false);
                     }
+                    break;
+
+                case "Roll":
+                    data.setFb_roll(Integer.parseInt(value));
+                    //setRoll(Integer.parseInt(value));
+                    break;
+                case "Pitch":
+                    data.setFb_pitch(Integer.parseInt(value));
+                    //setPitch(Integer.parseInt(value));
+                    break;
+                case "Heading":
+                    data.setFb_heading(Integer.parseInt(value));
+                    //setHeading(Integer.parseInt(value));
                     break;
 
                 /*
