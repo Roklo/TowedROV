@@ -90,13 +90,12 @@ public class ROVMain
 //
 //        String dataToSend = String.valueOf(b1) + String.valueOf(b2);
 //        System.out.println(Byte.parseByte(dataToSend));
-        I2CRW_this.readI2CData("ArduinoIO");
+        //       I2CRW_this.readI2CData("ArduinoIO");
 //
 //        I2CRW_this.sendI2CData("ActuatorPS_setTarget", 0);
 //        I2CRW_this.sendI2CData("ActuatorSB_setTarget", 0);
 //        
-
-        System.out.println("Done");
+        
 //        alarmHandler = new Thread(new AlarmHandler(dh));
 //        alarmHandler.start();
 //        alarmHandler.setName("AlarmHandler");
@@ -137,6 +136,13 @@ public class ROVMain
                 ArduinoIOThread.setName(comPortValue);
 
             }
+        }
+        System.out.println("Done");
+        while (true)
+        {
+            System.out.println("Roll: " + dh.getFb_roll());
+            System.out.println("Pitch: " + dh.getFb_pitch());
+
         }
         //serialRW.start();
 //        // ////////////////////////Robin's test area//////////////////////

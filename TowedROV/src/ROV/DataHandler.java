@@ -43,6 +43,9 @@ public class DataHandler
     boolean cmd_emergencySurface = false;
     boolean cmd_ack = false;
 
+    int cmd_imuCalibrateRoll = 0;
+    int cmd_imuCalibratePitch = 0;
+
     // Sensor values
     int fb_depthToSeabedEcho = 12;
     int fb_depthFromPressure = 0;
@@ -61,8 +64,8 @@ public class DataHandler
     int fb_tempMainElBox = 0;
     int fb_tempEchoBox = 0;
     int fb_currentDraw = 0;
-    int fb_pitch = 0;
-    int fb_roll = 0;
+    int fb_pitch = -1;
+    int fb_roll = -3;
     int fb_yaw = 0;
     int fb_heading = 0;
 
@@ -282,7 +285,7 @@ public class DataHandler
 
     public int getFb_pitch()
     {
-        return fb_pitch;
+        return fb_pitch + getCmd_imuCalibratePitch();
     }
 
     public void setFb_pitch(int fb_pitch)
@@ -292,7 +295,7 @@ public class DataHandler
 
     public int getFb_roll()
     {
-        return fb_roll;
+        return fb_roll + getCmd_imuCalibrateRoll();
     }
 
     public void setFb_roll(int fb_roll)
@@ -572,8 +575,26 @@ public class DataHandler
     {
         this.digitalInputChannel_6 = digitalInputChannel_6;
     }
-    
-    
+
+    public int getCmd_imuCalibrateRoll()
+    {
+        return cmd_imuCalibrateRoll;
+    }
+
+    public void setCmd_imuCalibrateRoll(int cmd_imuCalibrateRoll)
+    {
+        this.cmd_imuCalibrateRoll = cmd_imuCalibrateRoll;
+    }
+
+    public int getCmd_imuCalibratePitch()
+    {
+        return cmd_imuCalibratePitch;
+    }
+
+    public void setCmd_imuCalibratePitch(int cmd_imuCalibratePitch)
+    {
+        this.cmd_imuCalibratePitch = cmd_imuCalibratePitch;
+    }
 
     public void handleDataFromI2C()
     {
