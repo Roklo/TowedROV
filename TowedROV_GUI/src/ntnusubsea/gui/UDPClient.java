@@ -31,7 +31,8 @@ import java.net.InetAddress;
  *
  * @author MorSol and Marius Nonsvik
  */
-public class UDPClient implements Runnable {
+public class UDPClient implements Runnable
+{
 
     static BufferedImage videoImage;
     //static Socket videoSocket;
@@ -43,22 +44,51 @@ public class UDPClient implements Runnable {
     private DatagramSocket videoSocket;
     private long timer = System.currentTimeMillis();
     private File photoDirectory;
+    private DatagramPacket receivePacket;
+    private InetAddress returnIP;
+    private int returnPort;
 
-    public UDPClient(Data data) {
-        try {
+    public UDPClient(Data data)
+    {
+        try
+        {
             this.data = data;
             videoSocket = new DatagramSocket(8083);
             photoDirectory = new File("C://ROV_Photos/");
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
 
         }
-
     }
 
+    public void sendDelayCommand()
+    {
+        try
+        {
+            String message = "photoDelay:" + String.valueOf(data.getPhotoModeDelay());
+            byte arr[] = message.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, this.returnIP, this.returnPort);
+            videoSocket.send(sendPacket);
+            System.out.println("Delay command sent to Camera RPi!");
+
+        } catch (SocketException ex)
+        {
+            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
+
+        } catch (IOException ex)
+        {
+            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
     @Override
-    public void run() {
-        try {
-            if (System.currentTimeMillis() - timer > 60000) {
+    public void run()
+    {
+        try
+        {
+            if (System.currentTimeMillis() - timer > 60000)
+            {
                 videoSocket.close();
                 videoSocket = new DatagramSocket(8083);
                 timer = System.currentTimeMillis();
@@ -68,14 +98,18 @@ public class UDPClient implements Runnable {
 
             //Creating new DatagramPacket form the packet recived on the videoSocket
             byte[] receivedData = new byte[60000];
-            DatagramPacket receivePacket = new DatagramPacket(receivedData,
+            receivePacket = new DatagramPacket(receivedData,
                     receivedData.length);
-            if (receivePacket.getLength() > 0) {
+            if (receivePacket.getLength() > 0)
+            {
                 long startTime = System.currentTimeMillis();
                 //Updates the videoImage from the received DatagramPacket
                 videoSocket.receive(receivePacket);
+                this.returnIP = receivePacket.getAddress();
+                this.returnPort = receivePacket.getPort();
                 long endTime = System.currentTimeMillis();
-                if (debug) {
+                if (debug)
+                {
                     System.out.println("Videopackage received");
                 }
                 //Reads incomming byte array into a BufferedImage
@@ -84,28 +118,33 @@ public class UDPClient implements Runnable {
                 data.setVideoImage(videoImage);
 
                 // Saves the photo to disk if photo mode is true
-                if (data.isPhotoMode()) {
-                    try {
-                        if (this.photoDirectory.exists() && this.photoDirectory.isDirectory()) {
+                if (data.isPhotoMode())
+                {
+                    try
+                    {
+                        if (this.photoDirectory.exists() && this.photoDirectory.isDirectory())
+                        {
                             ImageIO.write(videoImage, "jpg", new File(this.photoDirectory.toString() + "/image" + this.photoNumber + ".png"));
                             this.photoNumber++;
-                        } else {
+                        } else
+                        {
                             System.out.println("No directory found, creating a new one at C://ROV_Photos/");
                             this.photoDirectory = new File("C://ROV_Photos/");
                         }
 
-                    } catch (Exception e) {
+                    } catch (Exception e)
+                    {
                         System.out.println("Exception occured :" + e.getMessage());
                     }
                     System.out.println("Image were saved to disk succesfully at C:/ROV_Photos");
                 }
 
-                if (data.isPhotoMode() != lastPhotoMode) {
-                    InetAddress returnIP = receivePacket.getAddress();
-                    int returnPort = receivePacket.getPort();
-                    String s1 = "photoMode:" + String.valueOf(data.isPhotoMode());
-                    byte arr[] = s1.getBytes();
-                    DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, returnIP, returnPort);
+                // Sends the command to the ROV
+                if (data.isPhotoMode() != lastPhotoMode)
+                {
+                    String message = "photoMode:" + String.valueOf(data.isPhotoMode());
+                    byte arr[] = message.getBytes();
+                    DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, this.returnIP, this.returnPort);
                     videoSocket.send(sendPacket);
                     lastPhotoMode = data.isPhotoMode();
                 }
@@ -116,10 +155,12 @@ public class UDPClient implements Runnable {
                 //System.out.println(endTime - startTime);
             }
 
-        } catch (SocketException ex) {
+        } catch (SocketException ex)
+        {
             Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
 
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
