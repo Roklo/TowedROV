@@ -36,7 +36,7 @@ public class FtpClient
 
     public FtpClient()
     {
-        this.server = "169.254.196.33"; //The IP address for the camera RPi.
+        this.server = "192.168.0.2"; //The IP address for the camera RPi.
         this.port = 21; // The FTP port
         this.user = "pi";
         this.password = "";

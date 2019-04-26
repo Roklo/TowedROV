@@ -60,19 +60,18 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="jPanelChannel2" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="32767" attributes="0"/>
                           <Component id="jPanelChannel3" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                          <Component id="jPanelChannel4" pref="170" max="32767" attributes="0"/>
+                          <Component id="jPanelChannel4" pref="174" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jPanelChannel6" max="32767" attributes="0"/>
+                          <Component id="jPanelChannel6" pref="171" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jPanelChannel7" max="32767" attributes="0"/>
+                          <Component id="jPanelChannel7" pref="171" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jPanelChannel8" max="32767" attributes="0"/>
+                          <Component id="jPanelChannel8" pref="172" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>

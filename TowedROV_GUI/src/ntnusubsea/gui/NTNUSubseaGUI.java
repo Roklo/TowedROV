@@ -33,6 +33,11 @@ public class NTNUSubseaGUI
     //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
+    protected static String IP_ROV = "192.168.0.1";
+    protected static String IP_camera = "192.168.0.2";
+    protected static int Port_ROV = 8080;
+    protected static int Port_cameraStream = 8083;
+    protected static int Port_cameraCom = 9006;
 
     /**
      * @param args the command line arguments
@@ -45,12 +50,13 @@ public class NTNUSubseaGUI
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         DataLogger logger = new DataLogger(data);
-        TCPClient client = new TCPClient(data);
-        IOControlFrame io = new IOControlFrame(data, client);
-        ROVFrame frame = new ROVFrame(sonar, data, client, io);
+        TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
+        TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
+        UDPClient stream = new UDPClient(Port_cameraStream, data);
+        IOControlFrame io = new IOControlFrame(data, client_ROV);
+        ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream);
         VideoEncoder encoder = new VideoEncoder(data);
         //NmeaReceiver nmea = new NmeaReceiver(data);
-        UDPClient stream = new UDPClient(data);
         BufferedImage banan;
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);
@@ -68,8 +74,10 @@ public class NTNUSubseaGUI
         executor.scheduleAtFixedRate(encoder,
                 20, 40, TimeUnit.MILLISECONDS);
         //executor.scheduleAtFixedRate(nmea,
-          //      0, 1000, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(client,
+        //      0, 1000, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(client_ROV,
+                0, 100, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(client_Camera,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(stream,
                 0, 20, TimeUnit.MILLISECONDS);
@@ -129,28 +137,28 @@ public class NTNUSubseaGUI
                 }
                 System.out.println("--End of com list--");
                 listedCom = true;
-                
+
                 for (Entry e : data.comPortList.entrySet())
                 {
                     String comPortKey = (String) e.getKey();
                     String comPortValue = (String) e.getValue();
                     if (comPortValue.contains("IMU"))
                     {
-                        imuThread = new Thread(new ReadSerialData(data,comPortKey, 115200));
+                        imuThread = new Thread(new ReadSerialData(data, comPortKey, 115200));
                         imuThread.start();
                         imuThread.setName(comPortValue);
-                        
+
                     }
-                    
-                    if(comPortValue.contains("GPS"))
+
+                    if (comPortValue.contains("GPS"))
                     {
-                        gpsThread = new Thread(new ReadSerialData(data,comPortKey, 115200));
+                        gpsThread = new Thread(new ReadSerialData(data, comPortKey, 115200));
                         gpsThread.start();
                         gpsThread.setName(comPortValue);
-                              
+
                     }
-                    
-                    if(comPortValue.contains("EchoSounder"))
+
+                    if (comPortValue.contains("EchoSounder"))
                     {
                         echoSounderThread = new Thread(new ReadSerialData(data, comPortKey, 4800));
                         echoSounderThread.start();
@@ -168,8 +176,10 @@ public class NTNUSubseaGUI
                     connected = true;
 
                 }
-
-                System.out.println(data.comPortList);
+                if (data.comPortList != null)
+                {
+                    System.out.println(data.comPortList);
+                }
             } catch (Exception e)
             {
             }
@@ -180,16 +190,16 @@ public class NTNUSubseaGUI
             {
                 try
                 {
-                    System.out.println(cmt.sendData("ping"));
+                   // System.out.println(cmt.sendData("ping"));
                 } catch (Exception e)
                 {
                 }
 
                 lastTime = System.currentTimeMillis();
             }
-            
-            System.out.println("Latitude: " + data.getLatitude() 
-                    + "    Roll: " + data.getRoll());
+
+            //System.out.println("Latitude: " + data.getLatitude() 
+            //        + "    Roll: " + data.getRoll());
         }
     }
 }

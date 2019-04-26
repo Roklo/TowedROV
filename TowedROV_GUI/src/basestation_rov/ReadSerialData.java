@@ -112,7 +112,7 @@ public class ReadSerialData implements Runnable
                 // System.out.println(comPort + " is open");
             } catch (SerialPortException ex)
             {
-                System.out.println(ex);
+                System.out.println(ex.getMessage());
             }
         }
 
