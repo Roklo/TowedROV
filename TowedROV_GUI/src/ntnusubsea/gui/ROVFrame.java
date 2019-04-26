@@ -74,7 +74,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         this.client_Camera = client_Camera;
         this.udpClient = udpClient;
         this.io = io;
-        //window.setBackground(new java.awt.Color(90, 90, 50));
+        this.getContentPane().setBackground(new Color(39, 44, 50));
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         videoSheet = new ImagePanel(cameraPanel.getWidth(), cameraPanel.getHeight());
         videoSheet.setBackground(cameraPanel.getBackground());
         fullscreenVideoSheet = new ImagePanel(cameraPanel1.getWidth(), cameraPanel1.getHeight());
@@ -118,6 +119,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         fullscreen = new javax.swing.JFrame();
         cameraPanel1 = new javax.swing.JPanel();
@@ -139,9 +141,15 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         depthModeButton = new javax.swing.JRadioButton();
         seafloorModeButton = new javax.swing.JRadioButton();
         setpointLabel = new javax.swing.JLabel();
+        manualControlButton = new javax.swing.JToggleButton();
+        jLabel5 = new javax.swing.JLabel();
+        manualControlButton_PS_UP = new javax.swing.JButton();
+        manualControlButton_PS_DN = new javax.swing.JButton();
+        manualControlButton_SB_UP = new javax.swing.JButton();
+        manualControlButton_SB_DN = new javax.swing.JButton();
+        resetManualControlButton = new javax.swing.JButton();
         lightPanel = new javax.swing.JPanel();
         lightHeader = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
         lightSwitch = new javax.swing.JToggleButton();
         lightSwitch_lbl = new javax.swing.JLabel();
@@ -175,6 +183,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator3 = new javax.swing.JSeparator();
         jSeparator8 = new javax.swing.JSeparator();
+        jSeparator1 = new javax.swing.JSeparator();
         infoPanel = new javax.swing.JPanel();
         pitchLabel = new javax.swing.JLabel();
         seafloorDepthRovLabel = new javax.swing.JLabel();
@@ -306,17 +315,23 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         setAutoRequestFocus(false);
         setBackground(new java.awt.Color(39, 44, 50));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setMinimumSize(new java.awt.Dimension(600, 480));
+        setForeground(new java.awt.Color(39, 44, 50));
+        setMinimumSize(new java.awt.Dimension(1500, 880));
+        setPreferredSize(new java.awt.Dimension(1500, 880));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         window.setBackground(new java.awt.Color(39, 44, 50));
         window.setForeground(new java.awt.Color(39, 44, 50));
-        window.setPreferredSize(new java.awt.Dimension(1800, 845));
+        window.setMinimumSize(new java.awt.Dimension(1500, 880));
+        window.setPreferredSize(new java.awt.Dimension(1500, 880));
+        window.setLayout(new java.awt.GridBagLayout());
 
         background.setBackground(new java.awt.Color(39, 44, 50));
         background.setForeground(new java.awt.Color(39, 44, 50));
         background.setToolTipText("");
-        background.setMinimumSize(new java.awt.Dimension(600, 480));
-        background.setPreferredSize(new java.awt.Dimension(1800, 845));
+        background.setAlignmentX(5.0F);
+        background.setMinimumSize(new java.awt.Dimension(1500, 880));
+        background.setPreferredSize(new java.awt.Dimension(1500, 880));
 
         cameraPanel.setBackground(new java.awt.Color(39, 44, 50));
         cameraPanel.setForeground(new java.awt.Color(39, 44, 50));
@@ -421,9 +436,57 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         setpointLabel.setBackground(new java.awt.Color(39, 44, 50));
         setpointLabel.setForeground(new java.awt.Color(255, 255, 255));
+        setpointLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         setpointLabel.setText("Current setpoint: 100m");
         setpointLabel.setToolTipText("");
         setpointLabel.setOpaque(true);
+
+        manualControlButton.setBackground(new java.awt.Color(39, 44, 50));
+        manualControlButton.setForeground(new java.awt.Color(39, 44, 50));
+        manualControlButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
+        manualControlButton.setBorder(null);
+        manualControlButton.setContentAreaFilled(false);
+        manualControlButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
+        manualControlButton.setFocusPainted(false);
+        manualControlButton.setFocusable(false);
+        manualControlButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
+        manualControlButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                manualControlButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Manual Control:");
+
+        manualControlButton_PS_UP.setBackground(new java.awt.Color(39, 44, 50));
+        manualControlButton_PS_UP.setForeground(new java.awt.Color(255, 255, 255));
+        manualControlButton_PS_UP.setText("UP");
+        manualControlButton_PS_UP.setFocusPainted(false);
+
+        manualControlButton_PS_DN.setBackground(new java.awt.Color(39, 44, 50));
+        manualControlButton_PS_DN.setForeground(new java.awt.Color(255, 255, 255));
+        manualControlButton_PS_DN.setText("DN");
+        manualControlButton_PS_DN.setFocusPainted(false);
+
+        manualControlButton_SB_UP.setBackground(new java.awt.Color(39, 44, 50));
+        manualControlButton_SB_UP.setForeground(new java.awt.Color(255, 255, 255));
+        manualControlButton_SB_UP.setText("UP");
+        manualControlButton_SB_UP.setFocusPainted(false);
+
+        manualControlButton_SB_DN.setBackground(new java.awt.Color(39, 44, 50));
+        manualControlButton_SB_DN.setForeground(new java.awt.Color(255, 255, 255));
+        manualControlButton_SB_DN.setText("DN");
+        manualControlButton_SB_DN.setFocusPainted(false);
+
+        resetManualControlButton.setBackground(new java.awt.Color(39, 44, 50));
+        resetManualControlButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        resetManualControlButton.setForeground(new java.awt.Color(255, 255, 255));
+        resetManualControlButton.setText("RESET");
+        resetManualControlButton.setFocusPainted(false);
 
         javax.swing.GroupLayout depthPanelLayout = new javax.swing.GroupLayout(depthPanel);
         depthPanel.setLayout(depthPanelLayout);
@@ -432,22 +495,42 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             .addComponent(depthHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator4)
             .addGroup(depthPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(15, 15, 15)
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, depthPanelLayout.createSequentialGroup()
+                            .addComponent(setpointLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(26, 26, 26)
+                            .addComponent(depthInputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(20, 20, 20))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, depthPanelLayout.createSequentialGroup()
+                            .addComponent(depthModeButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(seafloorModeButton)
+                            .addGap(9, 9, 9)))
+                    .addGroup(depthPanelLayout.createSequentialGroup()
+                        .addGap(56, 56, 56)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sendButton)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(depthPanelLayout.createSequentialGroup()
                 .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(depthPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(depthInputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(sendButton))
+                        .addComponent(manualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(depthPanelLayout.createSequentialGroup()
-                        .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(seafloorModeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(depthModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, depthPanelLayout.createSequentialGroup()
-                .addContainerGap(66, Short.MAX_VALUE)
-                .addComponent(setpointLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57))
+                        .addGap(34, 34, 34)
+                        .addComponent(resetManualControlButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(manualControlButton_PS_UP)
+                    .addComponent(manualControlButton_PS_DN))
+                .addGap(0, 0, 0)
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(manualControlButton_SB_UP)
+                    .addComponent(manualControlButton_SB_DN))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         depthPanelLayout.setVerticalGroup(
             depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -455,17 +538,37 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addComponent(depthHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(setpointLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
+                .addGap(0, 0, 0)
                 .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(setpointLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(depthInputTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(depthModeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(depthModeButton)
+                    .addComponent(seafloorModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(seafloorModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(depthPanelLayout.createSequentialGroup()
+                        .addComponent(manualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31))
+                    .addGroup(depthPanelLayout.createSequentialGroup()
+                        .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(depthPanelLayout.createSequentialGroup()
+                                .addComponent(manualControlButton_PS_UP)
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(manualControlButton_PS_DN))
+                            .addGroup(depthPanelLayout.createSequentialGroup()
+                                .addComponent(manualControlButton_SB_UP)
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(manualControlButton_SB_DN))
+                            .addGroup(depthPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(resetManualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
         );
 
         lightPanel.setBackground(new java.awt.Color(39, 44, 50));
@@ -474,10 +577,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightHeader.setForeground(new java.awt.Color(255, 255, 255));
         lightHeader.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lightHeader.setText("Lights");
-
-        jSeparator1.setBackground(new java.awt.Color(67, 72, 83));
-        jSeparator1.setForeground(new java.awt.Color(67, 72, 83));
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         jSeparator5.setBackground(new java.awt.Color(67, 72, 83));
         jSeparator5.setForeground(new java.awt.Color(67, 72, 83));
@@ -488,6 +587,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightSwitch.setBorder(null);
         lightSwitch.setContentAreaFilled(false);
         lightSwitch.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
+        lightSwitch.setFocusPainted(false);
         lightSwitch.setFocusable(false);
         lightSwitch.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
         lightSwitch.addActionListener(new java.awt.event.ActionListener()
@@ -523,8 +623,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightPanelLayout.setHorizontalGroup(
             lightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lightPanelLayout.createSequentialGroup()
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(lightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -548,14 +647,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addComponent(lightHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lightSwitch_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lightSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lightSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addComponent(jSeparator1)
             .addComponent(filler2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -688,6 +786,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         photoModeButton.setBorder(null);
         photoModeButton.setContentAreaFilled(false);
         photoModeButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
+        photoModeButton.setFocusPainted(false);
         photoModeButton.setFocusable(false);
         photoModeButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
         photoModeButton.addActionListener(new java.awt.event.ActionListener()
@@ -852,6 +951,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jSeparator8.setForeground(new java.awt.Color(67, 72, 83));
         jSeparator8.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
+        jSeparator1.setBackground(new java.awt.Color(67, 72, 83));
+        jSeparator1.setForeground(new java.awt.Color(67, 72, 83));
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
@@ -859,9 +962,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addComponent(depthPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lightPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cameraControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -875,16 +980,18 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(depthPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lightPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(emergencyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(positionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
             .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(cameraControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(controlPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSeparator8))
-            .addComponent(cameraControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 193, Short.MAX_VALUE)
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(depthPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lightPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 8, Short.MAX_VALUE))
+            .addComponent(jSeparator8, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         infoPanel.setBackground(new java.awt.Color(39, 44, 50));
@@ -1062,7 +1169,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     .addComponent(seafloorDepthRovLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(seafloorDepthBoatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(rovDepthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 26, Short.MAX_VALUE))
+                .addGap(0, 21, Short.MAX_VALUE))
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addGap(125, 125, 125)
                 .addComponent(leakLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1075,7 +1182,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seafloorDepthBoatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(rollLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(seafloorDepthRovLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pitchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1085,7 +1192,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     .addComponent(wingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(55, 55, 55)
                 .addComponent(leakLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addComponent(actuatorPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(actuatorPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1101,37 +1208,32 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     .addComponent(controlPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1039, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1039, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(infoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addComponent(infoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         backgroundLayout.setVerticalGroup(
             backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundLayout.createSequentialGroup()
-                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundLayout.createSequentialGroup()
-                        .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(infoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(infoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        javax.swing.GroupLayout windowLayout = new javax.swing.GroupLayout(window);
-        window.setLayout(windowLayout);
-        windowLayout.setHorizontalGroup(
-            windowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1479, Short.MAX_VALUE)
-            .addGroup(windowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(windowLayout.createSequentialGroup()
-                    .addComponent(background, javax.swing.GroupLayout.PREFERRED_SIZE, 1473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-        windowLayout.setVerticalGroup(
-            windowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 822, Short.MAX_VALUE)
-            .addGroup(windowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 856;
+        gridBagConstraints.ipady = 318;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 6, 0);
+        window.add(background, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        getContentPane().add(window, gridBagConstraints);
 
         jMenuBar.setForeground(new java.awt.Color(39, 44, 50));
 
@@ -1246,21 +1348,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuBar.add(jMenuHelp);
 
         setJMenuBar(jMenuBar);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(window, javax.swing.GroupLayout.PREFERRED_SIZE, 1479, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(window, javax.swing.GroupLayout.PREFERRED_SIZE, 822, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1699,9 +1786,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     setpointLabel.setBackground(new Color(28, 28, 28));
                     previousSetpoint = setpoint;
                     setpoint = newSetpoint;
-                    depthInputTextField.setValue(null);
+//                  depthInputTextField.setValue(null);
                     setpointLabel.setText("Current setpoint: " + setpoint + "m");
 
+                    // Diskuter med han robin: Sende samme setDepth-kommando og la ROV få bestemme om det e depth- eller seafloor-mode ut ifra ka knapp som e valgt i GUI.
+                    this.client_ROV.sendCommand("setCmd_depth:" + String.valueOf(setpoint));
                 } else
                 {
                     depthInputTextField.setValue(null);
@@ -1711,7 +1800,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                             JOptionPane.ERROR_MESSAGE);
                 }
 
-                this.client_ROV.sendDepthCommand();
             } else
             {
                 System.out.println("Invalid input entered.");
@@ -1721,6 +1809,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             depthInputTextField.setValue(null);
             System.out.println(ex.getMessage());
 
+        } catch (IOException ex)
+        {
+            System.out.println("IOException: " + ex.getMessage());
         }
 
 
@@ -1743,6 +1834,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lightSliderMouseReleased
+
+    private void manualControlButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_manualControlButtonActionPerformed
+    {//GEN-HEADEREND:event_manualControlButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_manualControlButtonActionPerformed
 
     Action exitFullscreenAction = new AbstractAction()
     {
@@ -1846,6 +1942,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuItem jMenuAbout;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenuItem jMenuEchosounder;
@@ -1877,12 +1974,18 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JToggleButton lightSwitch;
     private javax.swing.JLabel lightSwitch_lbl;
     private javax.swing.JLabel longitudeLabel;
+    private javax.swing.JToggleButton manualControlButton;
+    private javax.swing.JButton manualControlButton_PS_DN;
+    private javax.swing.JButton manualControlButton_PS_UP;
+    private javax.swing.JButton manualControlButton_SB_DN;
+    private javax.swing.JButton manualControlButton_SB_UP;
     private javax.swing.JToggleButton photoModeButton;
     private javax.swing.JLabel photoModeDelayLabel;
     private javax.swing.JLabel photoModeDelay_FB_Label;
     private javax.swing.JLabel pitchLabel;
     private javax.swing.JLabel positionHeader;
     private javax.swing.JPanel positionPanel;
+    private javax.swing.JButton resetManualControlButton;
     private javax.swing.JLabel rollLabel;
     private javax.swing.JLabel rovDepthLabel;
     private javax.swing.JLabel seafloorDepthBoatLabel;
@@ -1906,10 +2009,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         {
             Logger.getLogger(NTNUSubseaGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //this.setBackground(new Color(90, 90, 50));
         this.showImage(videoImage);
-        //this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //this.setUndecorated(true);
         this.setVisible(true); //To change body of generated methods, choose Tools | Templates.
 
         //
