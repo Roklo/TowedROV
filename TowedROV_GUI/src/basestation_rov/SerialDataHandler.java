@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import jssc.SerialPort;
 import jssc.SerialPortList;
+ 
 
 /**
  *
@@ -40,7 +41,7 @@ public class SerialDataHandler
 
     public void initiateComPorts()
     {
-        
+
     }
 
     private void saveUsableComPorts()
@@ -121,6 +122,7 @@ public class SerialDataHandler
                                     String key = (String) e.getKey();
                                     portNamesList.put(key, "EchoSounder");
                                 }
+
                             }
 
                         }

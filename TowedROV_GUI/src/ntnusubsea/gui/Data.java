@@ -48,6 +48,7 @@ public final class Data extends Observable
     public float longitude = (float) 0;
     public float depth = (float) 0.01;
     public float temperature = (float) 0.01;
+    public float voltage = (float) 0.00;
 
     //Feedback from IMU
     public float roll = 0;
@@ -764,6 +765,18 @@ public final class Data extends Observable
     public synchronized void setPitch(int pitch)
     {
         this.pitch = pitch;
+        setChanged();
+        notifyObservers();
+    }
+
+    public synchronized float getVoltage()
+    {
+        return voltage;
+    }
+
+    public synchronized void setVoltage(float voltage)
+    {
+        this.voltage = voltage;
         setChanged();
         notifyObservers();
     }

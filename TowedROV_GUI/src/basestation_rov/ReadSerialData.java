@@ -46,7 +46,7 @@ public class ReadSerialData implements Runnable
         {
             try
             {
-                
+
                 readData(comPort, baudRate);
             } catch (Exception e)
             {
@@ -61,8 +61,8 @@ public class ReadSerialData implements Runnable
 
         if (portNames.length == 0)
         {
-           // System.out.println("There are no serial-ports available!");
-           // System.out.println("Press enter to exit...");
+            // System.out.println("There are no serial-ports available!");
+            // System.out.println("Press enter to exit...");
 
             try
             {
@@ -95,7 +95,6 @@ public class ReadSerialData implements Runnable
 
         // long lastTime = System.nanoTime();
 //        ConcurrentHashMap<String, String> SerialDataList = new ConcurrentHashMap<>();
-
         boolean recievedData = false;
         //Declare special symbol used in serial data stream from Arduino
         String startChar = "<";
@@ -110,7 +109,7 @@ public class ReadSerialData implements Runnable
             {
                 serialPort.openPort();
                 portIsOpen = true;
-               // System.out.println(comPort + " is open");
+                // System.out.println(comPort + " is open");
             } catch (SerialPortException ex)
             {
                 System.out.println(ex.getMessage());
@@ -133,8 +132,7 @@ public class ReadSerialData implements Runnable
                 serialPort.setParams(baudRate, 8, 1, 0);
                 buffer = serialPort.readString();
 
-               // System.out.println(buffer);
-
+                // System.out.println(buffer);
                 boolean dataNotNull = false;
                 boolean dataHasFormat = false;
 
@@ -240,6 +238,10 @@ public class ReadSerialData implements Runnable
                     data.setHeading(Integer.parseInt(value));
                     //setHeading(Integer.parseInt(value));
                     break;
+                case "Volt":
+                    data.setVoltage(Float.parseFloat(value));
+                    break;
+
             }
         }
 

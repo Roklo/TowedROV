@@ -9,11 +9,11 @@
 #include <SoftwareSerial.h> // Software serial library
 #include <Wire.h> //I2C Library
 #include <stdlib.h>
-#define arduinoAddress 0x04 // I2C Address
+#define arduinoAddress 11 // I2C Address
 // Connect Vin (5V) and Gnd
 // GPS TX --> Digital 11
 // GPS RX --> Digital 10
-SoftwareSerial nmeaSerial(5, 6); // 5 RX pin, 6 TX pin, if
+SoftwareSerial nmeaSerial(2, 3); // 5 RX pin, 6 TX pin, if
 // is unreadable try switching.
 NMEA nmeaDecoder(ALL);
 // Set true if debugging
@@ -45,7 +45,7 @@ void setup() {
   // Serial setup
   Serial.begin(4800);
   nmeaSerial.begin(4800);
-  Serial.println("<EchoSounder:0>");
+  Serial.println("<ArduinoIO:0>");
   // -------------------------------------------------------------------------------- -
   // I2C setup
   // join I2C bus (I2Cdev library doesn't do this automatically)
@@ -171,8 +171,9 @@ void convertDataToString()
   strcat(bigstring, b);
   strcat(bigstring, str_temp);
   strcat(bigstring, c);
-  //Serial.println(bigstring);
-  Serial.write(bigstring);
+  Serial.println(bigstring);
+  //Serial.write(bigstring);
+  // Wire.write(bigstring);
 
 
   //Serial.println(final_depth);
