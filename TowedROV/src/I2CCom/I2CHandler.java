@@ -31,9 +31,9 @@ public class I2CHandler
     public I2CHandler(DataHandler dh)
     {
         this.dh = dh;
-        I2CRW = new Thread(new I2CRW(this, dh));
-        I2CRW.start();
-        I2CRW.setName("I2C_RW");
+//        I2CRW = new Thread(new I2CRW(this, dh));
+//        I2CRW.start();
+//        I2CRW.setName("I2C_RW");
     }
 
     public boolean getDataRequest()

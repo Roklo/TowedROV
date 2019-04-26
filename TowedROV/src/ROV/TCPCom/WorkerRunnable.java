@@ -69,7 +69,7 @@ public class WorkerRunnable implements Runnable
                     String key = "";
                     String value = "";
                     String inputData = inFromClient.readLine();
-                    if (inputData.contains("<") || inputData.contains(">"))
+                    if (inputData.contains("<") && inputData.contains(">"))
                     {
                         inputData = inputData.substring(inputData.indexOf(start_char) + 1);
                         inputData = inputData.substring(0, inputData.indexOf(end_char));
@@ -84,8 +84,9 @@ public class WorkerRunnable implements Runnable
 
                     switch (key)
                     {
+                        //Commands
 
-                        case "cmd_lightIntensity":
+                        case "cmd_lightIntensity":                            
                             dh.setCmd_lightIntensity(parseStringToInt(value));
                             System.out.println("Light intensity is: " + dh.getCmd_lightIntensity());
                             outToClient.println("Server: OK");

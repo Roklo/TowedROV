@@ -27,7 +27,7 @@ public class DataHandler
     int cmd_actuatorPSMinPos = 0;
     int cmd_actuatorSBMaxPos = 0;
     int cmd_actuatorSBMinPos = 0;
-    
+
     int cmd_pressureAtSeaLevel = 0;
 
     int cmd_depth = 0;
@@ -46,6 +46,9 @@ public class DataHandler
     // Sensor values
     int fb_depthToSeabedEcho = 12;
     int fb_depthFromPressure = 0;
+    int fb_depthBelowTransduser = 0;
+    int fb_depth = 0;
+
     int fb_speedThroughWather = 0;
     int fb_waterTemperature = 0;
     int fb_pressure = 0;
@@ -68,10 +71,18 @@ public class DataHandler
     boolean fb_waterLeakChannel_3 = false;
     boolean fb_waterLeakChannel_4 = false;
 
+    //Input channels
+    double analogInputChannel_1 = 0.00;
+    double analogInputChannel_2 = 0.00;
+    double analogInputChannel_3 = 0.00;
+    double analogInputChannel_4 = 0.00;
+    boolean digitalInputChannel_5 = false;
+    boolean digitalInputChannel_6 = false;
+
     //Class variables
     private int counter = 0;
     private boolean i2cRequest = false;
-    
+
     public HashMap<String, String> comPortList = new HashMap<>();
 
     public HashMap<String, String> data = new HashMap<>();
@@ -117,8 +128,6 @@ public class DataHandler
     {
         this.cmd_actuatorSBMinPos = cmd_actuatorSVMinPos;
     }
-    
-    
 
     public boolean isCmd_ack()
     {
@@ -471,6 +480,27 @@ public class DataHandler
         this.cmd_emergencySurface = cmd_emergencySurface;
     }
 
+    public int getFb_depthBelowTransduser()
+    {
+        return fb_depthBelowTransduser;
+    }
+
+    public void setFb_depthBelowTransduser(int fb_depthBelowTransduser)
+    {
+        this.fb_depthBelowTransduser = fb_depthBelowTransduser;
+
+    }
+
+    public int getFb_depth()
+    {
+        return fb_depth;
+    }
+
+    public void setFb_depth(int fb_depth)
+    {
+        this.fb_depth = fb_depth;
+    }
+
     //Alarm flags
     //Alarm getters and setters
     public int getCounter()
@@ -482,8 +512,68 @@ public class DataHandler
     {
         this.counter = counter;
     }
+
+    public double getAnalogInputChannel_1()
+    {
+        return analogInputChannel_1;
+    }
+
+    public void setAnalogInputChannel_1(double analogInputChannel_1)
+    {
+        this.analogInputChannel_1 = analogInputChannel_1;
+    }
+
+    public double getAnalogInputChannel_2()
+    {
+        return analogInputChannel_2;
+    }
+
+    public void setAnalogInputChannel_2(double analogInputChannel_2)
+    {
+        this.analogInputChannel_2 = analogInputChannel_2;
+    }
+
+    public double getAnalogInputChannel_3()
+    {
+        return analogInputChannel_3;
+    }
+
+    public void setAnalogInputChannel_3(double analogInputChannel_3)
+    {
+        this.analogInputChannel_3 = analogInputChannel_3;
+    }
+
+    public double getAnalogInputChannel_4()
+    {
+        return analogInputChannel_4;
+    }
+
+    public void setAnalogInputChannel_4(double analogInputChannel_4)
+    {
+        this.analogInputChannel_4 = analogInputChannel_4;
+    }
+
+    public boolean isDigitalInputChannel_5()
+    {
+        return digitalInputChannel_5;
+    }
+
+    public void setDigitalInputChannel_5(boolean digitalInputChannel_5)
+    {
+        this.digitalInputChannel_5 = digitalInputChannel_5;
+    }
+
+    public boolean isDigitalInputChannel_6()
+    {
+        return digitalInputChannel_6;
+    }
+
+    public void setDigitalInputChannel_6(boolean digitalInputChannel_6)
+    {
+        this.digitalInputChannel_6 = digitalInputChannel_6;
+    }
     
-   
+    
 
     public void handleDataFromI2C()
     {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package basestation_rov;
+package SerialCom;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import jssc.SerialPort;
 import jssc.SerialPortList;
 import jssc.SerialPortException;
-import ntnusubsea.gui.Data;
+import ROV.DataHandler;
 
 /**
  * Respnsible for reading serial data from the GPS, Sonar and IMU values on the
@@ -25,14 +25,14 @@ public class ReadSerialData implements Runnable
     boolean portIsOpen = false;
     String comPort = "";
     int baudRate = 0;
-    Data data = null;
+    DataHandler data = null;
 
     public HashMap<String, String> incommingData = new HashMap<>();
 
     private static volatile double depth;
     private static volatile double tempC;
 
-    public ReadSerialData(Data data, String comPort, int baudRate)
+    public ReadSerialData(DataHandler data, String comPort, int baudRate)
     {
         this.comPort = comPort;
         this.baudRate = baudRate;
@@ -82,12 +82,12 @@ public class ReadSerialData implements Runnable
 
     public void sendDepth()
     {
-        data.setDepth((float) depth);
+        // data.setDepth((float) depth);
     }
 
     public void sendTempC()
     {
-        data.setTemperature((float) tempC);
+        //data.setTemperature((float) tempC);
     }
 
     public void readData(String comPort, int baudRate)
@@ -194,6 +194,44 @@ public class ReadSerialData implements Runnable
 
             switch (key)
             {
+                case "D":
+                    data.setFb_depth(Integer.parseInt(value));
+                    break;
+                case "DBT:":
+                    data.setFb_depthBelowTransduser(Integer.parseInt(value));
+                    break;
+                case "Ach1:":
+                    data.setAnalogInputChannel_1(Double.parseDouble(value));
+                    break;
+                case "Ach2:":
+                    data.setAnalogInputChannel_2(Double.parseDouble(value));
+                    break;
+                case "Ach3:":
+                    data.setAnalogInputChannel_3(Double.parseDouble(value));
+                    break;
+                case "Ach4:":
+                    data.setAnalogInputChannel_4(Double.parseDouble(value));
+                    break;
+                case "Dch5:":
+                    if (value.equals("1.00"))
+                    {
+                        data.setDigitalInputChannel_5(true);
+                    } else
+                    {
+                        data.setDigitalInputChannel_5(false);
+                    }
+                    break;
+                case "Dch6:":
+                    if (value.equals("1.00"))
+                    {
+                        data.setDigitalInputChannel_6(true);
+                    } else
+                    {
+                        data.setDigitalInputChannel_6(false);
+                    }
+                    break;
+
+                /*
                 case "Satellites":
                     data.setSatellites(Integer.parseInt(value));
                     // setSatellites(Integer.parseInt(value));
@@ -238,10 +276,7 @@ public class ReadSerialData implements Runnable
                     data.setHeading(Integer.parseInt(value));
                     //setHeading(Integer.parseInt(value));
                     break;
-                case "Volt":
-                    data.setVoltage(Float.parseFloat(value));
-                    break;
-
+                 */
             }
         }
 

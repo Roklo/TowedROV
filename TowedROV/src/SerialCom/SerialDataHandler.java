@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package basestation_rov;
+package SerialCom;
 
-import ntnusubsea.gui.Data;
+import ROV.DataHandler;
+
 import java.util.HashMap;
 import java.util.Map.Entry;
 import jssc.SerialPort;
@@ -22,13 +23,13 @@ public class SerialDataHandler
 
     String comPort = "";
     SerialPort serialPort;
-    Data dh;
+    DataHandler dh;
 
     String start_char = "<";
     String end_char = ">";
     String sep_char = ":";
 
-    public SerialDataHandler(Data dh)
+    public SerialDataHandler(DataHandler dh)
     {
         this.dh = dh;
     }
@@ -66,7 +67,7 @@ public class SerialDataHandler
             String[] portNames = getAvailableComPorts();
             for (int i = 0; i < portNames.length; i++)
             {
-                if (portNames[i].contains("COM"))
+                if (portNames[i].contains("dev"))
                 {
                     portNamesList.put(portNames[i], "Unknown");
                 }
@@ -111,17 +112,16 @@ public class SerialDataHandler
                                     String key = (String) e.getKey();
                                     portNamesList.put(key, "IMU");
                                 }
-                                if (data[i].contains("GPS"))
+                                if (data[i].contains("ArduinoIO"))
                                 {
                                     String key = (String) e.getKey();
-                                    portNamesList.put(key, "GPS");
+                                    portNamesList.put(key, "ArduinoIO");
                                 }
-                                if (data[i].contains("EchoSounder"))
-                                {
-                                    String key = (String) e.getKey();
-                                    portNamesList.put(key, "EchoSounder");
-                                }
-
+//                                if (data[i].contains("EchoSounder"))
+//                                {
+//                                    String key = (String) e.getKey();
+//                                    portNamesList.put(key, "EchoSounder");
+//                                }
                             }
 
                         }
