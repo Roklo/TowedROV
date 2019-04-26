@@ -17,20 +17,140 @@ import java.nio.channels.SocketChannel;
  *
  * @author Marius Nonsvik
  */
-public class TCPClient implements Runnable {
+public class TCPClient implements Runnable
+{
+
+    boolean connectionResetError = false;
     private boolean connected = false;
-    private Socket soc;
+    private static String sentence;
+    private static String serverResponse;
+    private Socket clientSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
+    private int port;
     private String IP;
-    private final int port = 5001;
-    private ObjectInputStream ois;
-    private PrintStream ps;
     private Data data;
-    private SocketChannel sc;
 
-    public TCPClient(Data data) {
+    BufferedReader inFromServer;
+    PrintWriter outToServer;
+
+    public TCPClient(String IP, int port, Data data)
+    {
         this.data = data;
+        this.port = port;
+        this.IP = IP;
+    }
+
+    @Override
+    public void run()
+    {
+        while (!this.connected)
+        {
+            try
+            {
+                this.connect(this.IP, this.port);
+            } catch (Exception e1)
+            {
+                //System.out.println("Could not connect to server (" + this.IP + ":" + this.port + "): " + e1.getMessage());
+                long sec = 5000;
+                //System.out.println("Trying to reconnect in " + sec + " ms...");
+                try
+                {
+                    Thread.sleep(sec);
+                } catch (Exception e2)
+                {
+                }
+            }
+        }
+
+        boolean finished = false;
+
+        while (!finished)
+        {
+            try
+            {
+                //Run
+
+                if (this.connectionResetError && !isConnected())
+                {
+                    int sec = 5000;
+                    System.out.println("Trying to reconnect (" + this.IP + ":" + this.port + ") in " + sec + " sec...");
+                    Thread.sleep(sec);
+                    this.connect(this.IP, this.port);
+                }
+            } catch (SocketTimeoutException ex)
+            {
+                System.out.println("Error: Read timed out");
+                this.connectionResetError = true;
+                this.connected = false;
+            } catch (SocketException ex)
+            {
+                System.out.println("An error occured: Connection reset");
+                this.connectionResetError = true;
+                this.connected = false;
+            } catch (Exception e)
+            {
+                System.out.println("An error occured: " + e);
+                this.connectionResetError = true;
+                this.connected = false;
+            }
+        }
+
+    }
+
+    /**
+     * Sends a command to the server.
+     *
+     * @param s String containing the command to send
+     * @throws IOException Throws IOException if client is disconnected
+     */
+    public synchronized void sendCommand(String cmd) throws IOException
+    {
+        try
+        {
+            if (isConnected())
+            {
+
+                String commandString = "<" + cmd + ">";
+                outToServer.println(commandString);
+                System.out.println("Cmd sent: " + commandString);
+                outToServer.flush();
+
+                String serverResponse = inFromServer.readLine();
+                System.out.println("Server response: " + serverResponse);
+
+            } else
+            {
+                System.out.println("Command not sent: Not connected to server");
+            }
+
+        } catch (SocketTimeoutException ex)
+        {
+            System.out.println("Error: Read timed out");
+            this.connectionResetError = true;
+            this.connected = false;
+        } catch (SocketException ex)
+        {
+            System.out.println("An error occured: Connection reset");
+            this.connectionResetError = true;
+            this.connected = false;
+        } catch (Exception e)
+        {
+            System.out.println("An error occured: " + e);
+            this.connectionResetError = true;
+            this.connected = false;
+        }
+
+    }
+
+    /**
+     * Returns the connection status of the socket
+     *
+     * @return The connection status of the socket
+     */
+    public boolean isConnected()
+    {
+        return connected;
     }
 
     /**
@@ -41,61 +161,18 @@ public class TCPClient implements Runnable {
      * @throws IOException Throws an IOException when the connection is
      * unsuccessful
      */
-    public void connect(String IP) throws IOException {
-        soc = new Socket(IP, port);
-        this.inputStream = soc.getInputStream();
-        this.outputStream = soc.getOutputStream();
-        this.ps = new PrintStream(outputStream);
-        this.IP = IP;
-        connected = true;
-    }
-
-    /**
-     * Retrieves the byte array containing sensor data from the ROV and updates
-     * these values in the data storage.
-     *
-     * @throws Exception Throws exception if header is invalid or data is null
-     */
-    public void receiveData() throws Exception {
-        
-        byte[] byteArray = new byte[42];
-        if (inputStream.available() >= 42) {
-            inputStream.read(byteArray, 0, 42);
-            data.setActuatorStatus(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).get(0));
-            data.setDepth(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat(1));
-            data.setSeafloorRov(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat(5)); // not tested
-            data.setTemperature(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat(9));
-            data.setPressure(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat(13));
-            data.setRollAngle(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat(17));
-            data.setPitchAngle(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat(21));
-            data.setLeakStatus(ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).get(25));
-            data.setChannel(ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN).getFloat(26), 1);
-            data.setChannel(ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN).getFloat(30), 2);
-            data.setChannel(ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN).getFloat(34), 3);
-            data.setChannel(ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN).getFloat(38), 4);
-        }
-    }
-
-    /**
-     * Sends a command to the server.
-     *
-     * @param s String containing the command to send
-     * @throws IOException Throws IOException if client is disconnected
-     */
-    public synchronized void sendCommand(String s) throws IOException {
-        ps.print(s + System.getProperty("line.separator"));
-        outputStream.flush();
-        System.out.println(s);
-    }
-
-
-    /**
-     * Returns the connection status of the socket
-     *
-     * @return The connection status of the socket
-     */
-    public boolean isConnected() {
-        return connected;
+    public void connect(String IP, int port) throws IOException
+    {
+        clientSocket = new Socket(IP, port);
+//        this.inputStream = clientSocket.getInputStream();
+//        this.outputStream = clientSocket.getOutputStream();
+        outToServer = new PrintWriter(
+                clientSocket.getOutputStream(), true);
+        inFromServer = new BufferedReader(new InputStreamReader(
+                clientSocket.getInputStream()));
+        System.out.println("Success! Connected to server " + this.IP + ":" + this.port);
+        this.connected = true;
+        this.connectionResetError = false;
     }
 
     /**
@@ -104,21 +181,59 @@ public class TCPClient implements Runnable {
      * @throws IOException Throws IOException if there is a problem with the
      * connection
      */
-    public void disconnect() throws IOException {
-        if (soc != null) {
-            soc.close();
+    public void disconnect() throws IOException
+    {
+        if (clientSocket != null)
+        {
+            clientSocket.close();
         }
         connected = false;
     }
 
-    @Override
-    public void run() {
-        if (connected) {
-            try {
-                receiveData();
-            } catch (Exception ex) {
-                
-            }
+    public synchronized String sendData(String sentence)
+    {
+        try
+        {
+            outToServer.println(sentence);
+            System.out.println("Data is sent...");
+            outToServer.flush();
+            serverResponse = inFromServer.readLine();
+
+        } catch (Exception e)
+        {
         }
+
+        return serverResponse;
+
+    }
+
+    public String ping()
+    {
+        double elapsedTimer = 0;
+        double elapsedTimerNano = 0;
+        long lastTime = 0;
+
+        String ping = "<Ping:null>";
+        lastTime = System.nanoTime();
+        String serverResponse = sendData("ping");
+        if (serverResponse.equals("<ping:true>"))
+        {
+            elapsedTimerNano = (System.nanoTime() - lastTime);
+            elapsedTimer = elapsedTimerNano / 1000000;
+            System.out.println("<Ping: " + elapsedTimer + ">");
+
+            elapsedTimer = 0;
+        } else
+        {
+
+            ping = "<ping:null>";
+        }
+
+        return ping;
+    }
+
+    void sendDepthCommand()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

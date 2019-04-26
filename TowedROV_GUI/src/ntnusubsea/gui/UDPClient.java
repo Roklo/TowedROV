@@ -41,6 +41,8 @@ public class UDPClient implements Runnable
     private boolean debug = false;
     private Data data;
     private int test = 0;
+    //private String IP;
+    private int port;
     private DatagramSocket videoSocket;
     private long timer = System.currentTimeMillis();
     private File photoDirectory;
@@ -48,16 +50,18 @@ public class UDPClient implements Runnable
     private InetAddress returnIP;
     private int returnPort;
 
-    public UDPClient(Data data)
+    public UDPClient(int port, Data data)
     {
         try
         {
             this.data = data;
-            videoSocket = new DatagramSocket(8083);
+            this.port = port;
+            //this.IP = IP;
+            videoSocket = new DatagramSocket(this.port);
             photoDirectory = new File("C://ROV_Photos/");
         } catch (Exception e)
         {
-
+            System.out.println("Error connecting to the UDP Server: " + e.getMessage());
         }
     }
 
@@ -73,14 +77,16 @@ public class UDPClient implements Runnable
 
         } catch (SocketException ex)
         {
-            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("SocketException in UDPClient: " + ex.getMessage());
 
         } catch (IOException ex)
         {
-            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("IOException in UDPClient: " + ex.getMessage());
+        } catch (Exception ex)
+        {
+            System.out.println("Exception in UDPClient: " + ex.getMessage());
         }
     }
-
 
     @Override
     public void run()
@@ -90,7 +96,7 @@ public class UDPClient implements Runnable
             if (System.currentTimeMillis() - timer > 60000)
             {
                 videoSocket.close();
-                videoSocket = new DatagramSocket(8083);
+                videoSocket = new DatagramSocket(this.port);
                 timer = System.currentTimeMillis();
                 System.out.println("Reconnected");
             }
@@ -102,12 +108,13 @@ public class UDPClient implements Runnable
                     receivedData.length);
             if (receivePacket.getLength() > 0)
             {
-                long startTime = System.currentTimeMillis();
+                double startTime = System.currentTimeMillis();
                 //Updates the videoImage from the received DatagramPacket
                 videoSocket.receive(receivePacket);
                 this.returnIP = receivePacket.getAddress();
                 this.returnPort = receivePacket.getPort();
-                long endTime = System.currentTimeMillis();
+                double endTime = System.currentTimeMillis();
+                data.setPhotoModeDelay_FB((endTime - startTime) / 1000);
                 if (debug)
                 {
                     System.out.println("Videopackage received");
@@ -118,27 +125,26 @@ public class UDPClient implements Runnable
                 data.setVideoImage(videoImage);
 
                 // Saves the photo to disk if photo mode is true
-                if (data.isPhotoMode())
-                {
-                    try
-                    {
-                        if (this.photoDirectory.exists() && this.photoDirectory.isDirectory())
-                        {
-                            ImageIO.write(videoImage, "jpg", new File(this.photoDirectory.toString() + "/image" + this.photoNumber + ".png"));
-                            this.photoNumber++;
-                        } else
-                        {
-                            System.out.println("No directory found, creating a new one at C://ROV_Photos/");
-                            this.photoDirectory = new File("C://ROV_Photos/");
-                        }
-
-                    } catch (Exception e)
-                    {
-                        System.out.println("Exception occured :" + e.getMessage());
-                    }
-                    System.out.println("Image were saved to disk succesfully at C:/ROV_Photos");
-                }
-
+//                if (data.isPhotoMode())
+//                {
+//                    try
+//                    {
+//                        if (this.photoDirectory.exists() && this.photoDirectory.isDirectory())
+//                        {
+//                            ImageIO.write(videoImage, "jpg", new File(this.photoDirectory.toString() + "/image" + this.photoNumber + ".png"));
+//                            this.photoNumber++;
+//                        } else
+//                        {
+//                            System.out.println("No directory found, creating a new one at C://ROV_Photos/");
+//                            this.photoDirectory = new File("C://ROV_Photos/");
+//                        }
+//
+//                    } catch (Exception e)
+//                    {
+//                        System.out.println("Exception occured :" + e.getMessage());
+//                    }
+//                    System.out.println("Image were saved to disk succesfully at C:/ROV_Photos");
+//                }
                 // Sends the command to the ROV
                 if (data.isPhotoMode() != lastPhotoMode)
                 {

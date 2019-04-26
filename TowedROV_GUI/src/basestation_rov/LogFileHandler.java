@@ -53,7 +53,10 @@ public class LogFileHandler implements Runnable
 
     public void run()
     {
-        System.out.println(logStorageLocation);
+        if (logStorageLocation != null)
+        {
+            System.out.println(logStorageLocation);
+        }
         System.out.println("Wait");
         while (true)
         {
