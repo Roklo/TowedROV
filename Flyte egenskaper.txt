@@ -1,0 +1,107 @@
+(Unsaved)
+Area	1.058E+06 mm^2
+Density	0.008 g / mm^3
+Mass	1.919E+05 g
+Volume	2.444E+07 mm^3
+Physical Material	Steel
+
+Bounding Box
+	Length 	 1406.186 mm
+	Width 	 268.189 mm
+	Height 	 637.543 mm
+World X,Y,Z	0 mm, 0 mm, 0 mm
+Center of Mass	50.1706 mm, 29.9364 mm, 198.94 mm
+
+Moment of Inertia at Center of Mass   (g mm^2)
+	Ixx = 7.576E+09
+	Ixy = 2.720E+09
+	Ixz = -2.491E+09
+	Iyx = 2.720E+09
+	Iyy = 3.842E+10
+	Iyz = 8.376E+08
+	Izx = -2.491E+09
+	Izy = 8.376E+08
+	Izz = 3.215E+10
+
+Moment of Inertia at Origin   (g mm^2)
+	Ixx = 1.534E+10
+	Ixy = 2.431E+09
+	Ixz = -4.406E+09
+	Iyx = 2.431E+09
+	Iyy = 4.650E+10
+	Iyz = -3.051E+08
+	Izx = -4.406E+09
+	Izy = -3.051E+08
+	Izz = 3.280E+10
+
+
+
+
+
+328*2
+558*2
+242*4
+= 2740 = 2,740 Kg tyngde på rør
+
+25.05 Kg oppdrift 
+
+25,05 - 2,740 = 22,31 Total oppdrift nede
+
+-------------------
+
+558*2 = 1116 = 1,116 Kg
+5.552 Kg oppdrift
+5,552 - 1,116 4,436 Kg Total oppdrift oppe
+
+
+-------------------
+
+637 = 0,637 Kg
+1.4606 Kg oppdrift
+1,4606 - 0,637 = 0,8236 Kg
+
+--------------------------
+
+Tot sum uten lille rør = 22,31 + 4,436 = 26,746
+Tot sum = 22,31 + 4,436 + 0,8236 = 27,5696 Kg
+
+
+
+
+
+
+
+Area	7.084E+04 mm^2
+Density	0.008 g / mm^3
+Mass	1.119E+04 g
+Volume	1.425E+06 mm^3
+Physical Material	Steel
+Appearance	Steel - Satin
+
+Bounding Box
+	Length 	 110.00 mm
+	Width 	 110.00 mm
+	Height 	 150.00 mm
+Center of Mass	5.87621 mm, 154.027 mm, 75 mm
+
+Moment of Inertia at Center of Mass   (g mm^2)
+	Ixx = 2.944E+07
+	Ixy = 1.693E+07
+	Ixz = 2.944E+07
+	Iyx = 1.693E+07
+	Iyy = 2.944E+07
+	Iyz = 2.944E+07
+	Izx = 2.944E+07
+	Izy = 2.944E+07
+	Izz = 1.693E+07
+
+Moment of Inertia at Origin   (g mm^2)
+	Ixx = 3.579E+08
+	Ixy = 2.828E+08
+	Ixz = 9.278E+07
+	Iyx = 2.828E+08
+	Iyy = 9.278E+07
+	Iyz = 3.579E+08
+	Izx = 9.278E+07
+	Izy = 3.579E+08
+	Izz = 2.828E+08
