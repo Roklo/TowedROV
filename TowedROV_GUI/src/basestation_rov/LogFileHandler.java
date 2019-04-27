@@ -8,13 +8,12 @@ package basestation_rov;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import static java.lang.Math.PI;
-import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import ntnusubsea.gui.Data;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -40,11 +39,16 @@ public class LogFileHandler implements Runnable
 
     int shipTrackPointNumb = 1;
     int photoLocationNumb = 1;
-    String logStorageLocation = System.getProperty("user.dir");
-//"C:\\Users\\rocio\\Google Drive\\NTNU\\3.År\\2.Semester\\Bachelor oppgave\\";
+
+    String logStorageLocation = "C:\\TowedROV\\Log\\";
+
     String photoPosLog = "";
     String shipPosLog = "";
     boolean setupIsDone = false;
+
+    File shipPosLogFile = null;
+
+    BufferedWriter outputWriterShipPos = null;
 
     public LogFileHandler(Data data)
     {
@@ -53,66 +57,36 @@ public class LogFileHandler implements Runnable
 
     public void run()
     {
-        if (logStorageLocation != null)
-        {
-            System.out.println(logStorageLocation);
-        }
-        System.out.println("Wait");
-        while (true)
+        if (!setupIsDone)
         {
             try
             {
-                lastTime = System.currentTimeMillis();
-                PrintWriter pw = new PrintWriter(shipPosLog);
-            } catch (Exception e)
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+                Date date = new Date(System.currentTimeMillis());
+
+                shipPosLogFile = new File(logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv");
+                FileUtils.touch(shipPosLogFile);
+
+                File photoPosLog = new File(logStorageLocation + "PhotoPos_LOG_" + formatter.format(date) + ".csv");
+                FileUtils.touch(photoPosLog);
+//                         
+                outputWriterShipPos = new BufferedWriter(new FileWriter(shipPosLogFile));
+
+                outputWriterShipPos.append("Point, Latitude, Longtitude, Speed, ROV Depth, Heading");
+                outputWriterShipPos.flush();
+             
+                setupIsDone = true;
+
+            } catch (Exception ex)
             {
-                BufferedWriter writer = null;
-                BufferedWriter writer2 = null;
-                while (data.startLogging)
-                {
-
-                    if (!setupIsDone)
-                    {
-                        try
-                        {
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-                            Date date = new Date(System.currentTimeMillis());
-                            shipPosLog = logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv";
-
-                            photoPosLog = logStorageLocation + "PhotoPos_LOG_" + formatter.format(date) + ".csv";
-
-                            writer = new BufferedWriter(new FileWriter(shipPosLog));
-                            writer2 = new BufferedWriter(new FileWriter(photoPosLog));
-
-                            //Setting up shiplog csv
-                            writer.append("Point, Latitude, Longtitude, Speed, ROV Depth, Heading");
-                            writer.append('\n');
-
-                            setupIsDone = true;
-                            lastTime = System.currentTimeMillis();
-
-                        } catch (Exception ex)
-                        {
-                            System.out.println("ERROR: " + ex);
-                        }
-                    }
-
-                    timeDifference = System.currentTimeMillis() - lastTime;
-                    if (timeDifference >= pointFreqMillis)
-                    {
-                        logShipPosition(writer);
-                        lastTime = System.currentTimeMillis();
-                    }
-                    //logPhotoPosition(writer2);
-//                    if(###PhotoIsTaken)
-//                    {
-//                        
-//                    }
-
-                }
+                System.out.println("ERROR: " + ex);
             }
-
         }
+        if (data.startLogging)
+        {
+            logShipPosition();         
+        }
+      
     }
 
     private void logPhotoPosition(BufferedWriter bw)
@@ -167,30 +141,34 @@ public class LogFileHandler implements Runnable
 
     }
 
-    private void logShipPosition(BufferedWriter bw)
+    public void closeLog()
     {
-
         try
         {
-            // PrintWriter pw = new PrintWriter(shipPosLog);
+            outputWriterShipPos.close();
+        } catch (Exception e)
+        {
+            System.out.println("Problem closing log file");
+        }
 
-            // System.out.println("Waiting");
+    }
+
+    private void logShipPosition()
+    {
+        try
+        {
             shipTrack = "";
             shipTrack = shipTrackPointNumb + ","
                     + data.getLatitude() + "," + data.getLongitude() + ","
                     + data.getSpeed() + "," + data.rovDepth + "," + data.getHeading();
-
-            bw.append(shipTrack);
-            bw.append('\n');
-            bw.flush();
-            //pw.close();
-
+            outputWriterShipPos.append('\n');
+            outputWriterShipPos.append(shipTrack);
+            outputWriterShipPos.flush();            
             shipTrackPointNumb++;
 
         } catch (Exception e)
         {
             System.out.println("Error: " + e);
         }
-
     }
 }

@@ -148,8 +148,7 @@ public class SerialDataHandler
 
         if (portNames.length == 0)
         {
-            System.out.println("There are no serial-ports :( You can use an emulator, such ad VSPE, to create a virtual serial port.");
-            System.out.println("Press Enter to exit...");
+            System.out.println("No com ports is connected...");
             try
             {
                 System.in.read();
