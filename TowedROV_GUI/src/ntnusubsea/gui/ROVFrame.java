@@ -2267,8 +2267,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         rollLabel.setText("<html>Roll angle:<br/><br/><center/>" + data.getRollAngle());
         pitchLabel.setText("<html>Pitch angle:<br/><br/><center/>" + data.getPitchAngle());
         wingLabel.setText("<html>Wing angle:<br/><br/><center/>" + data.getWingAngle());
-        seafloorDepthBoatLabel.setText("<html>Depth beneath boat:<br/><br/><center/>" + data.getSeafloorBoat());
-        seafloorDepthRovLabel.setText("<html>Depth beneath ROV:<br/><br/><center/>" + data.getSeafloorRov());
+        seafloorDepthBoatLabel.setText("<html>Depth beneath boat:<br/><br/><center/>" + data.getDepthBeneathBoat());
+        seafloorDepthRovLabel.setText("<html>Depth beneath ROV:<br/><br/><center/>" + data.getDepthBeneathRov());
 
 //        actuatorControlPS.setValue(data.getFb_actuatorPSPos);
 //        actuatorControlSB.setValue(data.getFb_actuatorSBPos);

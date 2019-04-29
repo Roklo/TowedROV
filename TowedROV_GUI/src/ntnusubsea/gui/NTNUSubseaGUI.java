@@ -62,7 +62,7 @@ public class NTNUSubseaGUI
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);
         SwingUtilities.invokeLater(frame);
-        SwingUtilities.invokeLater(sonar);
+        //SwingUtilities.invokeLater(sonar);
         SwingUtilities.invokeLater(io);
         sonar.setVisible(false);
         data.addObserver(sonar);
@@ -84,6 +84,8 @@ public class NTNUSubseaGUI
                 0, 20, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(cmt,
+                0, 100, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(sonar,
                 0, 100, TimeUnit.MILLISECONDS);
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(new Runnable()
