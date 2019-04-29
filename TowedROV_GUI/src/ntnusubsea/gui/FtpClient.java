@@ -25,7 +25,7 @@ import org.apache.commons.net.ftp.FTPReply;
  *
  * @author hakon
  */
-public class FtpClient
+public class FtpClient implements Runnable
 {
 
     private String server;
@@ -34,14 +34,26 @@ public class FtpClient
     private String password;
     private FTPClient ftp;
 
-    public FtpClient()
+    public FtpClient(String IP)
     {
-        this.server = "192.168.0.2"; //The IP address for the camera RPi.
+        this.server = IP; //The IP address for the camera RPi.
         this.port = 21; // The FTP port
         this.user = "pi";
         this.password = "";
 
     }
+    
+    @Override
+    public void run()
+    {
+        //this.open();
+        while(true)
+        {
+            // be alive
+        }
+    }
+
+
 
     public void open()
     {
@@ -62,7 +74,7 @@ public class FtpClient
             ftp.login(user, password);
         } catch (IOException ex)
         {
-            System.out.println(ex.getMessage());
+            System.out.println("IOException in FtpClient.open(): " + ex.getMessage());
         }
 
     }

@@ -86,6 +86,7 @@ public final class Data extends Observable
     private boolean photoMode = false;
     private double photoModeDelay = 1;
     private double photoModeDelay_FB = 1;
+    private int imageNumber = 0;
     private int cameraPitchValue = 0;
 
     /**
@@ -641,8 +642,6 @@ public final class Data extends Observable
         setChanged();
         notifyObservers();
     }
-    
-    
 
     /**
      * Returns the camera pitch value
@@ -662,6 +661,38 @@ public final class Data extends Observable
     public void setCameraPitchValue(int cameraPitchValue)
     {
         this.cameraPitchValue = cameraPitchValue;
+    }
+
+    /**
+     * Returns the image number value
+     *
+     * @return the image number value
+     */
+    public int getImageNumber()
+    {
+        return imageNumber;
+    }
+
+    /**
+     * Sets the image number value
+     *
+     * @param imageNumber the image number value
+     */
+    public void setImageNumber(int imageNumber)
+    {
+        this.imageNumber = imageNumber;
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Increases the image number by one
+     */
+    public void increaseImageNumberByOne()
+    {
+        this.imageNumber++;
+        setChanged();
+        notifyObservers();
     }
 
     // CODE BELOW ADDED FROM THE BASESTATION PROJECT

@@ -5,7 +5,9 @@
  */
 package ntnusubsea.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -16,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -25,7 +28,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 /**
@@ -57,6 +62,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private double photoModeDelay = 1;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
 
+    private int cmd_actuatorPS = 0;
+    private int cmd_actuatorSB = 0;
+
     /**
      * Creates new form ROVFrame
      *
@@ -86,9 +94,16 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         cameraPanel1.add(fullscreenVideoSheet);
         setpointLabel.setText("Current setpoint: " + setpoint + "m");
         exitFullscreenButton.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exitFullscreen");
-        depthInputTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "sendInput");
+//        depthInputTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "sendInput");
         exitFullscreenButton.getActionMap().put("exitFullscreen", exitFullscreenAction);
-        depthInputTextField.getActionMap().put("sendInput", sendInputAction);
+//        depthInputTextField.getActionMap().put("sendInput", sendInputAction);
+        try
+        {
+            this.client_Camera.sendCommand("setPitch:57");
+        } catch (IOException ex)
+        {
+            System.out.println("IOException setPitch in ROVFrame constructor: " + ex.getMessage());
+        }
     }
 
     /**
@@ -134,7 +149,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         fullscreenButton = new javax.swing.JButton();
         controlPanel = new javax.swing.JPanel();
         depthPanel = new javax.swing.JPanel();
-        sendButton = new javax.swing.JButton();
         depthInputTextField = new javax.swing.JFormattedTextField();
         depthHeader = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
@@ -143,11 +157,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         setpointLabel = new javax.swing.JLabel();
         manualControlButton = new javax.swing.JToggleButton();
         jLabel5 = new javax.swing.JLabel();
-        manualControlButton_PS_UP = new javax.swing.JButton();
-        manualControlButton_PS_DN = new javax.swing.JButton();
-        manualControlButton_SB_UP = new javax.swing.JButton();
-        manualControlButton_SB_DN = new javax.swing.JButton();
         resetManualControlButton = new javax.swing.JButton();
+        actuatorControlPS = new javax.swing.JSlider();
+        actuatorControlSB = new javax.swing.JSlider();
+        actuatorPosLabel = new javax.swing.JLabel();
+        lockButton = new javax.swing.JToggleButton();
         lightPanel = new javax.swing.JPanel();
         lightHeader = new javax.swing.JLabel();
         jSeparator5 = new javax.swing.JSeparator();
@@ -167,11 +181,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         latitudeLabel = new javax.swing.JLabel();
         longitudeLabel = new javax.swing.JLabel();
         cameraControlPanel = new javax.swing.JPanel();
+        delayTextField = new javax.swing.JFormattedTextField();
         cameraHeader = new javax.swing.JLabel();
         jSeparator9 = new javax.swing.JSeparator();
         photoModeButton = new javax.swing.JToggleButton();
         jLabel2 = new javax.swing.JLabel();
-        delayTextField = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
         cameraPitchSlider = new javax.swing.JSlider();
         jLabel4 = new javax.swing.JLabel();
@@ -180,6 +194,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         photoModeDelayLabel = new javax.swing.JLabel();
         getPhotosButton = new javax.swing.JButton();
         photoModeDelay_FB_Label = new javax.swing.JLabel();
+        clearImagesButton = new javax.swing.JButton();
+        imageNumberLabel = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator3 = new javax.swing.JSeparator();
         jSeparator8 = new javax.swing.JSeparator();
@@ -316,30 +332,30 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         setBackground(new java.awt.Color(39, 44, 50));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(new java.awt.Color(39, 44, 50));
-        setMinimumSize(new java.awt.Dimension(1500, 880));
-        setPreferredSize(new java.awt.Dimension(1500, 880));
+        setMinimumSize(new java.awt.Dimension(1445, 830));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         window.setBackground(new java.awt.Color(39, 44, 50));
         window.setForeground(new java.awt.Color(39, 44, 50));
-        window.setMinimumSize(new java.awt.Dimension(1500, 880));
-        window.setPreferredSize(new java.awt.Dimension(1500, 880));
+        window.setMinimumSize(new java.awt.Dimension(1445, 830));
+        window.setPreferredSize(new java.awt.Dimension(1445, 830));
         window.setLayout(new java.awt.GridBagLayout());
 
         background.setBackground(new java.awt.Color(39, 44, 50));
         background.setForeground(new java.awt.Color(39, 44, 50));
         background.setToolTipText("");
         background.setAlignmentX(5.0F);
-        background.setMinimumSize(new java.awt.Dimension(1500, 880));
-        background.setPreferredSize(new java.awt.Dimension(1500, 880));
+        background.setMinimumSize(new java.awt.Dimension(1445, 830));
+        background.setPreferredSize(new java.awt.Dimension(1445, 830));
 
         cameraPanel.setBackground(new java.awt.Color(39, 44, 50));
         cameraPanel.setForeground(new java.awt.Color(39, 44, 50));
         cameraPanel.setToolTipText("");
         cameraPanel.setAlignmentX(0.8F);
         cameraPanel.setAlignmentY(0.8F);
-        cameraPanel.setMinimumSize(new java.awt.Dimension(450, 320));
-        cameraPanel.setPreferredSize(new java.awt.Dimension(718, 580));
+        cameraPanel.setMaximumSize(new java.awt.Dimension(985, 605));
+        cameraPanel.setMinimumSize(new java.awt.Dimension(985, 605));
+        cameraPanel.setPreferredSize(new java.awt.Dimension(985, 605));
 
         fullscreenButton.setBackground(new java.awt.Color(0, 0, 0));
         fullscreenButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -362,7 +378,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         cameraPanelLayout.setHorizontalGroup(
             cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cameraPanelLayout.createSequentialGroup()
-                .addGap(0, 1009, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(fullscreenButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         cameraPanelLayout.setVerticalGroup(
@@ -379,20 +395,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         depthPanel.setBackground(new java.awt.Color(39, 44, 50));
 
-        sendButton.setBackground(new java.awt.Color(39, 44, 50));
-        sendButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        sendButton.setText("Send");
-        sendButton.setEnabled(false);
-        sendButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                sendButtonActionPerformed(evt);
-            }
-        });
-
-        depthInputTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#.000"))));
-        depthInputTextField.setToolTipText("Depth (Meters)");
+        depthInputTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        depthInputTextField.setToolTipText("Depth (m)");
         depthInputTextField.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -414,6 +418,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         depthModeButton.setForeground(new java.awt.Color(255, 255, 255));
         depthModeButton.setSelected(true);
         depthModeButton.setText("Depth");
+        depthModeButton.setFocusPainted(false);
         depthModeButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -426,6 +431,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         buttonGroup1.add(seafloorModeButton);
         seafloorModeButton.setForeground(new java.awt.Color(255, 255, 255));
         seafloorModeButton.setText("Distance from seafloor");
+        seafloorModeButton.setFocusPainted(false);
         seafloorModeButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -437,11 +443,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         setpointLabel.setBackground(new java.awt.Color(39, 44, 50));
         setpointLabel.setForeground(new java.awt.Color(255, 255, 255));
         setpointLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        setpointLabel.setText("Current setpoint: 100m");
+        setpointLabel.setText("Current setpoint: 0m");
         setpointLabel.setToolTipText("");
+        setpointLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         setpointLabel.setOpaque(true);
 
         manualControlButton.setBackground(new java.awt.Color(39, 44, 50));
+        buttonGroup1.add(manualControlButton);
         manualControlButton.setForeground(new java.awt.Color(39, 44, 50));
         manualControlButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
         manualControlButton.setBorder(null);
@@ -462,113 +470,126 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Manual Control:");
 
-        manualControlButton_PS_UP.setBackground(new java.awt.Color(39, 44, 50));
-        manualControlButton_PS_UP.setForeground(new java.awt.Color(255, 255, 255));
-        manualControlButton_PS_UP.setText("UP");
-        manualControlButton_PS_UP.setFocusPainted(false);
-
-        manualControlButton_PS_DN.setBackground(new java.awt.Color(39, 44, 50));
-        manualControlButton_PS_DN.setForeground(new java.awt.Color(255, 255, 255));
-        manualControlButton_PS_DN.setText("DN");
-        manualControlButton_PS_DN.setFocusPainted(false);
-
-        manualControlButton_SB_UP.setBackground(new java.awt.Color(39, 44, 50));
-        manualControlButton_SB_UP.setForeground(new java.awt.Color(255, 255, 255));
-        manualControlButton_SB_UP.setText("UP");
-        manualControlButton_SB_UP.setFocusPainted(false);
-
-        manualControlButton_SB_DN.setBackground(new java.awt.Color(39, 44, 50));
-        manualControlButton_SB_DN.setForeground(new java.awt.Color(255, 255, 255));
-        manualControlButton_SB_DN.setText("DN");
-        manualControlButton_SB_DN.setFocusPainted(false);
-
         resetManualControlButton.setBackground(new java.awt.Color(39, 44, 50));
         resetManualControlButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         resetManualControlButton.setForeground(new java.awt.Color(255, 255, 255));
         resetManualControlButton.setText("RESET");
         resetManualControlButton.setFocusPainted(false);
+        resetManualControlButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                resetManualControlButtonActionPerformed(evt);
+            }
+        });
+
+        actuatorControlPS.setBackground(new java.awt.Color(39, 44, 50));
+        actuatorControlPS.setMaximum(254);
+        actuatorControlPS.setMinimum(1);
+        actuatorControlPS.setOrientation(javax.swing.JSlider.VERTICAL);
+        actuatorControlPS.setValue(127);
+        actuatorControlPS.setEnabled(false);
+        actuatorControlPS.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseReleased(java.awt.event.MouseEvent evt)
+            {
+                actuatorControlPSMouseReleased(evt);
+            }
+        });
+
+        actuatorControlSB.setBackground(new java.awt.Color(39, 44, 50));
+        actuatorControlSB.setMaximum(254);
+        actuatorControlSB.setMinimum(1);
+        actuatorControlSB.setOrientation(javax.swing.JSlider.VERTICAL);
+        actuatorControlSB.setValue(127);
+        actuatorControlSB.setEnabled(false);
+        actuatorControlSB.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseReleased(java.awt.event.MouseEvent evt)
+            {
+                actuatorControlSBMouseReleased(evt);
+            }
+        });
+
+        actuatorPosLabel.setForeground(new java.awt.Color(255, 255, 255));
+        actuatorPosLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        actuatorPosLabel.setText("<html>PS: 127<br/><br/>SB: 127");
+
+        lockButton.setBackground(new java.awt.Color(39, 44, 50));
+        lockButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        lockButton.setForeground(new java.awt.Color(255, 255, 255));
+        lockButton.setText("LOCK");
+        lockButton.setFocusPainted(false);
+        lockButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                lockButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout depthPanelLayout = new javax.swing.GroupLayout(depthPanel);
         depthPanel.setLayout(depthPanelLayout);
         depthPanelLayout.setHorizontalGroup(
             depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(depthHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSeparator4)
+            .addComponent(depthHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(depthPanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(setpointLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(depthInputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(depthPanelLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, depthPanelLayout.createSequentialGroup()
-                            .addComponent(setpointLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(26, 26, 26)
-                            .addComponent(depthInputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(20, 20, 20))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, depthPanelLayout.createSequentialGroup()
-                            .addComponent(depthModeButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(seafloorModeButton)
-                            .addGap(9, 9, 9)))
-                    .addGroup(depthPanelLayout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sendButton)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(depthModeButton)
+                .addGap(6, 6, 6)
+                .addComponent(seafloorModeButton))
             .addGroup(depthPanelLayout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(depthPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(manualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(depthPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(manualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(depthPanelLayout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(resetManualControlButton)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(manualControlButton_PS_UP)
-                    .addComponent(manualControlButton_PS_DN))
+                        .addGap(17, 17, 17)
+                        .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(resetManualControlButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lockButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(0, 0, 0)
-                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(manualControlButton_SB_UP)
-                    .addComponent(manualControlButton_SB_DN))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(actuatorControlPS, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(actuatorControlSB, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(actuatorPosLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         depthPanelLayout.setVerticalGroup(
             depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(depthPanelLayout.createSequentialGroup()
                 .addComponent(depthHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(setpointLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(depthInputTextField))
-                .addGap(0, 0, 0)
-                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(depthInputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(depthModeButton)
-                    .addComponent(seafloorModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(depthPanelLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(seafloorModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addComponent(jLabel5)
+                .addGap(11, 11, 11)
+                .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(depthPanelLayout.createSequentialGroup()
                         .addComponent(manualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31))
-                    .addGroup(depthPanelLayout.createSequentialGroup()
-                        .addGroup(depthPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(depthPanelLayout.createSequentialGroup()
-                                .addComponent(manualControlButton_PS_UP)
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(manualControlButton_PS_DN))
-                            .addGroup(depthPanelLayout.createSequentialGroup()
-                                .addComponent(manualControlButton_SB_UP)
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(manualControlButton_SB_DN))
-                            .addGroup(depthPanelLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(resetManualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                        .addGap(1, 1, 1)
+                        .addComponent(resetManualControlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(lockButton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(actuatorControlPS, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(actuatorControlSB, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(actuatorPosLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         lightPanel.setBackground(new java.awt.Color(39, 44, 50));
@@ -693,7 +714,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(emergencyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator6)
-                    .addComponent(emergencyHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                    .addComponent(emergencyHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, emergencyPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(emergencyStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -708,9 +729,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addComponent(emergencyHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(35, 35, 35)
                 .addComponent(emergencyStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(35, 35, 35))
             .addGroup(emergencyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -751,7 +772,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             .addGroup(positionPanelLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(positionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(longitudeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                    .addComponent(longitudeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                     .addComponent(latitudeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(headingLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -771,6 +792,16 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         );
 
         cameraControlPanel.setBackground(new java.awt.Color(39, 44, 50));
+
+        delayTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        delayTextField.setToolTipText("Time between each frame (0-99). - Press enter to send command.");
+        delayTextField.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                delayTextFieldActionPerformed(evt);
+            }
+        });
 
         cameraHeader.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cameraHeader.setForeground(new java.awt.Color(255, 255, 255));
@@ -801,16 +832,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Photo Mode");
 
-        delayTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        delayTextField.setToolTipText("Time between each frame (0-100). Press enter.");
-        delayTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                delayTextFieldActionPerformed(evt);
-            }
-        });
-
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Delay:");
@@ -818,6 +839,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         cameraPitchSlider.setBackground(new java.awt.Color(39, 44, 50));
         cameraPitchSlider.setMaximum(75);
         cameraPitchSlider.setMinimum(50);
+        cameraPitchSlider.setValue(57);
         cameraPitchSlider.addMouseListener(new java.awt.event.MouseAdapter()
         {
             public void mouseReleased(java.awt.event.MouseEvent evt)
@@ -831,7 +853,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jLabel4.setText("Camera Pitch:");
 
         cameraPitchTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        cameraPitchTextField.setToolTipText("Camera Pitch (0-100%). Press enter.");
+        cameraPitchTextField.setToolTipText("Camera Pitch (50-75). - Press enter to send command.");
         cameraPitchTextField.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -841,13 +863,14 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         });
 
         cameraPitchLabel.setForeground(new java.awt.Color(255, 255, 255));
-        cameraPitchLabel.setText("0");
+        cameraPitchLabel.setText("57");
 
         photoModeDelayLabel.setForeground(new java.awt.Color(255, 255, 255));
         photoModeDelayLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         photoModeDelayLabel.setText("1 s");
 
         getPhotosButton.setBackground(new java.awt.Color(39, 44, 50));
+        getPhotosButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         getPhotosButton.setForeground(new java.awt.Color(255, 255, 255));
         getPhotosButton.setText("Get IMGs");
         getPhotosButton.setToolTipText("Retrieves the photos from the ROV and saves it to C:/ROV_Photos");
@@ -864,41 +887,67 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         photoModeDelay_FB_Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         photoModeDelay_FB_Label.setText("1 s");
 
+        clearImagesButton.setBackground(new java.awt.Color(39, 44, 50));
+        clearImagesButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        clearImagesButton.setForeground(new java.awt.Color(255, 255, 255));
+        clearImagesButton.setToolTipText("Clears the image folder on the ROV RPi.");
+        clearImagesButton.setFocusPainted(false);
+        clearImagesButton.setLabel("CLR IMGs");
+        clearImagesButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                clearImagesButtonActionPerformed(evt);
+            }
+        });
+
+        imageNumberLabel.setForeground(new java.awt.Color(255, 255, 255));
+        imageNumberLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        imageNumberLabel.setText("0 / 1000");
+
         javax.swing.GroupLayout cameraControlPanelLayout = new javax.swing.GroupLayout(cameraControlPanel);
         cameraControlPanel.setLayout(cameraControlPanelLayout);
         cameraControlPanelLayout.setHorizontalGroup(
             cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator9)
             .addComponent(cameraHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cameraControlPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(photoModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(getPhotosButton)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(cameraControlPanelLayout.createSequentialGroup()
                 .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cameraControlPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(cameraControlPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(photoModeDelayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(delayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cameraControlPanelLayout.createSequentialGroup()
+                                .addComponent(cameraPitchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12))
+                            .addComponent(photoModeDelay_FB_Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(cameraControlPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cameraPitchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12))
-                    .addGroup(cameraControlPanelLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(cameraPitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cameraPitchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 20, Short.MAX_VALUE))
-                    .addGroup(cameraControlPanelLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(photoModeDelayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(delayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(photoModeDelay_FB_Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(cameraControlPanelLayout.createSequentialGroup()
+                                .addComponent(cameraPitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cameraPitchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(6, 6, 6))
+                            .addGroup(cameraControlPanelLayout.createSequentialGroup()
+                                .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(photoModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(cameraControlPanelLayout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(imageNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(clearImagesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(getPhotosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(cameraControlPanelLayout.createSequentialGroup()
                 .addGap(49, 49, 49)
@@ -913,11 +962,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(delayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(photoModeDelayLabel)
                     .addComponent(photoModeDelay_FB_Label))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(0, 0, 0)
                 .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(cameraPitchLabel))
@@ -927,14 +976,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     .addComponent(cameraPitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(cameraControlPanelLayout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(photoModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(getPhotosButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(clearImagesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(cameraControlPanelLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(getPhotosButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(192, 192, 192))
+                        .addComponent(photoModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(imageNumberLabel)))
+                .addGap(246, 246, 246))
         );
 
         delayTextField.getAccessibleContext().setAccessibleDescription("Time between each frame");
@@ -975,21 +1027,22 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addComponent(emergencyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(positionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9)
+                .addComponent(positionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(emergencyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(emergencyPanel, 213, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(positionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
             .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addComponent(cameraControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(cameraControlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(depthPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lightPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 8, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(jSeparator8, javax.swing.GroupLayout.Alignment.TRAILING)
             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
@@ -1164,12 +1217,12 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     .addComponent(wingLabel)
                     .addComponent(pitchLabel)
                     .addComponent(rollLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 40, Short.MAX_VALUE)
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(seafloorDepthRovLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(seafloorDepthBoatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(rovDepthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 21, Short.MAX_VALUE))
+                .addGap(0, 43, Short.MAX_VALUE))
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addGap(125, 125, 125)
                 .addComponent(leakLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1204,16 +1257,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         backgroundLayout.setHorizontalGroup(
             backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundLayout.createSequentialGroup()
-                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(controlPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1039, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1039, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(infoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(controlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 985, Short.MAX_VALUE)
+                    .addComponent(cameraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(infoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         backgroundLayout.setVerticalGroup(
             backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundLayout.createSequentialGroup()
-                .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1357,7 +1411,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         redoSetpoint = setpoint;
         setpoint = previousSetpoint;
         depthInputTextField.setText(setpoint.toString());
-        sendButton.doClick();
+        //sendButton.doClick();
     }//GEN-LAST:event_jMenuUndoActionPerformed
 
     private void fullscreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullscreenButtonActionPerformed
@@ -1402,71 +1456,36 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         }
     }//GEN-LAST:event_actuatorDutyCycleBar1StateChanged
 
-    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-
-        try
+    private void seafloorModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seafloorModeButtonActionPerformed
+        actuatorControlPS.setValue(127);
+        actuatorControlSB.setValue(127);
+        actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+        actuatorControlPS.setEnabled(false);
+        actuatorControlSB.setEnabled(false);
+        if (this.mode != 1)
         {
-            depthInputTextField.commitEdit();
-            double newSetpoint;
+            this.mode = 1;
+            System.out.println("Mode 1 - Distance from seafloor");
             try
             {
-                newSetpoint = (double) depthInputTextField.getValue();
-            } catch (ClassCastException ex)
+                this.client_ROV.sendCommand("cmd_mode:" + String.valueOf(this.mode));
+            } catch (IOException ex)
             {
-                Long newSetpointLong = (long) depthInputTextField.getValue();
-                newSetpoint = newSetpointLong.doubleValue();
+                System.out.println("IOException: " + ex.getMessage());
             }
-            //newSetpoint = Double.parseDouble(new DecimalFormat("#.000").format(newSetpoint));
-            if (newSetpoint <= 50 && newSetpoint >= 0)
-            {
-                try
-                {
-                    if (true)
-                    {
-//                        client.sendCommand(SETPOINTID + newSetpoint);
-//                        client.sendCommand(MODEID + mode);
-                        //       System.out.println("<Setpoint>" + newSetpoint);
-                        //       System.out.println("<Mode>" + mode);
-                        setpointLabel.setBackground(new Color(28, 28, 28));
-                        previousSetpoint = setpoint;
-                        setpoint = newSetpoint;
-                        depthInputTextField.setValue(null);
-                        setpointLabel.setText("Current setpoint: " + setpoint + "m");
-                    } else
-                    {
-                        depthInputTextField.setValue(null);
-                        JOptionPane.showMessageDialog(this,
-                                "No connection established.",
-                                "Connection error",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (Exception ex)
-                {
-                    System.out.println(ex.getMessage());
-                }
-            } else
-            {
-                depthInputTextField.setValue(null);
-                JOptionPane.showMessageDialog(this,
-                        "Input is invalid. (Max depth 50m)",
-                        "Input error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (ParseException ex)
+        } else
         {
-            depthInputTextField.setValue(null);
-            System.out.println(ex.getMessage());
-
+            System.out.println("Already in seafloor mode.");
         }
-
-    }//GEN-LAST:event_sendButtonActionPerformed
-
-    private void seafloorModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seafloorModeButtonActionPerformed
-        mode = 1;
-        System.out.println("Mode 1 - Distance from seafloor");
     }//GEN-LAST:event_seafloorModeButtonActionPerformed
 
     private void lightSwitchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lightSwitchActionPerformed
+        actuatorControlPS.setValue(127);
+        actuatorControlSB.setValue(127);
+        actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+        actuatorControlPS.setEnabled(false);
+        actuatorControlSB.setEnabled(false);
+
         if (lightSwitch.isSelected())
         {
             try
@@ -1493,12 +1512,21 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void emergencyStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyStopButtonActionPerformed
 //        previousSetpoint = setpoint;
-//        setpoint = 0.000;
-        setpointLabel.setText("Emergency! Setpoint: " + setpoint + "m");
+//        setpoint = 0.000; 
+        setpointLabel.setText("EMERGENCY STOP: " + String.valueOf(setpoint) + "m");
         setpointLabel.setBackground(new Color(255, 0, 0));
         depthModeButton.doClick();
         depthInputTextField.setText("0");
-        sendButton.doClick();
+        this.mode = 0;
+        try
+        {
+            this.client_ROV.sendCommand("cmd_emergencySurface:true");
+            this.client_ROV.sendCommand("cmd_mode:0");
+            //sendButton.doClick();
+        } catch (IOException ex)
+        {
+            System.out.println("IOException in emergencyStopButtonActionPerformed: " + ex.getMessage());
+        }
     }//GEN-LAST:event_emergencyStopButtonActionPerformed
 
     private void jMenuItemConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConnectActionPerformed
@@ -1506,7 +1534,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         try
         {
 //            client.connect(ip);
-            sendButton.setEnabled(true);
+            //sendButton.setEnabled(true);
             lightSwitch.setEnabled(true);
             emergencyStopButton.setEnabled(true);
             io.enableIO();
@@ -1529,7 +1557,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         {
             //client.sendCommand("Quit");
             client_ROV.disconnect();
-            sendButton.setEnabled(false);
+            //sendButton.setEnabled(false);
             lightSwitch.setEnabled(false);
             emergencyStopButton.setEnabled(false);
             io.disableIO();
@@ -1554,7 +1582,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         Double tempsetpoint = setpoint;
         setpoint = redoSetpoint;
         depthInputTextField.setText(setpoint.toString());
-        sendButton.doClick();
+        //sendButton.doClick();
         previousSetpoint = tempsetpoint;
     }//GEN-LAST:event_jMenuRedoActionPerformed
 
@@ -1602,8 +1630,26 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     }//GEN-LAST:event_jMenuOptionsActionPerformed
 
     private void depthModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depthModeButtonActionPerformed
-        mode = 0;
-        System.out.println("Mode 0 - Depth");
+        actuatorControlPS.setValue(127);
+        actuatorControlSB.setValue(127);
+        actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+        actuatorControlPS.setEnabled(false);
+        actuatorControlSB.setEnabled(false);
+        if (this.mode != 0)
+        {
+            this.mode = 0;
+            System.out.println("Mode 0 - Depth");
+            try
+            {
+                this.client_ROV.sendCommand("cmd_mode:" + String.valueOf(this.mode));
+            } catch (IOException ex)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            }
+        } else
+        {
+            System.out.println("Already in depth mode.");
+        }
     }//GEN-LAST:event_depthModeButtonActionPerformed
 
     private void jMenuIOControllerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuIOControllerActionPerformed
@@ -1657,12 +1703,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         } catch (ParseException ex)
         {
-            depthInputTextField.setValue(null);
             System.out.println(ex.getMessage());
 
         } catch (IOException ex)
         {
-            depthInputTextField.setValue(null);
             System.out.println("Error: " + ex.getMessage());
         }
     }//GEN-LAST:event_cameraPitchTextFieldActionPerformed
@@ -1694,7 +1738,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 if (this.photoModeDelay > 99)
                 {
                     this.photoModeDelay = 99;
-                    System.out.println("Photo Mode Delay input too high! Set to max (100)");
+                    System.out.println("Photo Mode Delay input too high! Set to max (99)");
                 } else if (this.photoModeDelay < 0)
                 {
                     this.photoModeDelay = 0;
@@ -1703,6 +1747,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 photoModeDelayLabel.setText(String.valueOf(this.photoModeDelay) + " s");
                 data.setPhotoModeDelay(this.photoModeDelay);
                 System.out.println("Photo Mode Delay set to " + String.valueOf(this.photoModeDelay));
+
                 this.udpClient.sendDelayCommand();
             } else
             {
@@ -1739,83 +1784,59 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void getPhotosButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_getPhotosButtonActionPerformed
     {//GEN-HEADEREND:event_getPhotosButtonActionPerformed
-        FtpClient ftp = null;
-        try
+//        GetImagesFrame imgframe = new GetImagesFrame();
+//        imgframe.setVisible(true);
+//        imgframe.setLocation(this.getLocation().x, this.getLocation().y);
+        Object[] options =
         {
-            // Test FTP Client (WORKING)
-            ftp = new FtpClient();
-            ftp.open();
-            for (String s : ftp.getFileList("ftp/images"))
+            "OK", "Cancel"
+        };
+        int choice = JOptionPane.showOptionDialog(this,
+                "Warning! This might take a few minutes and will freeze the GUI.\nPress OK to continue, or Cancel to abort.",
+                "Warning!",
+                JOptionPane.YES_NO_OPTION, //int optionType
+                JOptionPane.INFORMATION_MESSAGE, //int messageType
+                null, //Icon icon,
+                options, //Object[] options,
+                options[0]);//Object initialValue 
+        if (choice == 0)
+        {
+            FtpClient ftp = null;
+            try
             {
-                ftp.downloadFile("ftp/images/" + s, "C://ROV_Photos/" + s, "C://ROV_Photos/");
-                System.out.println(s);
-            }
+                // Test FTP Client (WORKING)
+                ftp = new FtpClient(this.client_Camera.getIP());
+                Thread ftpThread = new Thread(ftp);
+                ftpThread.start();
+                ftp.open();
+                //int count = 1;
+                Collection<String> list = ftp.getFileList("ftp/images");
+                for (String s : list)
+                {
+                    ftp.downloadFile("ftp/images/" + s, "C://ROV_Photos/" + s, "C://ROV_Photos/");
+                    //imgframe.progressLabel.setText(String.valueOf(count) + " / " + String.valueOf(list.size()));
+                    System.out.println(s);
+                    //count++;
+                }
 
-        } catch (Exception ex)
-        {
-            System.out.println(ex.getMessage());
-        } finally
-        {
-            if (ftp != null)
+            } catch (Exception ex)
             {
-                ftp.disconnect();
+                System.out.println(ex.getMessage());
+            } finally
+            {
+                if (ftp != null)
+                {
+                    ftp.disconnect();
+                }
             }
+        } else if (choice == 0)
+        {
+            System.out.println("Cancelled getting the images.");
+        } else
+        {
+            System.out.println("No option chosen: Cancelled getting the images.");
         }
-
     }//GEN-LAST:event_getPhotosButtonActionPerformed
-
-    private void depthInputTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_depthInputTextFieldActionPerformed
-    {//GEN-HEADEREND:event_depthInputTextFieldActionPerformed
-        try
-        {
-            depthInputTextField.commitEdit();
-            if (depthInputTextField.getText() != null)
-            {
-                double newSetpoint;
-                try
-                {
-                    newSetpoint = (double) depthInputTextField.getValue();
-                } catch (ClassCastException ex)
-                {
-                    Long newSetpointLong = (long) depthInputTextField.getValue();
-                    newSetpoint = newSetpointLong.doubleValue();
-                }
-
-                if (newSetpoint <= 50 && newSetpoint >= 0)
-                {
-                    setpointLabel.setBackground(new Color(28, 28, 28));
-                    previousSetpoint = setpoint;
-                    setpoint = newSetpoint;
-//                  depthInputTextField.setValue(null);
-                    setpointLabel.setText("Current setpoint: " + setpoint + "m");
-
-                    // Diskuter med han robin: Sende samme setDepth-kommando og la ROV få bestemme om det e depth- eller seafloor-mode ut ifra ka knapp som e valgt i GUI.
-                    this.client_ROV.sendCommand("setCmd_depth:" + String.valueOf(setpoint));
-                } else
-                {
-                    depthInputTextField.setValue(null);
-                    JOptionPane.showMessageDialog(this,
-                            "Input is invalid. (Max depth 50m)",
-                            "Input error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-
-            } else
-            {
-                System.out.println("Invalid input entered.");
-            }
-        } catch (ParseException ex)
-        {
-            depthInputTextField.setValue(null);
-            System.out.println(ex.getMessage());
-
-        } catch (IOException ex)
-        {
-            System.out.println("IOException: " + ex.getMessage());
-        }
-
-
-    }//GEN-LAST:event_depthInputTextFieldActionPerformed
 
     private void lightSliderMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_lightSliderMouseReleased
     {//GEN-HEADEREND:event_lightSliderMouseReleased
@@ -1837,8 +1858,206 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void manualControlButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_manualControlButtonActionPerformed
     {//GEN-HEADEREND:event_manualControlButtonActionPerformed
-        // TODO add your handling code here:
+        if (this.mode != 2)
+        {
+            actuatorControlPS.setEnabled(true);
+            actuatorControlSB.setEnabled(true);
+            this.mode = 2;
+            System.out.println("Mode 2 - Manual wing control");
+            try
+            {
+                this.client_ROV.sendCommand("cmd_mode:" + String.valueOf(this.mode));
+                this.client_ROV.sendCommand("cmd_manualWingControl:" + String.valueOf(manualControlButton.isSelected()));
+            } catch (IOException ex)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            }
+        } else
+        {
+            depthModeButton.doClick();
+        }
     }//GEN-LAST:event_manualControlButtonActionPerformed
+
+    private void resetManualControlButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_resetManualControlButtonActionPerformed
+    {//GEN-HEADEREND:event_resetManualControlButtonActionPerformed
+        actuatorControlPS.setValue(127);
+        actuatorControlSB.setValue(127);
+        actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+        if (manualControlButton.isSelected())
+        {
+            try
+            {
+                this.client_ROV.sendCommand("cmd_actuatorPS:127");
+                this.client_ROV.sendCommand("cmd_actuatorSB:127");
+            } catch (IOException ex)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            }
+        } else
+        {
+            //System.out.println("Not in manual control mode.");
+        }
+    }//GEN-LAST:event_resetManualControlButtonActionPerformed
+
+    private void actuatorControlPSMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_actuatorControlPSMouseReleased
+    {//GEN-HEADEREND:event_actuatorControlPSMouseReleased
+        if (manualControlButton.isSelected())
+        {
+            if (lockButton.isSelected())
+            {
+                actuatorControlSB.setValue(actuatorControlPS.getValue());
+                actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+                try
+                {
+                    this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
+                    this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
+                } catch (IOException ex)
+                {
+                    System.out.println("IOException: " + ex.getMessage());
+                }
+            } else
+            {
+                actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+                try
+                {
+                    this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
+                } catch (IOException ex)
+                {
+                    System.out.println("IOException: " + ex.getMessage());
+                }
+            }
+
+        } else
+        {
+            //System.out.println("Not in manual control mode.");
+        }
+
+    }//GEN-LAST:event_actuatorControlPSMouseReleased
+
+    private void actuatorControlSBMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_actuatorControlSBMouseReleased
+    {//GEN-HEADEREND:event_actuatorControlSBMouseReleased
+        if (manualControlButton.isSelected())
+        {
+            if (lockButton.isSelected())
+            {
+                actuatorControlPS.setValue(actuatorControlSB.getValue());
+                actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+                try
+                {
+                    this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
+                    this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
+                } catch (IOException ex)
+                {
+                    System.out.println("IOException: " + ex.getMessage());
+                }
+            } else
+            {
+
+                actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+                try
+                {
+                    this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
+                } catch (IOException ex)
+                {
+                    System.out.println("IOException: " + ex.getMessage());
+                }
+            }
+        } else
+        {
+            //System.out.println("Not in manual control mode.");
+        }
+    }//GEN-LAST:event_actuatorControlSBMouseReleased
+
+    private void depthInputTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_depthInputTextFieldActionPerformed
+    {//GEN-HEADEREND:event_depthInputTextFieldActionPerformed
+        System.out.println("test");
+        try
+        {
+            depthInputTextField.commitEdit();
+            if (depthInputTextField.getText() != null && isNumeric(delayTextField.getText()))
+            {
+                double newSetpoint;
+                try
+                {
+                    newSetpoint = (double) depthInputTextField.getValue();
+                } catch (ClassCastException ex)
+                {
+                    Long newSetpointLong = (long) depthInputTextField.getValue();
+                    newSetpoint = newSetpointLong.doubleValue();
+                }
+
+                if (newSetpoint <= 50 && newSetpoint >= 0)
+                {
+                    setpointLabel.setBackground(new Color(39, 44, 50));
+                    previousSetpoint = setpoint;
+                    setpoint = newSetpoint;
+//                  depthInputTextField.setValue(null);
+                    setpointLabel.setText("Current setpoint: " + setpoint + "m");
+                    System.out.println("Photo Mode Delay set to " + String.valueOf(this.photoModeDelay));
+                    this.client_ROV.sendCommand("cmd_depth:" + String.valueOf(setpoint));
+                } else
+                {
+                    depthInputTextField.setValue(null);
+                    JOptionPane.showMessageDialog(this,
+                            "Input is invalid. (Max depth 50m)",
+                            "Input error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
+            } else
+            {
+                System.out.println("Invalid input entered.");
+            }
+        } catch (IOException ex)
+        {
+            System.out.println("IOException: " + ex.getMessage());
+        } catch (ParseException ex)
+        {
+            System.out.println("ParseException: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_depthInputTextFieldActionPerformed
+
+    private void lockButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_lockButtonActionPerformed
+    {//GEN-HEADEREND:event_lockButtonActionPerformed
+        if (actuatorControlPS.getValue() != 127)
+        {
+            actuatorControlPS.setValue(127);
+            actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+            try
+            {
+                this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
+            } catch (IOException ex)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            }
+        }
+        if (actuatorControlSB.getValue() != 127)
+        {
+            actuatorControlSB.setValue(127);
+            actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+            try
+            {
+                this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
+            } catch (IOException ex)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            }
+        }
+    }//GEN-LAST:event_lockButtonActionPerformed
+
+    private void clearImagesButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clearImagesButtonActionPerformed
+    {//GEN-HEADEREND:event_clearImagesButtonActionPerformed
+        try
+        {
+            this.client_Camera.sendCommand("clearImages");
+            this.udpClient.sendResetIMGcommand();
+            data.setImageNumber(0);
+            imageNumberLabel.setText("0 / 1000");
+        } catch (IOException ex)
+        {
+            Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_clearImagesButtonActionPerformed
 
     Action exitFullscreenAction = new AbstractAction()
     {
@@ -1848,17 +2067,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         }
     };
 
-    Action sendInputAction = new AbstractAction()
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            if (depthInputTextField.isFocusOwner())
-            {
-                sendButton.doClick();
-            }
-
-        }
-    };
+//    Action sendInputAction = new AbstractAction()
+//    {
+//        public void actionPerformed(ActionEvent e)
+//        {
+//            if (depthInputTextField.isFocusOwner())
+//            {
+//                //sendButton.doClick();
+//            }
+//
+//        }
+//    };
 
     public static boolean isNumeric(String string)
     {
@@ -1904,12 +2123,15 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSlider actuatorControlPS;
+    private javax.swing.JSlider actuatorControlSB;
     private javax.swing.JProgressBar actuatorDutyCycleBar1;
     private javax.swing.JProgressBar actuatorDutyCycleBar2;
     private javax.swing.JLabel actuatorHeader1;
     private javax.swing.JLabel actuatorHeader2;
     private javax.swing.JPanel actuatorPanel1;
     private javax.swing.JPanel actuatorPanel2;
+    private javax.swing.JLabel actuatorPosLabel;
     private javax.swing.JPanel background;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel cameraControlPanel;
@@ -1919,6 +2141,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JLabel cameraPitchLabel;
     private javax.swing.JSlider cameraPitchSlider;
     private javax.swing.JFormattedTextField cameraPitchTextField;
+    private javax.swing.JButton clearImagesButton;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JFormattedTextField delayTextField;
     private javax.swing.JLabel depthHeader;
@@ -1936,6 +2159,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JButton getPhotosButton;
     private javax.swing.JLabel headingLabel;
     private javax.swing.JFrame helpframe;
+    private javax.swing.JLabel imageNumberLabel;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -1973,12 +2197,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JSlider lightSlider;
     private javax.swing.JToggleButton lightSwitch;
     private javax.swing.JLabel lightSwitch_lbl;
+    private javax.swing.JToggleButton lockButton;
     private javax.swing.JLabel longitudeLabel;
     private javax.swing.JToggleButton manualControlButton;
-    private javax.swing.JButton manualControlButton_PS_DN;
-    private javax.swing.JButton manualControlButton_PS_UP;
-    private javax.swing.JButton manualControlButton_SB_DN;
-    private javax.swing.JButton manualControlButton_SB_UP;
     private javax.swing.JToggleButton photoModeButton;
     private javax.swing.JLabel photoModeDelayLabel;
     private javax.swing.JLabel photoModeDelay_FB_Label;
@@ -1991,7 +2212,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JLabel seafloorDepthBoatLabel;
     private javax.swing.JLabel seafloorDepthRovLabel;
     private javax.swing.JRadioButton seafloorModeButton;
-    private javax.swing.JButton sendButton;
     private javax.swing.JLabel setpointLabel;
     private javax.swing.JLabel warningLabel1;
     private javax.swing.JLabel warningLabel2;
@@ -2004,7 +2224,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     {
         try
         {
-            videoImage = ImageIO.read(new File("C:\\TowedROV.jpg"));
+            videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
         } catch (IOException ex)
         {
             Logger.getLogger(NTNUSubseaGUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -2034,8 +2254,12 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     {
         //actuatorDutyCycleBar1.setValue(data.getBarValue());
         //System.out.println(data.getPitchAngle());
-        this.showImage(data.getVideoImage());
+        if (data.getVideoImage() != null)
+        {
+            this.showImage(data.getVideoImage());
+        }
         photoModeDelay_FB_Label.setText(String.valueOf(df2.format(data.getPhotoModeDelay_FB())) + " s");
+        imageNumberLabel.setText(data.getImageNumber() + " / 1000");
         headingLabel.setText("Heading: " + data.getHeading());
         longitudeLabel.setText("Longitude: " + data.getLongitude());
         latitudeLabel.setText("Latitude: " + data.getLatitude());
@@ -2045,6 +2269,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         wingLabel.setText("<html>Wing angle:<br/><br/><center/>" + data.getWingAngle());
         seafloorDepthBoatLabel.setText("<html>Depth beneath boat:<br/><br/><center/>" + data.getSeafloorBoat());
         seafloorDepthRovLabel.setText("<html>Depth beneath ROV:<br/><br/><center/>" + data.getSeafloorRov());
+
+//        actuatorControlPS.setValue(data.getFb_actuatorPSPos);
+//        actuatorControlSB.setValue(data.getFb_actuatorSBPos);
+        actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
+
         if (data.getLeakStatus())
         {
             leakLabel.setText("<html>Leak detection:<br/><br/><center/>Leak detected!");

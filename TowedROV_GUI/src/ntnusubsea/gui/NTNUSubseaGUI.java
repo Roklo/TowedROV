@@ -33,8 +33,8 @@ public class NTNUSubseaGUI
     //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
-    protected static String IP_ROV = "192.168.0.1";
-    protected static String IP_camera = "192.168.0.2";
+    protected static String IP_ROV = "192.168.0.101";
+    protected static String IP_camera = "192.168.0.102";
     protected static int Port_ROV = 8080;
     protected static int Port_cameraStream = 8083;
     protected static int Port_cameraCom = 9006;

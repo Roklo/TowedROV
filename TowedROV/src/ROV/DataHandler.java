@@ -30,6 +30,7 @@ public class DataHandler
 
     int cmd_pressureAtSeaLevel = 0;
 
+	byte cmd_mode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
     int cmd_depth = 0;
     int cmd_cameraPitch = 0;
     int cmd_cameraRoll = 0;
@@ -42,6 +43,7 @@ public class DataHandler
 
     boolean cmd_emergencySurface = false;
     boolean cmd_ack = false;
+    boolean cmd_manualWingControl = false;
 
     int cmd_imuCalibrateRoll = 0;
     int cmd_imuCalibratePitch = 0;
@@ -393,6 +395,16 @@ public class DataHandler
         this.cmd_actuatorSB = cmd_actuatorSB;
     }
 
+    public byte getCmd_mode()
+    {
+        return cmd_mode;
+    }
+
+    public void setCmd_mode(byte cmd_mode)
+    {
+        this.cmd_mode = cmd_mode;
+    }
+
     public int getCmd_depth()
     {
         return cmd_depth;
@@ -481,6 +493,16 @@ public class DataHandler
     public void setCmd_emergencySurface(boolean cmd_emergencySurface)
     {
         this.cmd_emergencySurface = cmd_emergencySurface;
+    }
+	
+	public boolean isCmd_manualWingControl()
+    {
+        return cmd_manualWingControl;
+    }
+
+    public void setCmd_manualWingControl(boolean cmd_manualWingControl)
+    {
+        this.cmd_manualWingControl = cmd_manualWingControl;
     }
 
     public int getFb_depthBelowTransduser()

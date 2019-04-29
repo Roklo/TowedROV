@@ -8,22 +8,28 @@ package ntnusubsea.gui;
 import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
  * Frame to display a graph panel
+ *
  * @author Marius Nonsvik
  */
-public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Observer {
+public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Observer
+{
 
     private Data data;
     private GraphPanel graph;
 
     /**
      * Creates new form SonarFrame
+     *
      * @param data Data containing shared variables
      */
-    public EchoSounderFrame(Data data) {
+    public EchoSounderFrame(Data data)
+    {
         initComponents();
         this.data = data;
         graph = new GraphPanel();
@@ -39,18 +45,20 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
     /**
      * Draws and displays the graphs
      */
-    public void showGraph() {
+    public void showGraph()
+    {
         graph.createAndShowGraph();
     }
 
     /**
-     * |- Not finished -|
-     * Refreshes the graphs with the given depth and position of the 2nd
-     * graph in the x axis x-axis  
+     * |- Not finished -| Refreshes the graphs with the given depth and position
+     * of the 2nd graph in the x axis x-axis
+     *
      * @param position X position of second graph
      * @param depth Depth of the graphs
      */
-    public void refreshGraph(int position, int depth) {
+    public void refreshGraph(int position, int depth)
+    {
         graph.drawGraph(position, depth);
     }
 
@@ -117,16 +125,51 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         String cableLength = (String) JOptionPane.showInputDialog(this, "Enten current cable length (Meters)", "Calibration", JOptionPane.PLAIN_MESSAGE, null, null, "100.000");
-        try {
+        try
+        {
             System.out.println(Float.valueOf(cableLength));
-        } catch (NumberFormatException | NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex)
+        {
             System.out.println("Invalid or no input");
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     @Override
-    public void run() {
+    public void run()
+    {
         showGraph();
+        int depth = 0;
+        int xpos = 0;
+
+//        while (true)
+//        {
+//            for (int i = 0; i <= 10; i++)
+//            {
+//                depth = depth + i;
+//                xpos = xpos + 3;
+//                this.refreshGraph(xpos, depth);
+//                try
+//                {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException ex)
+//                {
+//                    Logger.getLogger(EchoSounderFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//            for (int o = 10; o <= 0; o--)
+//            {
+//                depth = depth - 0;
+//                xpos = xpos + 3;
+//                this.refreshGraph(xpos, depth);
+//                try
+//                {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException ex)
+//                {
+//                    Logger.getLogger(EchoSounderFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        }
     }
 
 
@@ -140,8 +183,9 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void update(Observable o, Object arg) {
-     //int depth = Math.round(data.getDepth() * 100);
-    // refreshGraph(0, depth);
+    public void update(Observable o, Object arg)
+    {
+        //int depth = Math.round(data.getDepth() * 100);
+        // refreshGraph(0, depth);
     }
 }
