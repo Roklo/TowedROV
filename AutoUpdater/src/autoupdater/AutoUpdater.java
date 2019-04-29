@@ -4,41 +4,55 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.commons.io.FileUtils;
+import java.net.InetAddress;
 
 public class AutoUpdater
 {
 
-    protected static String sUrl = "https://github.com/Roklo/TowedROV/archive/master.zip";
+    protected static String sUrl = "https://github.com/Roklo/TowedROV_GUI/archive/master.zip";
     protected static String destinationZip = "C:\\Temp\\file.zip";
-    protected static String destinationToDownloadedFolder = "C:\\Temp\\TowedROV-master";
+    protected static String destinationToDownloadedFolder = "C:\\temp\\TowedROV_GUI-master";
     protected static String destination = "C:\\Temp";
-    protected static String destinationToNewFiles = "C:\\temp\\TowedROV-master\\TowedROV_GUI\\PublishedVersion";
+    protected static String destinationToNewFiles = "C:\\temp\\TowedROV_GUI-master";
     protected static String destinationToSaveLocation = "C:\\TowedROV";
-    protected static String newDestinationVersion = "C:\\temp\\TowedROV-master\\TowedROV_GUI\\PublishedVersion\\Version.txt";
+    protected static String newDestinationVersion = "C:\\temp\\TowedROV_GUI-master\\Version.txt";
     protected static String oldDestinationVersion = "C:\\TowedROV\\Version.txt";
 
     public static void main(String[] args) throws IOException
     {
+        System.out.println("Checking internet connection...");
         boolean connectedToInternet = false;
-        //URL pointing to the file
-        URL url = new URL(sUrl);
-        ZipExtractor zipE = new ZipExtractor();
+//        Checking internet connection
+        InetAddress address = InetAddress.getByName("8.8.8.8");
+        String hostName = address.getHostName().toLowerCase();
 
-        //File where to be downloaded
-        File filezip = new File(destinationZip);
-
-        System.out.println("Starting to download file...");
-        try
+        if (hostName.contains("google"))
         {
-            URLReader.copyURLToFile(url, filezip);
             connectedToInternet = true;
-        } catch (Exception e)
+        } else
         {
             connectedToInternet = false;
-            System.out.println("Not connected to internet or GIT is not available");
         }
+
         if (connectedToInternet)
         {
+            //URL pointing to the file
+            URL url = new URL(sUrl);
+            ZipExtractor zipE = new ZipExtractor();
+
+            //File where to be downloaded
+            File filezip = new File(destinationZip);
+
+            System.out.println("Starting to download file...");
+            try
+            {
+              //  URLReader.copyURLToFile(url, filezip);
+                connectedToInternet = true;
+            } catch (Exception e)
+            {
+                connectedToInternet = false;
+                System.out.println("Not connected to internet or GIT is not available");
+            }
 
             System.out.println("Starting to unzip...");
             zipE.unzip(destinationZip, destination);
@@ -96,6 +110,7 @@ public class AutoUpdater
                         System.out.println("Cleaning up...");
                         cleaner();
                         System.out.println("Done");
+                        startGUI();
 
                     } catch (Exception e)
                     {
@@ -105,6 +120,10 @@ public class AutoUpdater
                 {
                     //Do not update
                     System.out.println("Newest version already installed!");
+                    System.out.println("Cleaning up...");
+                    cleaner();
+                    System.out.println("Done");
+                    startGUI();
                 }
             } else
             {
@@ -118,6 +137,46 @@ public class AutoUpdater
                 {
                 }
                 System.out.println("New files installed");
+                System.out.println("Cleaning up...");
+                cleaner();
+                System.out.println("Done");
+                startGUI();
+
+            }
+
+        } else
+        {
+            System.out.println("------------------------------------------------------------------");
+            System.out.println("Warning: Not connected to internet...");
+            System.out.println("------------------------------------------------------------------");
+
+            File oldVersionFile = new File(oldDestinationVersion);
+
+            if (oldVersionFile.exists() && !oldVersionFile.isDirectory())
+            {
+                // do something
+                System.out.println("Using local files");
+                startGUI();
+            } else
+            {
+                System.out.println("------------------------------------------------------------------");
+                System.out.println("ERROR: TowedRov_GUI is not installed on this computer!!!");
+                System.out.println("Connect to internet and run launcher again to fix the problem");
+                System.out.println("------------------------------------------------------------------");
+                System.out.println("Program exiting in ...");
+                try
+                {
+                    for (int i = 10; i >= 0; i--)
+                    {
+                        System.out.println(i);
+                        Thread.sleep(1000);
+
+                    }
+
+                } catch (Exception e)
+                {
+                }
+
             }
 
         }
@@ -133,6 +192,26 @@ public class AutoUpdater
 
     private static void startGUI()
     {
+        try
+        {
+            String exeLocation = destinationToSaveLocation + "\\TowedROV_GUI.exe";
+            System.out.println("Starting GUI...");
+
+            //  Runtime.getRuntime().exec(exeLocation, null, new File(destinationToSaveLocation));
+            System.out.println("Done, GUI will start in: ");
+            for (int i = 5; i >= 0; i--)
+            {
+                System.out.println(i);
+                Thread.sleep(1000);
+
+            }
+            Runtime.getRuntime().exec("cmd /c start \"\" C:\\TowedROV\\TowedROV_GUI.exe");
+            Thread.sleep(10);
+        } catch (Exception e)
+        {
+            System.out.println("Error could not start TowedROV_GUI");
+            System.out.println(e);
+        }
 
     }
 

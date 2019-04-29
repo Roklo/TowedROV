@@ -25,7 +25,7 @@ public class NTNUSubseaGUI
 {
 
     private static Thread readSerialData;
-    private static Thread LogFileHandler;
+    //private static Thread LogFileHandler;
     private static Thread imuThread;
     private static Thread gpsThread;
     private static Thread echoSounderThread;
@@ -49,7 +49,8 @@ public class NTNUSubseaGUI
         Data data = new Data();
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
-        DataLogger logger = new DataLogger(data);
+        //DataLogger logger = new DataLogger(data);
+        LogFileHandler lgh = new LogFileHandler(data);
         TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
         TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
         UDPClient stream = new UDPClient(Port_cameraStream, data);
@@ -65,12 +66,12 @@ public class NTNUSubseaGUI
         SwingUtilities.invokeLater(io);
         sonar.setVisible(false);
         data.addObserver(sonar);
-        data.addObserver(logger);
+       // data.addObserver(logger);
         data.addObserver(frame);
         data.addObserver(encoder);
         data.addObserver(io);
-        executor.scheduleAtFixedRate(logger,
-                3000, 1000, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(lgh,
+                0, 5000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
                 20, 40, TimeUnit.MILLISECONDS);
         //executor.scheduleAtFixedRate(nmea,
@@ -96,9 +97,9 @@ public class NTNUSubseaGUI
                 },
                         "Shutdown-thread"));
 
-        LogFileHandler = new Thread(new LogFileHandler(data));
-
-        LogFileHandler.start();
+//        LogFileHandler = new Thread(new LogFileHandler(data));
+//
+//        LogFileHandler.start();
 
         long timeDifference = 0;
         long lastTime = 0;

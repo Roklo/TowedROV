@@ -32,6 +32,15 @@ public final class Data extends Observable
     public HashMap<String, String> comPortList = new HashMap<>();
     public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
 
+    //------------------------
+    //Do not change the times, this is measured movement time without oil
+    private static final long actuatorPSInitialMovementTime = 8000;
+    private static final long actuatorSBInitialMovementTime = 8000;
+    //------------------------
+    private static final int actuatorTolerableSpeedLoss = 10; //Percent
+    private long PSActuatorMaxToMinTime;
+    private long SBActuatorMaxToMinTime;
+
     private int arduinoBaudRate = 115200;
     private byte[] dataFromArduino = new byte[11];
     private boolean dataFromArduinoAvailable = false;
@@ -57,6 +66,12 @@ public final class Data extends Observable
 
     // Feedback from ROV
     public int rovDepth;
+    private int fb_actuatorPSPos;
+    private int fb_actuatorSBPos;
+    private int fb_actuatorPSMinPos;
+    private int fb_actuatorSBMinPos;
+    private int fb_actuatorPSMaxPos;
+    private int fb_actuatorSBMaxPos;
 
     // Feedback from GUI
     public boolean startLogging = true;
@@ -88,6 +103,7 @@ public final class Data extends Observable
     private double photoModeDelay_FB = 1;
     private int imageNumber = 0;
     private int cameraPitchValue = 0;
+    private boolean doRovCalibration = false;
 
     /**
      * Creates an object of the class Data.
@@ -811,6 +827,100 @@ public final class Data extends Observable
         setChanged();
         notifyObservers();
     }
+
+    public boolean getStartLogging()
+    {
+        return startLogging;
+    }
+
+    public void setStartLogging(boolean startLogging)
+    {
+        this.startLogging = startLogging;
+        setChanged();
+        notifyObservers();
+    }
+
+    public int getFb_actuatorPSPos()
+    {
+        return fb_actuatorPSPos;
+    }
+
+    public void setFb_actuatorPSPos(int fb_actuatorPSPos)
+    {
+        this.fb_actuatorPSPos = fb_actuatorPSPos;
+    }
+
+    public int getFb_actuatorSBPos()
+    {
+        return fb_actuatorSBPos;
+    }
+
+    public void setFb_actuatorSBPos(int fb_actuatorSBPos)
+    {
+        this.fb_actuatorSBPos = fb_actuatorSBPos;
+    }
+
+    public int getFb_actuatorPSMinPos()
+    {
+        return fb_actuatorPSMinPos;
+    }
+
+    public void setFb_actuatorPSMinPos(int fb_actuatorPSMinPos)
+    {
+        this.fb_actuatorPSMinPos = fb_actuatorPSMinPos;
+    }
+
+    public int getFb_actuatorSBMinPos()
+    {
+        return fb_actuatorSBMinPos;
+    }
+
+    public void setFb_actuatorSBMinPos(int fb_actuatorSBMinPos)
+    {
+        this.fb_actuatorSBMinPos = fb_actuatorSBMinPos;
+    }
+
+    public int getFb_actuatorPSMaxPos()
+    {
+        return fb_actuatorPSMaxPos;
+    }
+
+    public void setFb_actuatorPSMaxPos(int fb_actuatorPSMaxPos)
+    {
+        this.fb_actuatorPSMaxPos = fb_actuatorPSMaxPos;
+    }
+
+    public int getFb_actuatorSBMaxPos()
+    {
+        return fb_actuatorSBMaxPos;
+    }
+
+    public void setFb_actuatorSBMaxPos(int fb_actuatorSBMaxPos)
+    {
+        this.fb_actuatorSBMaxPos = fb_actuatorSBMaxPos;
+    }
+
+    public long getPSActuatorMaxToMinTime()
+    {
+        return PSActuatorMaxToMinTime;
+    }
+
+    public void setPSActuatorMaxToMinTime(long PSActuatorMaxToMinTime)
+    {
+        this.PSActuatorMaxToMinTime = PSActuatorMaxToMinTime;
+    }
+
+    public long getSBActuatorMaxToMinTime()
+    {
+        return SBActuatorMaxToMinTime;
+    }
+
+    public void setSBActuatorMaxToMinTime(long SBActuatorMaxToMinTime)
+    {
+        this.SBActuatorMaxToMinTime = SBActuatorMaxToMinTime;
+    }
+
+ 
 
     /**
      * Compare keys to controll values coming in from arduino, and puts correct
