@@ -73,7 +73,7 @@ public class NTNUSubseaGUI
         executor.scheduleAtFixedRate(lgh,
                 0, 5000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
-                20, 40, TimeUnit.MILLISECONDS);
+                5000, 40, TimeUnit.MILLISECONDS);
         //executor.scheduleAtFixedRate(nmea,
         //      0, 1000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(client_ROV,

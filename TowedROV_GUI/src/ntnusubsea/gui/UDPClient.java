@@ -61,7 +61,7 @@ public class UDPClient implements Runnable
             this.port = port;
             //this.IP = IP;
             videoSocket = new DatagramSocket(this.port);
-            photoDirectory = new File("C://ROV_Photos/");
+            photoDirectory = new File("C://TowedROV/ROV_Photos/");
         } catch (Exception e)
         {
             System.out.println("Error connecting to the UDP Server: " + e.getMessage());
@@ -166,15 +166,15 @@ public class UDPClient implements Runnable
 //                            this.photoNumber++;
 //                        } else
 //                        {
-//                            System.out.println("No directory found, creating a new one at C://ROV_Photos/");
-//                            this.photoDirectory = new File("C://ROV_Photos/");
+//                            System.out.println("No directory found, creating a new one at C://TowedROV/ROV_Photos/");
+//                            this.photoDirectory.mkdir();
 //                        }
 //
 //                    } catch (Exception e)
 //                    {
 //                        System.out.println("Exception occured :" + e.getMessage());
 //                    }
-//                    System.out.println("Image were saved to disk succesfully at C:/ROV_Photos");
+//                    System.out.println("Image were saved to disk succesfully at C://TowedROV/ROV_Photos");
 //                }
                 // Sends the command to the ROV
                 if (data.isPhotoMode() != lastPhotoMode)
