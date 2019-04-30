@@ -137,7 +137,7 @@ public class StartupCalibration
         {
             if (System.nanoTime() - lastTime >= 250000000)
             {
-                dh.cmd_lightIntensity = lightIntensity + 1;
+                dh.cmd_lightMode = lightIntensity + 1;
                 lastTime = System.nanoTime();
             }
 
@@ -145,7 +145,7 @@ public class StartupCalibration
         try
         {
             Thread.sleep(5000);
-            dh.cmd_lightIntensity = 0;
+            dh.cmd_lightMode = 0;
         } catch (Exception e)
         {
         }

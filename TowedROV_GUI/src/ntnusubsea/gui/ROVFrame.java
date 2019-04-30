@@ -21,6 +21,9 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -55,6 +58,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private TCPClient client_ROV;
     private TCPClient client_Camera;
     private UDPClient udpClient;
+    private ScheduledExecutorService clientThreadExecutor;
     private IOControlFrame io;
     private final String LIGHTSID = "<Lights>";
     private final String MODEID = "<Mode>";
@@ -76,6 +80,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
      */
     public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPClient client_ROV, TCPClient client_Camera, UDPClient udpClient)
     {
+        this.clientThreadExecutor = null;
         initComponents();
         this.data = data;
         this.echoSounder = echoSounder;
@@ -144,7 +149,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         buttonGroup1 = new javax.swing.ButtonGroup();
         helpframe = new javax.swing.JFrame();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        helpFrameOKbutton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         window = new javax.swing.JPanel();
         background = new javax.swing.JPanel();
@@ -172,6 +177,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightSwitch_lbl = new javax.swing.JLabel();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 180), new java.awt.Dimension(0, 180), new java.awt.Dimension(32767, 180));
         lightSlider = new javax.swing.JSlider();
+        lightSwitchBlueLED = new javax.swing.JToggleButton();
+        jLabel6 = new javax.swing.JLabel();
         emergencyPanel = new javax.swing.JPanel();
         emergencyHeader = new javax.swing.JLabel();
         emergencyStopButton = new javax.swing.JButton();
@@ -221,13 +228,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         leakLabel = new javax.swing.JLabel();
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         jMenuBar = new javax.swing.JMenuBar();
-        jMenuFile = new javax.swing.JMenu();
+        jMenuConnect = new javax.swing.JMenu();
         jMenuItemConnect = new javax.swing.JMenuItem();
         jMenuItemDisconnect = new javax.swing.JMenuItem();
         jMenuItemExit = new javax.swing.JMenuItem();
-        jMenuEdit = new javax.swing.JMenu();
-        jMenuUndo = new javax.swing.JMenuItem();
-        jMenuRedo = new javax.swing.JMenuItem();
         jMenuTools = new javax.swing.JMenu();
         jMenuEchosounder = new javax.swing.JMenuItem();
         jMenuIOController = new javax.swing.JMenuItem();
@@ -275,13 +279,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         cameraPanel1Layout.setHorizontalGroup(
             cameraPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cameraPanel1Layout.createSequentialGroup()
-                .addGap(0, 688, Short.MAX_VALUE)
+                .addGap(0, 708, Short.MAX_VALUE)
                 .addComponent(exitFullscreenButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         cameraPanel1Layout.setVerticalGroup(
             cameraPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cameraPanel1Layout.createSequentialGroup()
-                .addGap(0, 550, Short.MAX_VALUE)
+                .addGap(0, 572, Short.MAX_VALUE)
                 .addComponent(exitFullscreenButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -308,15 +312,15 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jPanel1.setMinimumSize(new java.awt.Dimension(395, 304));
         jPanel1.setPreferredSize(new java.awt.Dimension(395, 304));
 
-        jButton1.setBackground(new java.awt.Color(39, 44, 50));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Close");
-        jButton1.setFocusPainted(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        helpFrameOKbutton.setBackground(new java.awt.Color(39, 44, 50));
+        helpFrameOKbutton.setForeground(new java.awt.Color(255, 255, 255));
+        helpFrameOKbutton.setText("Close");
+        helpFrameOKbutton.setFocusPainted(false);
+        helpFrameOKbutton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton1ActionPerformed(evt);
+                helpFrameOKbuttonActionPerformed(evt);
             }
         });
 
@@ -333,7 +337,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 160, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addComponent(helpFrameOKbutton)
                         .addGap(0, 161, Short.MAX_VALUE))
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
@@ -344,7 +348,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(helpFrameOKbutton)
                 .addContainerGap())
         );
 
@@ -667,7 +671,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         ImageIcon myimage = new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/light-bulb.png"));
         Image img = myimage.getImage();
-        Image img2 = img.getScaledInstance(63, 63, Image.SCALE_SMOOTH);
+        Image img2 = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         ImageIcon imgIcon = new ImageIcon(img2);
         lightSwitch_lbl.setIcon(imgIcon);
         lightSwitch_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -686,6 +690,28 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             }
         });
 
+        lightSwitchBlueLED.setBackground(new java.awt.Color(39, 44, 50));
+        lightSwitchBlueLED.setForeground(new java.awt.Color(39, 44, 50));
+        lightSwitchBlueLED.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
+        lightSwitchBlueLED.setBorder(null);
+        lightSwitchBlueLED.setContentAreaFilled(false);
+        lightSwitchBlueLED.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lightSwitchBlueLED.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-off.gif"))); // NOI18N
+        lightSwitchBlueLED.setFocusPainted(false);
+        lightSwitchBlueLED.setFocusable(false);
+        lightSwitchBlueLED.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
+        lightSwitchBlueLED.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                lightSwitchBlueLEDActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Blue LEDs");
+
         javax.swing.GroupLayout lightPanelLayout = new javax.swing.GroupLayout(lightPanel);
         lightPanel.setLayout(lightPanelLayout);
         lightPanelLayout.setHorizontalGroup(
@@ -693,36 +719,43 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             .addGroup(lightPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addGroup(lightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lightHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator5)
                     .addGroup(lightPanelLayout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(lightSwitch_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(42, Short.MAX_VALUE))
+                    .addGroup(lightPanelLayout.createSequentialGroup()
                         .addGroup(lightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(lightPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                                .addComponent(lightSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(lightPanelLayout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(lightSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(lightPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(lightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lightSwitch_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lightSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(28, Short.MAX_VALUE))))
+                                    .addComponent(lightSwitchBlueLED, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lightSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(28, 28, 28))))
         );
         lightPanelLayout.setVerticalGroup(
             lightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lightPanelLayout.createSequentialGroup()
+            .addGroup(lightPanelLayout.createSequentialGroup()
                 .addComponent(lightHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lightSwitch_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(lightSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lightSwitch_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(lightSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(lightSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addComponent(filler2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addComponent(jLabel6)
+                .addGap(1, 1, 1)
+                .addComponent(lightSwitchBlueLED, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(filler2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         emergencyPanel.setBackground(new java.awt.Color(39, 44, 50));
@@ -923,7 +956,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         photoModeDelayLabel.setForeground(new java.awt.Color(255, 255, 255));
         photoModeDelayLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        photoModeDelayLabel.setText("1 s");
+        photoModeDelayLabel.setText("1.0 s");
 
         getPhotosButton.setBackground(new java.awt.Color(39, 44, 50));
         getPhotosButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
@@ -941,8 +974,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         });
 
         photoModeDelay_FB_Label.setForeground(new java.awt.Color(255, 255, 255));
-        photoModeDelay_FB_Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        photoModeDelay_FB_Label.setText("1 s");
+        photoModeDelay_FB_Label.setText("1.0 s");
 
         clearImagesButton.setBackground(new java.awt.Color(39, 44, 50));
         clearImagesButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
@@ -1035,7 +1067,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(cameraPitchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cameraPitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(10, 10, 10)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1359,7 +1391,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         jMenuBar.setForeground(new java.awt.Color(39, 44, 50));
 
-        jMenuFile.setText("File");
+        jMenuConnect.setText("Connect");
+        jMenuConnect.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenuConnect.setFocusPainted(true);
 
         jMenuItemConnect.setText("Connect");
         jMenuItemConnect.addActionListener(new java.awt.event.ActionListener()
@@ -1369,9 +1403,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 jMenuItemConnectActionPerformed(evt);
             }
         });
-        jMenuFile.add(jMenuItemConnect);
+        jMenuConnect.add(jMenuItemConnect);
 
         jMenuItemDisconnect.setText("Disconnect");
+        jMenuItemDisconnect.setEnabled(false);
         jMenuItemDisconnect.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1379,7 +1414,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 jMenuItemDisconnectActionPerformed(evt);
             }
         });
-        jMenuFile.add(jMenuItemDisconnect);
+        jMenuConnect.add(jMenuItemDisconnect);
 
         jMenuItemExit.setText("Exit");
         jMenuItemExit.addActionListener(new java.awt.event.ActionListener()
@@ -1389,40 +1424,12 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 jMenuItemExitActionPerformed(evt);
             }
         });
-        jMenuFile.add(jMenuItemExit);
+        jMenuConnect.add(jMenuItemExit);
 
-        jMenuBar.add(jMenuFile);
-
-        jMenuEdit.setText("Edit");
-
-        jMenuUndo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuUndo.setText("Undo");
-        jMenuUndo.setToolTipText("");
-        jMenuUndo.setEnabled(false);
-        jMenuUndo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jMenuUndoActionPerformed(evt);
-            }
-        });
-        jMenuEdit.add(jMenuUndo);
-
-        jMenuRedo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuRedo.setText("Redo");
-        jMenuRedo.setEnabled(false);
-        jMenuRedo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jMenuRedoActionPerformed(evt);
-            }
-        });
-        jMenuEdit.add(jMenuRedo);
-
-        jMenuBar.add(jMenuEdit);
+        jMenuBar.add(jMenuConnect);
 
         jMenuTools.setText("Tools");
+        jMenuTools.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jMenuEchosounder.setText("Echo sounder");
         jMenuEchosounder.addActionListener(new java.awt.event.ActionListener()
@@ -1458,6 +1465,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         jMenuHelp.setText("Help");
         jMenuHelp.setToolTipText("");
+        jMenuHelp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jMenuAbout.setText("About");
         jMenuAbout.addActionListener(new java.awt.event.ActionListener()
@@ -1473,6 +1481,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         jMenuCalibrate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))); // NOI18N
         jMenuCalibrate.setText("Not Calibrated!");
+        jMenuCalibrate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenuCalibrate.setDisabledIcon(null);
 
         calibrateMenuItem.setText("Calibrate");
@@ -1491,14 +1500,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jMenuUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuUndoActionPerformed
-        // TODO add your handling code here:
-        redoSetpoint = setpoint;
-        setpoint = previousSetpoint;
-        depthInputTextField.setText(setpoint.toString());
-        //sendButton.doClick();
-    }//GEN-LAST:event_jMenuUndoActionPerformed
 
     private void fullscreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullscreenButtonActionPerformed
         Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
@@ -1566,12 +1567,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     }//GEN-LAST:event_seafloorModeButtonActionPerformed
 
     private void lightSwitchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lightSwitchActionPerformed
-        actuatorControlPS.setValue(127);
-        actuatorControlSB.setValue(127);
-        actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-        actuatorControlPS.setEnabled(false);
-        actuatorControlSB.setEnabled(false);
-
         if (lightSwitch.isSelected())
         {
             try
@@ -1616,11 +1611,18 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     }//GEN-LAST:event_emergencyStopButtonActionPerformed
 
     private void jMenuItemConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConnectActionPerformed
-        String ip = (String) JOptionPane.showInputDialog(this, "Enter IP", "Connection", JOptionPane.PLAIN_MESSAGE, null, null, data.getIP_Rov());
+//        String ip = (String) JOptionPane.showInputDialog(this, "Enter IP", "Connection", JOptionPane.PLAIN_MESSAGE, null, null, data.getIP_Rov());
         try
         {
-//            client.connect(ip);
-            //sendButton.setEnabled(true);
+
+            this.clientThreadExecutor = Executors.newScheduledThreadPool(3);
+            clientThreadExecutor.scheduleAtFixedRate(client_ROV,
+                    0, 100, TimeUnit.MILLISECONDS);
+            clientThreadExecutor.scheduleAtFixedRate(client_Camera,
+                    0, 100, TimeUnit.MILLISECONDS);
+            clientThreadExecutor.scheduleAtFixedRate(udpClient,
+                    0, 20, TimeUnit.MILLISECONDS);
+
             lightSwitch.setEnabled(true);
             emergencyStopButton.setEnabled(true);
             io.enableIO();
@@ -1629,6 +1631,12 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 //            client.sendCommand("<KI>" + data.getKi());
 //            Thread.sleep(100);
 //            client.sendCommand("<KD>" + data.getKd());
+            jMenuItemDisconnect.setEnabled(true);
+            jMenuItemConnect.setEnabled(false);
+            JOptionPane.showMessageDialog(this,
+                    "Successfully connected to the ROV RPi and the camera RPi.",
+                    "Connected",
+                    JOptionPane.PLAIN_MESSAGE);
         } catch (Exception ex)
         {
             JOptionPane.showMessageDialog(this,
@@ -1639,18 +1647,29 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     }//GEN-LAST:event_jMenuItemConnectActionPerformed
 
     private void jMenuItemDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDisconnectActionPerformed
+
         try
         {
+
             //client.sendCommand("Quit");
             client_ROV.disconnect();
-            //sendButton.setEnabled(false);
+            client_Camera.disconnect();
             lightSwitch.setEnabled(false);
             emergencyStopButton.setEnabled(false);
             io.disableIO();
+
+            if (clientThreadExecutor != null)
+            {
+                clientThreadExecutor.shutdown();
+            }
             JOptionPane.showMessageDialog(this,
-                    "Successfully disconnected.",
+                    "Successfully disconnected from the ROV RPi and the camera RPi.",
                     "Disconnected",
                     JOptionPane.PLAIN_MESSAGE);
+            videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
+            data.setVideoImage(videoImage);
+            jMenuItemDisconnect.setEnabled(false);
+            jMenuItemConnect.setEnabled(true);
         } catch (IOException ex)
         {
             JOptionPane.showMessageDialog(this,
@@ -1664,28 +1683,14 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         System.exit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
-    private void jMenuRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuRedoActionPerformed
-        Double tempsetpoint = setpoint;
-        setpoint = redoSetpoint;
-        depthInputTextField.setText(setpoint.toString());
-        //sendButton.doClick();
-        previousSetpoint = tempsetpoint;
-    }//GEN-LAST:event_jMenuRedoActionPerformed
-
 
     private void jMenuEchosounderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuEchosounderActionPerformed
-//        if (echoSounder.isVisible())
-//        {
-//            //echoSounder.setVisible(false);
-//        } else
-//        {
         echoSounder.setVisible(true);
-//        }
     }//GEN-LAST:event_jMenuEchosounderActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void helpFrameOKbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpFrameOKbuttonActionPerformed
         helpframe.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_helpFrameOKbuttonActionPerformed
 
     private void jMenuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuAboutActionPerformed
         helpframe.setVisible(true);
@@ -2145,8 +2150,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         {
             this.client_Camera.sendCommand("clearImages");
             this.udpClient.sendResetIMGcommand();
+            int tempNum = data.getImageNumber();
             data.setImageNumber(0);
             imageNumberLabel.setText("0 / 1000");
+            JOptionPane.showMessageDialog(this,
+                    "Successfully cleared " + String.valueOf(tempNum) + " of " + String.valueOf(tempNum) + " images on the RPi.",
+                    "Cleared Images",
+                    JOptionPane.PLAIN_MESSAGE);
         } catch (IOException ex)
         {
             Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -2167,6 +2177,31 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         }
     }//GEN-LAST:event_calibrateMenuItemActionPerformed
+
+    private void lightSwitchBlueLEDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_lightSwitchBlueLEDActionPerformed
+    {//GEN-HEADEREND:event_lightSwitchBlueLEDActionPerformed
+        if (lightSwitchBlueLED.isSelected())
+        {
+            try
+            {
+                client_Camera.sendCommand("cmd_lightMode:1");
+                //lightSlider.setValue(40);
+            } catch (IOException ex)
+            {
+                System.out.println("Error while turning the blue LEDs on: " + ex.getMessage());
+            }
+        } else
+        {
+            try
+            {
+                client_Camera.sendCommand("cmd_lightMode:0");
+                //lightSlider.setValue(19);
+            } catch (IOException ex)
+            {
+                System.out.println("Error while turning the blue LEDs off: " + ex.getMessage());
+            }
+        }
+    }//GEN-LAST:event_lightSwitchBlueLEDActionPerformed
 
     Action exitFullscreenAction = new AbstractAction()
     {
@@ -2268,30 +2303,28 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JButton fullscreenButton;
     private javax.swing.JButton getPhotosButton;
     private javax.swing.JLabel headingLabel;
+    private javax.swing.JButton helpFrameOKbutton;
     private javax.swing.JFrame helpframe;
     private javax.swing.JLabel imageNumberLabel;
     private javax.swing.JPanel infoPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JMenuItem jMenuAbout;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuCalibrate;
+    private javax.swing.JMenu jMenuConnect;
     private javax.swing.JMenuItem jMenuEchosounder;
-    private javax.swing.JMenu jMenuEdit;
-    private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuIOController;
     private javax.swing.JMenuItem jMenuItemConnect;
     private javax.swing.JMenuItem jMenuItemDisconnect;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuOptions;
-    private javax.swing.JMenuItem jMenuRedo;
     private javax.swing.JMenu jMenuTools;
-    private javax.swing.JMenuItem jMenuUndo;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
@@ -2308,6 +2341,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JPanel lightPanel;
     private javax.swing.JSlider lightSlider;
     private javax.swing.JToggleButton lightSwitch;
+    private javax.swing.JToggleButton lightSwitchBlueLED;
     private javax.swing.JLabel lightSwitch_lbl;
     private javax.swing.JToggleButton lockButton;
     private javax.swing.JLabel longitudeLabel;
