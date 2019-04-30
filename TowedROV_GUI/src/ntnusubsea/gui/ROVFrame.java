@@ -1391,6 +1391,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         jMenuBar.setForeground(new java.awt.Color(39, 44, 50));
 
+        jMenuConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))); // NOI18N
         jMenuConnect.setText("Connect");
         jMenuConnect.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenuConnect.setFocusPainted(true);
@@ -1623,22 +1624,73 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             clientThreadExecutor.scheduleAtFixedRate(udpClient,
                     0, 20, TimeUnit.MILLISECONDS);
 
-            lightSwitch.setEnabled(true);
-            emergencyStopButton.setEnabled(true);
-            io.enableIO();
+            if (client_ROV.isConnected() && client_Camera.isConnected())
+            {
+                lightSwitch.setEnabled(true);
+                emergencyStopButton.setEnabled(true);
+                io.enableIO();
 //            client.sendCommand("<KP>" + data.getKp());
 //            Thread.sleep(100);
 //            client.sendCommand("<KI>" + data.getKi());
 //            Thread.sleep(100);
 //            client.sendCommand("<KD>" + data.getKd());
-            jMenuItemDisconnect.setEnabled(true);
-            jMenuItemConnect.setEnabled(false);
-            JOptionPane.showMessageDialog(this,
-                    "Successfully connected to the ROV RPi and the camera RPi.",
-                    "Connected",
-                    JOptionPane.PLAIN_MESSAGE);
+                jMenuConnect.setText("Connected 2/2");
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+                jMenuItemDisconnect.setEnabled(true);
+                jMenuItemConnect.setEnabled(false);
+                JOptionPane.showMessageDialog(this,
+                        "Successfully connected to the ROV RPi and the camera RPi.",
+                        "Connected",
+                        JOptionPane.PLAIN_MESSAGE);
+            } else if (client_ROV.isConnected() && !client_Camera.isConnected())
+            {
+                lightSwitch.setEnabled(false);
+                emergencyStopButton.setEnabled(true);
+                io.enableIO();
+//            client.sendCommand("<KP>" + data.getKp());
+//            Thread.sleep(100);
+//            client.sendCommand("<KI>" + data.getKi());
+//            Thread.sleep(100);
+//            client.sendCommand("<KD>" + data.getKd());
+                jMenuConnect.setText("Connected 1/2");
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuItemDisconnect.setEnabled(true);
+                jMenuItemConnect.setEnabled(false);
+                JOptionPane.showMessageDialog(this,
+                        "Could only connect to the ROV RPi, but not the camera RPi...",
+                        "Connected 1/2",
+                        JOptionPane.PLAIN_MESSAGE);
+            } else if (!client_ROV.isConnected() && client_Camera.isConnected())
+            {
+                lightSwitch.setEnabled(true);
+                emergencyStopButton.setEnabled(false);
+                io.disableIO();
+                jMenuConnect.setText("Connected 1/2");
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuItemDisconnect.setEnabled(true);
+                jMenuItemConnect.setEnabled(false);
+                JOptionPane.showMessageDialog(this,
+                        "Could only connect to the camera RPi, but not the ROV RPi...",
+                        "Connected 1/2",
+                        JOptionPane.PLAIN_MESSAGE);
+            } else
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Error: Could not connect to either the ROV RPi nor the camera RPi.",
+                        "Error: Could not connect",
+                        JOptionPane.PLAIN_MESSAGE);
+            }
+
         } catch (Exception ex)
         {
+            jMenuConnect.setText("Connect");
+            try
+            {
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+            } catch (IOException ex1)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            }
             JOptionPane.showMessageDialog(this,
                     "Connection failed.",
                     "Conncetion error",
@@ -1662,14 +1714,16 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             {
                 clientThreadExecutor.shutdown();
             }
+            jMenuItemDisconnect.setEnabled(false);
+            jMenuItemConnect.setEnabled(true);
+            jMenuConnect.setText("Connect");
+            jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
             JOptionPane.showMessageDialog(this,
                     "Successfully disconnected from the ROV RPi and the camera RPi.",
                     "Disconnected",
                     JOptionPane.PLAIN_MESSAGE);
             videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
             data.setVideoImage(videoImage);
-            jMenuItemDisconnect.setEnabled(false);
-            jMenuItemConnect.setEnabled(true);
         } catch (IOException ex)
         {
             JOptionPane.showMessageDialog(this,
@@ -2184,7 +2238,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         {
             try
             {
-                client_Camera.sendCommand("cmd_lightMode:1");
+                client_Camera.sendCommand("cmd_BlueLED:1");
                 //lightSlider.setValue(40);
             } catch (IOException ex)
             {
@@ -2194,7 +2248,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         {
             try
             {
-                client_Camera.sendCommand("cmd_lightMode:0");
+                client_Camera.sendCommand("cmd_BlueLED:0");
                 //lightSlider.setValue(19);
             } catch (IOException ex)
             {
