@@ -167,6 +167,11 @@ public class WorkerRunnable implements Runnable
                             outToClient.println("Server: OK");
                             break;
 
+                        case "cmd_BlueLED":
+                            dh.setCmd_BlueLED(parseStringToInt(value));
+                            outToClient.println("Server: OK");
+                            break;
+
                         //Feedback commands
                         case "fb_depthToSeabedEcho":
                             outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthToSeabedEcho() + ">");

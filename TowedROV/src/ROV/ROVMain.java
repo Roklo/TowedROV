@@ -89,7 +89,7 @@ public class ROVMain
                 20, 40, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(logic,
-                20, 150, TimeUnit.MILLISECONDS);
+                20, 100, TimeUnit.MILLISECONDS);
 
 //        int b1 = 0xC0;//0xC0 + (commandValue & 0x1F);
 //        int b2 = 0x7F; //(commandValue >> 5) & 0x7F;

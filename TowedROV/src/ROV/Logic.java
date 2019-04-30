@@ -7,6 +7,11 @@ package ROV;
 
 import I2CCom.*;
 import ROV.TCPCom.*;
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.RaspiPin;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -23,6 +28,13 @@ public class Logic implements Runnable, Observer
     int old_cmd_actuatorPS = -1;
     int old_cmd_actuatorSB = -1;
 
+    int actuatorPShysteresis = 10;
+    int actuatorSBhysteresis = 10;
+
+    final GpioController gpio = GpioFactory.getInstance();
+
+    final GpioPinDigitalOutput BlueLED_PIN = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "BlueLED", PinState.LOW);
+
     public Logic(DataHandler data, I2CRW i2cRw)
     {
         this.data = data;
@@ -38,6 +50,18 @@ public class Logic implements Runnable, Observer
     {
         try
         {
+            if (data.fb_actuatorPSPos >= data.getCmd_actuatorPS() - actuatorPShysteresis
+                    && data.fb_actuatorPSPos <= data.getCmd_actuatorPS() + actuatorPShysteresis)
+            {
+                i2cRw.sendI2CData("ActuatorPS_stopMotor", 0);
+            }
+
+            if (data.fb_actuatorSBPos >= data.getCmd_actuatorSB() - actuatorSBhysteresis
+                    && data.fb_actuatorSBPos <= data.getCmd_actuatorSB() + actuatorSBhysteresis)
+            {
+                i2cRw.sendI2CData("ActuatorSB_stopMotor", 0);
+            }
+
 //            Thread.sleep(1000);
 //            i2cRw.readI2CData("ActuatorPS_Feedback");
 //            Thread.sleep(1000);
@@ -62,6 +86,13 @@ public class Logic implements Runnable, Observer
             i2cRw.sendI2CData("ActuatorSB_setTarget", data.cmd_actuatorSB);
         }
 
+        if (data.getCmd_BlueLED() == 1)
+        {
+            BlueLED_PIN.high();
+        }
+        else
+        {
+            BlueLED_PIN.low();
+        }       
     }
-
 }
