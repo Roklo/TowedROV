@@ -33,7 +33,7 @@ public class Logic implements Runnable, Observer
 
     final GpioController gpio = GpioFactory.getInstance();
 
-    final GpioPinDigitalOutput BlueLED_PIN = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_17, "BlueLED", PinState.LOW);
+    final GpioPinDigitalOutput BlueLED_PIN = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "BlueLED", PinState.LOW);
 
     public Logic(DataHandler data, I2CRW i2cRw)
     {
@@ -93,9 +93,6 @@ public class Logic implements Runnable, Observer
         else
         {
             BlueLED_PIN.low();
-        }
-        
-
+        }       
     }
-
 }
