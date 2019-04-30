@@ -11,13 +11,16 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  * This frame lets the user control the different inputs and outputs. Sends a
  * new command whenever a button is pressed.
+ *
  * @author Marius Nonsvik
  */
-public class IOControlFrame extends javax.swing.JFrame implements Runnable, Observer {
+public class IOControlFrame extends javax.swing.JFrame implements Runnable, Observer
+{
 
     private Data data;
     private TCPClient client;
@@ -26,11 +29,16 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
 
     /**
      * Creates new form IOControlFrame
+     *
      * @param data Data containing shared variables
      * @param client TCP client that sends commands
      */
-    public IOControlFrame(Data data, TCPClient client) {
+    public IOControlFrame(Data data, TCPClient client)
+    {
         initComponents();
+        this.pack();
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(null);
         this.data = data;
         this.client = client;
         jLabelChannel1Value.setText(data.getChannel(1));
@@ -51,7 +59,8 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         jPanel9 = new javax.swing.JPanel();
         jPanelChannel5 = new javax.swing.JPanel();
@@ -134,8 +143,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel5.setContentAreaFilled(false);
         jToggleButtonChannel5.setEnabled(false);
         jToggleButtonChannel5.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel5ActionPerformed(evt);
             }
         });
@@ -154,7 +165,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jLabelOffChannel5.setText("Off");
 
         jLabelIndicatorChannel5.setBackground(new java.awt.Color(35, 39, 43));
-        jLabelIndicatorChannel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO_Off.png"))); // NOI18N
+        jLabelIndicatorChannel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO-Off.gif"))); // NOI18N
         jLabelIndicatorChannel5.setOpaque(true);
 
         javax.swing.GroupLayout jPanelChannel5Layout = new javax.swing.GroupLayout(jPanelChannel5);
@@ -206,8 +217,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel6.setContentAreaFilled(false);
         jToggleButtonChannel6.setEnabled(false);
         jToggleButtonChannel6.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel6.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel6ActionPerformed(evt);
             }
         });
@@ -226,7 +239,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jLabelOffChannel6.setText("Off");
 
         jLabelIndicatorChannel6.setBackground(new java.awt.Color(35, 39, 43));
-        jLabelIndicatorChannel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO_Off.png"))); // NOI18N
+        jLabelIndicatorChannel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO-Off.gif"))); // NOI18N
         jLabelIndicatorChannel6.setText("jLabel26");
         jLabelIndicatorChannel6.setOpaque(true);
 
@@ -280,8 +293,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel7.setContentAreaFilled(false);
         jToggleButtonChannel7.setEnabled(false);
         jToggleButtonChannel7.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel7.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel7ActionPerformed(evt);
             }
         });
@@ -300,7 +315,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jLabelOffChannel7.setText("Off");
 
         jLabelIndicatorChannel7.setBackground(new java.awt.Color(35, 39, 43));
-        jLabelIndicatorChannel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO_Off.png"))); // NOI18N
+        jLabelIndicatorChannel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO-Off.gif"))); // NOI18N
         jLabelIndicatorChannel7.setOpaque(true);
 
         javax.swing.GroupLayout jPanelChannel7Layout = new javax.swing.GroupLayout(jPanelChannel7);
@@ -351,8 +366,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel8.setContentAreaFilled(false);
         jToggleButtonChannel8.setEnabled(false);
         jToggleButtonChannel8.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel8.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel8ActionPerformed(evt);
             }
         });
@@ -371,7 +388,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jLabelOffChannel8.setText("Off");
 
         jLabelIndicatorChannel8.setBackground(new java.awt.Color(35, 39, 43));
-        jLabelIndicatorChannel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO_Off.png"))); // NOI18N
+        jLabelIndicatorChannel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/IO-Off.gif"))); // NOI18N
         jLabelIndicatorChannel8.setOpaque(true);
 
         javax.swing.GroupLayout jPanelChannel8Layout = new javax.swing.GroupLayout(jPanelChannel8);
@@ -427,8 +444,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel1.setContentAreaFilled(false);
         jToggleButtonChannel1.setEnabled(false);
         jToggleButtonChannel1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel1ActionPerformed(evt);
             }
         });
@@ -504,8 +523,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel2.setContentAreaFilled(false);
         jToggleButtonChannel2.setEnabled(false);
         jToggleButtonChannel2.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel2ActionPerformed(evt);
             }
         });
@@ -582,8 +603,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel3.setContentAreaFilled(false);
         jToggleButtonChannel3.setEnabled(false);
         jToggleButtonChannel3.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel3.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel3ActionPerformed(evt);
             }
         });
@@ -661,8 +684,10 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
         jToggleButtonChannel4.setContentAreaFilled(false);
         jToggleButtonChannel4.setEnabled(false);
         jToggleButtonChannel4.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on-vertical.gif"))); // NOI18N
-        jToggleButtonChannel4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jToggleButtonChannel4.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jToggleButtonChannel4ActionPerformed(evt);
             }
         });
@@ -729,18 +754,17 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jPanelChannel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelChannel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanelChannel4, javax.swing.GroupLayout.PREFERRED_SIZE, 170, Short.MAX_VALUE))
+                        .addComponent(jPanelChannel4, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
                     .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(jPanelChannel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanelChannel6, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanelChannel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanelChannel7, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanelChannel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanelChannel8, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -776,137 +800,169 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     }// </editor-fold>//GEN-END:initComponents
 
     private void jToggleButtonChannel5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel5ActionPerformed
-        try {
-            if (jToggleButtonChannel5.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel5.isSelected())
+            {
                 setBit(4, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel5.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(4, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel5.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel5ActionPerformed
 
     private void jToggleButtonChannel6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel6ActionPerformed
-        try {
-            if (jToggleButtonChannel6.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel6.isSelected())
+            {
                 setBit(5, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel6.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(5, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel6.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel6ActionPerformed
 
     private void jToggleButtonChannel7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel7ActionPerformed
-        try {
-            if (jToggleButtonChannel7.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel7.isSelected())
+            {
                 setBit(6, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel7.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(6, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel7.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel7ActionPerformed
 
     private void jToggleButtonChannel8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel8ActionPerformed
-        try {
-            if (jToggleButtonChannel8.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel8.isSelected())
+            {
                 setBit(7, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel8.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(7, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel8.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel8ActionPerformed
 
     private void jToggleButtonChannel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel1ActionPerformed
-        try {
-            if (jToggleButtonChannel1.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel1.isSelected())
+            {
                 setBit(0, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel1.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(0, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel1.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel1ActionPerformed
 
     private void jToggleButtonChannel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel2ActionPerformed
-        try {
-            if (jToggleButtonChannel2.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel2.isSelected())
+            {
                 setBit(1, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel2.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(1, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel2.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel2ActionPerformed
 
     private void jToggleButtonChannel3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel3ActionPerformed
-        try {
-            if (jToggleButtonChannel3.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel3.isSelected())
+            {
                 setBit(2, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel3.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(2, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel3.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel3ActionPerformed
 
     private void jToggleButtonChannel4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel4ActionPerformed
-        try {
-            if (jToggleButtonChannel4.isSelected()) {
+        try
+        {
+            if (jToggleButtonChannel4.isSelected())
+            {
                 setBit(3, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel4.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else {
+            } else
+            {
                 setBit(3, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel4.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel4ActionPerformed
@@ -914,7 +970,8 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     /**
      * Enables the I/O buttons
      */
-    public void enableIO() {
+    public void enableIO()
+    {
         jToggleButtonChannel1.setEnabled(true);
         jToggleButtonChannel2.setEnabled(true);
         jToggleButtonChannel3.setEnabled(true);
@@ -928,7 +985,8 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     /**
      * Disables the I/O buttons
      */
-    public void disableIO() {
+    public void disableIO()
+    {
         jToggleButtonChannel1.setEnabled(false);
         jToggleButtonChannel2.setEnabled(false);
         jToggleButtonChannel3.setEnabled(false);
@@ -1000,22 +1058,27 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void run() {
+    public void run()
+    {
         this.setVisible(false);
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable o, Object arg)
+    {
         jLabelChannel1Value.setText(data.getChannel(1));
         jLabelChannel2Value.setText(data.getChannel(2));
         jLabelChannel3Value.setText(data.getChannel(3));
         jLabelChannel4Value.setText(data.getChannel(4));
     }
 
-    private void setBit(int bit, int value) {
-        if (value == 0) {
+    private void setBit(int bit, int value)
+    {
+        if (value == 0)
+        {
             outputValue = outputValue & ~(1 << bit);
-        } else {
+        } else
+        {
             outputValue = outputValue | (1 << bit);
         }
     }

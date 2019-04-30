@@ -51,7 +51,7 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
         JPanel chartPanel = createChartPanel();
 
         //setSize(640, 480);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
         chartPanel.setSize(jPanel1.getWidth(), jPanel1.getHeight());

@@ -232,7 +232,7 @@
                   <Color blue="2b" green="27" red="23" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO_Off.png"/>
+                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO-Off.gif"/>
                 </Property>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
@@ -372,7 +372,7 @@
                   <Color blue="2b" green="27" red="23" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO_Off.png"/>
+                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO-Off.gif"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="jLabel26"/>
                 <Property name="opaque" type="boolean" value="true"/>
@@ -510,7 +510,7 @@
                   <Color blue="2b" green="27" red="23" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO_Off.png"/>
+                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO-Off.gif"/>
                 </Property>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
@@ -647,7 +647,7 @@
                   <Color blue="2b" green="27" red="23" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO_Off.png"/>
+                  <Image iconType="3" name="/ntnusubsea/gui/Images/IO-Off.gif"/>
                 </Property>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>

@@ -96,7 +96,8 @@ public final class Data extends Observable
     private byte leakStatus = 0;
     private ArrayList<String> labels = new ArrayList();
     private float[] channelValues = new float[4];
-    private String defaultIP = "";
+    private String IP_Rov = "";
+    private String IP_Camera = "";
     private BufferedImage videoImage;
     private String Kp;
     private String Ki;
@@ -118,7 +119,8 @@ public final class Data extends Observable
         {
             BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt"));
             //this.updateRovDepthDataList();
-            defaultIP = br.readLine();
+            IP_Rov = br.readLine();
+            IP_Camera = br.readLine();
             labels.add(0, br.readLine());
             labels.add(1, br.readLine());
             labels.add(2, br.readLine());
@@ -142,25 +144,47 @@ public final class Data extends Observable
     }
 
     /**
-     * Sets the default connection IP
+     * Sets the default ROV IP
      *
-     * @param ip The default connection IP
+     * @param ip The default ROV IP
      */
-    public synchronized void setDefaultIP(String ip)
+    public synchronized void setIP_Rov(String ip)
     {
-        defaultIP = ip;
+        this.IP_Rov = ip;
         setChanged();
         notifyObservers();
     }
 
     /**
-     * Returns the default connection IP
+     * Returns the default ROV IP
      *
-     * @return The default connection IP
+     * @return The default ROV IP
      */
-    public synchronized String getDefaultIP()
+    public synchronized String getIP_Rov()
     {
-        return defaultIP;
+        return IP_Rov;
+    }
+
+    /**
+     * Sets the default Camera IP
+     *
+     * @param ip The default Camera IP
+     */
+    public synchronized void setIP_Camera(String ip)
+    {
+        this.IP_Camera = ip;
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Returns the default Camera IP
+     *
+     * @return The default Camera IP
+     */
+    public synchronized String getIP_Camera()
+    {
+        return IP_Camera;
     }
 
     public synchronized String getKp()
@@ -426,8 +450,6 @@ public final class Data extends Observable
     {
         this.timeBetweenBoatAndRov = timeBetweenBoatAndRov;
     }
-    
-    
 
     /**
      * Updates the current depth beneath the ROV
