@@ -28,10 +28,11 @@ public class DataHandler extends Observable
     int cmd_actuatorPSMinPos = 0;
     int cmd_actuatorSBMaxPos = 0;
     int cmd_actuatorSBMinPos = 0;
+    int cmd_BlueLED = 0;
 
     int cmd_pressureAtSeaLevel = 0;
 
-	byte cmd_mode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
+    byte cmd_mode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
     int cmd_depth = 0;
     int cmd_cameraPitch = 0;
     int cmd_cameraRoll = 0;
@@ -278,8 +279,6 @@ public class DataHandler extends Observable
     {
         this.fb_tempMainElBoxRear = fb_tempMainElBoxRear;
     }
-    
-    
 
     public int getFb_tempEchoBox()
     {
@@ -515,8 +514,8 @@ public class DataHandler extends Observable
     {
         this.cmd_emergencySurface = cmd_emergencySurface;
     }
-	
-	public boolean isCmd_manualWingControl()
+
+    public boolean isCmd_manualWingControl()
     {
         return cmd_manualWingControl;
     }
@@ -637,6 +636,18 @@ public class DataHandler extends Observable
     public void setCmd_imuCalibratePitch(int cmd_imuCalibratePitch)
     {
         this.cmd_imuCalibratePitch = cmd_imuCalibratePitch;
+    }
+
+    public int getCmd_BlueLED()
+    {
+        return cmd_BlueLED;
+    }
+
+    public void setCmd_BlueLED(int cmd_BlueLED)
+    {
+        this.cmd_BlueLED = cmd_BlueLED;
+        setChanged();
+        notifyObservers();
     }
 
     public void handleDataFromI2C()
