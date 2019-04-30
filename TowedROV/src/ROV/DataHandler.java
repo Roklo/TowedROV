@@ -7,13 +7,14 @@ package ROV;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author <Robin S. Thorholm>
  */
-public class DataHandler
+public class DataHandler extends Observable
 {
 
     // Calibration values
@@ -61,7 +62,8 @@ public class DataHandler
     int fb_humidityInternalCamera = 0;
     int fb_tempPSactuatorBox = 0;
     int fb_tempSBactuatorBox = 0;
-    int fb_tempMainElBox = 0;
+    double fb_tempMainElBoxFront = 0;
+    double fb_tempMainElBoxRear = 0;
     int fb_tempEchoBox = 0;
     int fb_currentDraw = 0;
     int fb_pitch = -1;
@@ -210,7 +212,9 @@ public class DataHandler
 
     public void setFb_actuatorSBPos(int fb_actuatorSBPos)
     {
+
         this.fb_actuatorSBPos = fb_actuatorSBPos;
+
     }
 
     public int getFb_tempInternalCamera()
@@ -253,15 +257,27 @@ public class DataHandler
         this.fb_tempSBactuatorBox = fb_tempSBactuatorBox;
     }
 
-    public int getFb_tempMainElBox()
+    public double getFb_tempMainElBoxFront()
     {
-        return fb_tempMainElBox;
+        return fb_tempMainElBoxFront;
     }
 
-    public void setFb_tempMainElBox(int fb_tempMainElBox)
+    public void setFb_tempMainElBoxFront(double fb_tempMainElBoxFront)
     {
-        this.fb_tempMainElBox = fb_tempMainElBox;
+        this.fb_tempMainElBoxFront = fb_tempMainElBoxFront;
     }
+
+    public double getFb_tempMainElBoxRear()
+    {
+        return fb_tempMainElBoxRear;
+    }
+
+    public void setFb_tempMainElBoxRear(double fb_tempMainElBoxRear)
+    {
+        this.fb_tempMainElBoxRear = fb_tempMainElBoxRear;
+    }
+    
+    
 
     public int getFb_tempEchoBox()
     {
@@ -381,6 +397,9 @@ public class DataHandler
     public void setCmd_actuatorPS(int cmd_actuatorPS)
     {
         this.cmd_actuatorPS = cmd_actuatorPS;
+        setChanged();
+        notifyObservers();
+
     }
 
     public int getCmd_actuatorSB()
@@ -391,6 +410,8 @@ public class DataHandler
     public void setCmd_actuatorSB(int cmd_actuatorSB)
     {
         this.cmd_actuatorSB = cmd_actuatorSB;
+        setChanged();
+        notifyObservers();
     }
 
     public int getCmd_depth()

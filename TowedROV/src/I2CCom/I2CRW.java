@@ -21,7 +21,7 @@ public class I2CRW implements Runnable
 {
 
     protected static I2CHandler I2CH;
-    protected static DataHandler dh;
+    protected static DataHandler data;
 
     I2CDevice arduinoIO;
     I2CDevice actuatorSB;
@@ -36,18 +36,21 @@ public class I2CRW implements Runnable
     private final static int ARDUINO_IO_ADDRESS = 0x0B;
 
     //JRK commands 
-    int SetTargetLowResRev = 0xE0;
-    int SetTargetLowResFwd = 0xE1;
+    int JRK_setTargetLowResRev = 0xE0;
+    int JRK_setTargetLowResFwd = 0xE1;
+    int JRK_getScaledFeedback = 0xA7; //The low byte of “Feedback”
 
     String start_char = "<";
     String end_char = ">";
     String sep_char = ":";
 
-    public I2CRW(DataHandler dh)
+    public I2CRW(DataHandler data)
     {
 
         this.I2CH = I2CH;
-        this.dh = dh;
+
+        this.data = data;
+
         try
         {
             //System.out.println("Creatingbus");
@@ -56,6 +59,7 @@ public class I2CRW implements Runnable
             arduinoIO = bus.getDevice(ARDUINO_IO_ADDRESS);
             actuatorSB = bus.getDevice(SB_ACTUATOR_ADDRESS);
             actuatorPS = bus.getDevice(PS_ACTUATOR_ADDRESS);
+
         } catch (Exception e)
         {
             System.out.println("Failed to instansiate I2 Bus");
@@ -214,23 +218,23 @@ public class I2CRW implements Runnable
                     {
                         if (commandValue == 127)
                         {
-                            commandValue = commandValue + 1;
+                            // commandValue = commandValue - 1;
                         }
-                        commandValue = (byte) (commandValue - 127);
-                        actuatorPS.write(SetTargetLowResFwd, (byte) commandValue);
+                        commandValue = (byte) (commandValue);
+                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) commandValue);
                     }
                     if (commandValue > 0 && commandValue < 127)
                     {
                         if (commandValue == 1)
                         {
-                            commandValue = commandValue - 1;
+                            commandValue = commandValue + 1;
                         }
-                        commandValue = (byte) (127 - commandValue);
-                        actuatorPS.write(SetTargetLowResRev, (byte) commandValue);
+                        commandValue = (byte) (commandValue - 127);
+                        actuatorPS.write(JRK_setTargetLowResRev, (byte) commandValue);
                     }
                     if (commandValue == 0)
                     {
-                        actuatorPS.write(SetTargetLowResRev, (byte) commandValue);
+                        actuatorPS.write(JRK_setTargetLowResRev, (byte) commandValue);
                     }
                     break;
                 case "ActuatorSB_setTarget":
@@ -241,7 +245,7 @@ public class I2CRW implements Runnable
                             commandValue = commandValue + 1;
                         }
                         commandValue = (byte) (commandValue - 127);
-                        actuatorSB.write(SetTargetLowResFwd, (byte) commandValue);
+                        actuatorSB.write(JRK_setTargetLowResFwd, (byte) commandValue);
                     }
                     if (commandValue > 0 && commandValue < 127)
                     {
@@ -250,11 +254,11 @@ public class I2CRW implements Runnable
                             commandValue = commandValue - 1;
                         }
                         commandValue = (byte) (127 - commandValue);
-                        actuatorSB.write(SetTargetLowResRev, (byte) commandValue);
+                        actuatorSB.write(JRK_setTargetLowResRev, (byte) commandValue);
                     }
                     if (commandValue == 0)
                     {
-                        actuatorSB.write(SetTargetLowResRev, (byte) commandValue);
+                        actuatorSB.write(JRK_setTargetLowResRev, (byte) commandValue);
                     }
                     break;
                 case "ActuatorSB_stopMotor":
@@ -280,24 +284,23 @@ public class I2CRW implements Runnable
         {
             switch (device)
             {
+
                 case "ActuatorSB_Feedback":
-                    actuatorSB.write(SB_ACTUATOR_ADDRESS, (byte) 0xE5);
-                    int actuatorSB_Data = actuatorSB.read(SB_ACTUATOR_ADDRESS);
+
+                    // int test = actuatorSB.read(JRK_getScaledFeedback);
+                    byte[] byteArraySB = new byte[2];
+                    actuatorSB.read(0xA7, byteArraySB, 0, 2);
+                    int posSB = byteArraySB[0] + 256 * byteArraySB[1];
+
+//                    int posSB = actuatorSB.read(JRK_getScaledFeedback);
+                    data.setFb_actuatorSBPos(posSB);
                     break;
+
                 case "ActuatorPS_Feedback":
-                    byte[] writeBuffer = null;
-                    byte[] readBuffer = null;
-
-                    writeBuffer[0] = (byte) 0xE5;
-                    try
-
-                    {
-                        actuatorPS.read(writeBuffer, 0, 15, readBuffer, 0, 15);
-                        Thread.sleep(15);
-                    } catch (Exception e)
-                    {
-                    }
-
+                    byte[] byteArrayPS = new byte[2];
+                    actuatorPS.read(0xA7, byteArrayPS, 0, 2);
+                    int posPS = byteArrayPS[0] + 256 * byteArrayPS[1];
+                    data.setFb_actuatorPSPos(posPS);
                     break;
 
                 case "ArduinoIO":
@@ -325,6 +328,7 @@ public class I2CRW implements Runnable
             }
         } catch (Exception e)
         {
+            System.out.println(e);
         }
 
     }

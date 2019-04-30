@@ -33,7 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class ROVMain
 {
 
-    private final static int serverAddress = 9000;
+    private final static int serverPort = 8080;
     private static Thread serialRW;
     private static Thread I2CComHandler;
 
@@ -50,6 +50,7 @@ public class ROVMain
 
     private static Thread imuThread;
     private static Thread ArduinoIOThread;
+    private static Thread ArduinoActuatorFBThread;
 
     /**
      * @param args the command line arguments
@@ -78,12 +79,17 @@ public class ROVMain
         }
         dh = new DataHandler();
 
-//
         I2CRW I2CRW_this = new I2CRW(dh);
+        Logic logic = new Logic(dh, I2CRW_this);
+        dh.addObserver(logic);
+
         SerialDataHandler sdh = new SerialDataHandler(dh);
 
         executor.scheduleAtFixedRate(I2CRW_this,
                 20, 40, TimeUnit.MILLISECONDS);
+
+        executor.scheduleAtFixedRate(logic,
+                20, 150, TimeUnit.MILLISECONDS);
 
 //        int b1 = 0xC0;//0xC0 + (commandValue & 0x1F);
 //        int b2 = 0x7F; //(commandValue >> 5) & 0x7F;
@@ -95,14 +101,13 @@ public class ROVMain
 //        I2CRW_this.sendI2CData("ActuatorPS_setTarget", 0);
 //        I2CRW_this.sendI2CData("ActuatorSB_setTarget", 0);
 //        
-        
 //        alarmHandler = new Thread(new AlarmHandler(dh));
 //        alarmHandler.start();
 //        alarmHandler.setName("AlarmHandler");
 //
-//        Server = new Thread(new Server(serverAddress, dh));
-//        Server.start();
-//        Server.setName("Server");
+        Server = new Thread(new Server(serverPort, dh));
+        Server.start();
+        Server.setName("Server");
 //        I2CRW = new Thread(new I2CRW(dh));
 //        I2CRW.start();
 //        I2CRW.setName("I2C_RW");
@@ -136,12 +141,36 @@ public class ROVMain
                 ArduinoIOThread.setName(comPortValue);
 
             }
+            
+            if (comPortValue.contains("ActuatorFBArduino"))
+            {
+                ArduinoActuatorFBThread = new Thread(new ReadSerialData(dh, comPortKey, 38400));
+                ArduinoActuatorFBThread.start();
+                ArduinoActuatorFBThread.setName(comPortValue);
+
+            }
+            
+            
+            
+            
+            
         }
         System.out.println("Done");
         while (true)
         {
-            System.out.println("Roll: " + dh.getFb_roll());
-            System.out.println("Pitch: " + dh.getFb_pitch());
+            try
+            {
+               //Thread.sleep(500);
+                System.out.println("------------------------------------");
+               System.out.println("FeedbackPS: " + dh.getFb_actuatorPSPos());
+            System.out.println("FeedbackSB: " + dh.getFb_actuatorSBPos());
+            
+            } catch (Exception e)
+            {
+            }
+            
+            //  System.out.println("Roll: " + dh.getFb_roll());
+            // System.out.println("Pitch: " + dh.getFb_pitch());
 
         }
         //serialRW.start();

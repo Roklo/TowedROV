@@ -38,22 +38,23 @@ char* t8;
 char* t9;
 
 
-const int CHANNEL1_PIN = A0;
-const int CHANNEL2_PIN = A1;
-const int CHANNEL3_PIN = A2;
-const int CHANNEL4_PIN = A3;
-const int CHANNEL5_PIN = 10;
-const int CHANNEL6_PIN = 11;
-const int CHANNEL7_PIN = 12;
-const int CHANNEL8_PIN = 13;
-float Ach1 = 0.00;
-float Ach2 = 0.00;
-float Ach3 = 0.00;
-float Ach4 = 0.00;
-float Dch5 = 0.00;
-float Dch6 = 0.00;
-boolean Dch7 = false;
-boolean Dch8 = false;
+//const int CHANNEL1_PIN = A0;
+//const int CHANNEL2_PIN = A1;
+//const int CHANNEL3_PIN = A2;
+//const int CHANNEL4_PIN = A3;
+//const int CHANNEL5_PIN = 10;
+
+//const int CHANNEL6_PIN = 11;
+//const int CHANNEL7_PIN = 12;
+//const int CHANNEL8_PIN = 13;
+//float Ach1 = 0.00;
+//float Ach2 = 0.00;
+//float Ach3 = 0.00;
+//float Ach4 = 0.00;
+//float Dch5 = 0.00;
+//float Dch6 = 0.00;
+//boolean Dch7 = false;
+//boolean Dch8 = false;
 boolean LED = false;
 
 
@@ -62,12 +63,12 @@ void setup() {
   // Serial setup
   Serial.begin(4800);
   nmeaSerial.begin(4800);
-  Serial.println("<ArduinoIO:0>");
+  Serial.println("<EchoSounder:0>");
 
-  pinMode(CHANNEL5_PIN, INPUT);
-  pinMode(CHANNEL6_PIN, INPUT);
-  pinMode(CHANNEL7_PIN, INPUT);
-  pinMode(CHANNEL8_PIN, INPUT);
+ // pinMode(CHANNEL5_PIN, INPUT);
+ // pinMode(CHANNEL6_PIN, INPUT);
+ // pinMode(CHANNEL7_PIN, INPUT);
+ // pinMode(CHANNEL8_PIN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
 
   // -------------------------------------------------------------------------------- -
@@ -100,10 +101,11 @@ void loop() {
   }
 
   //Checks input
-  Ach1 = analogRead(CHANNEL1_PIN);
-  Ach2 = analogRead(CHANNEL2_PIN);
-  Ach3 = analogRead(CHANNEL3_PIN);
-  Ach4 = analogRead(CHANNEL4_PIN);
+ // Ach1 = analogRead(CHANNEL1_PIN);
+ // Ach2 = analogRead(CHANNEL2_PIN);
+ // Ach3 = analogRead(CHANNEL3_PIN);
+ // Ach4 = analogRead(CHANNEL4_PIN);
+ /*
   if (digitalRead(CHANNEL5_PIN) == HIGH)
   {
     Dch5 = 1.00;
@@ -122,6 +124,7 @@ void loop() {
   }
   Dch7 = digitalRead(CHANNEL7_PIN);
   Dch8 = digitalRead(CHANNEL8_PIN);
+  */
 
   //Checks for avilable NMEA sentences
   if (nmeaSerial.available()) {
@@ -215,6 +218,7 @@ void convertDataToString()
 
   char str_depthBelowTd[6];
 
+/*
   char str_Ach1[6];
   char str_Ach2[6];
   char str_Ach3[6];
@@ -223,6 +227,7 @@ void convertDataToString()
   char str_Dch6[6];
   // char str_Dch7[6];
   //t char str_Dch8[6];
+  */
 
   // char str_speed[6];
 
@@ -237,6 +242,7 @@ void convertDataToString()
   {
     dtostrf(depthBelowTd, 4, 2, str_depthBelowTd);
   }
+  /*
 
   for (int i = 0; i < 6; i++)
   {
@@ -273,6 +279,7 @@ void convertDataToString()
   {
     dtostrf(Dch6, 4, 2, str_Dch6);
   }
+  */
 
   /*
 
@@ -297,35 +304,35 @@ void convertDataToString()
 
   char* a = "<D:";
   char* b = ":DBT:";
-  char* c = ":Ach1:";
-  char* d = ":Ach2:";
-  char* e = ":Ach3:";
-  char* f = ":Ach4:";
-  char* g = ":Dch5:";
-  char* h = ":Dch6:";
-  char* i = ":Dch7:";
+  //char* c = ":Ach1:";
+  //char* d = ":Ach2:";
+  //char* e = ":Ach3:";
+  //char* f = ":Ach4:";
+  //char* g = ":Dch5:";
+  //char* h = ":Dch6:";
+  //char* i = ":Dch7:";
   //  char* j = ":Dch8:";
   char* k = ">";
   //strcat(str_depth, a);
 
-  char bigstring[85] = "";  // enough room for all strings together
+  char bigstring[32] = "";  // enough room for all strings together
   //bigstring[0] = <;          // start with a null string:
   strcat(bigstring, a);   // add first string
   strcat(bigstring, str_depth);
   strcat(bigstring, b);
   strcat(bigstring, str_depthBelowTd);
-  strcat(bigstring, c);
-  strcat(bigstring, str_Ach1);
-  strcat(bigstring, d);
-  strcat(bigstring, str_Ach2);
-  strcat(bigstring, e);
-  strcat(bigstring, str_Ach3);
-  strcat(bigstring, f);
-  strcat(bigstring, str_Ach4);
-  strcat(bigstring, g);
-  strcat(bigstring, str_Dch5);
-  strcat(bigstring, h);
-  strcat(bigstring, str_Dch6);
+  //strcat(bigstring, c);
+  //strcat(bigstring, str_Ach1);
+  //strcat(bigstring, d);
+  //strcat(bigstring, str_Ach2);
+ //strcat(bigstring, e);
+  //strcat(bigstring, str_Ach3);
+  //strcat(bigstring, f);
+  //strcat(bigstring, str_Ach4);
+  //strcat(bigstring, g);
+  //strcat(bigstring, str_Dch5);
+  //strcat(bigstring, h);
+ // strcat(bigstring, str_Dch6);
   //  strcat(bigstring, i);
   //  strcat(bigstring, str_Dch7);
   //  strcat(bigstring, j);

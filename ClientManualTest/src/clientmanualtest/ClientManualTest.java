@@ -45,7 +45,7 @@ public class ClientManualTest
                         Thread.sleep(1000);
                     }
                 }
-                Socket clientSocket = new Socket("localhost", 9000);
+                Socket clientSocket = new Socket("192.168.0.101", 8080);
 
                 //clientSocket.setSoTimeout(1000);
                 PrintWriter outToServer = new PrintWriter(

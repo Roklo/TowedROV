@@ -22,6 +22,15 @@ import ROV.DataHandler;
 public class ReadSerialData implements Runnable
 {
 
+    // Filter values
+    int actuatorFbFilter = 10; // 1 equals off
+
+    int actuatorPSFbFilterStorage = 0;
+    int actuatorSBFbFilterStorage = 0;
+
+    int actuatorPSFbFilterCounter = 0;
+    int actuatorSBFbFilterCounter = 0;
+
     boolean portIsOpen = false;
     String comPort = "";
     int baudRate = 0;
@@ -201,19 +210,19 @@ public class ReadSerialData implements Runnable
                 case "DBT:":
                     data.setFb_depthBelowTransduser(Integer.parseInt(value));
                     break;
-                case "Ach1:":
+                case "ch1:":
                     data.setAnalogInputChannel_1(Double.parseDouble(value));
                     break;
-                case "Ach2:":
+                case "ch2:":
                     data.setAnalogInputChannel_2(Double.parseDouble(value));
                     break;
-                case "Ach3:":
+                case "ch3:":
                     data.setAnalogInputChannel_3(Double.parseDouble(value));
                     break;
-                case "Ach4:":
+                case "ch4:":
                     data.setAnalogInputChannel_4(Double.parseDouble(value));
                     break;
-                case "Dch5:":
+                case "ch5:":
                     if (value.equals("1.00"))
                     {
                         data.setDigitalInputChannel_5(true);
@@ -222,13 +231,63 @@ public class ReadSerialData implements Runnable
                         data.setDigitalInputChannel_5(false);
                     }
                     break;
-                case "Dch6:":
+                case "ch6:":
                     if (value.equals("1.00"))
                     {
                         data.setDigitalInputChannel_6(true);
                     } else
                     {
                         data.setDigitalInputChannel_6(false);
+                    }
+                    break;
+
+                case "PsActuatorFb":
+                    int tempValuePs = Integer.parseInt(value);
+                    if (tempValuePs < 0)
+                    {
+                        tempValuePs = 0;
+                    }
+                    if (tempValuePs > 254)
+                    {
+                        tempValuePs = 254;
+                    }
+
+                    if (actuatorPSFbFilterCounter <= actuatorFbFilter)
+                    {
+                        actuatorPSFbFilterStorage = actuatorPSFbFilterStorage + tempValuePs;
+                        actuatorPSFbFilterCounter++;
+
+                    } else
+                    {
+                        actuatorPSFbFilterStorage = actuatorPSFbFilterStorage / actuatorFbFilter;
+                        actuatorPSFbFilterCounter = 0;
+
+                        data.setFb_actuatorPSPos(tempValuePs);
+                    }
+                    break;
+
+                case "SbActuatorFb":
+                    int tempValueSb = Integer.parseInt(value);
+                    if (tempValueSb < 0)
+                    {
+                        tempValueSb = 0;
+                    }
+                    if (tempValueSb > 254)
+                    {
+                        tempValueSb = 254;
+                    }
+
+                    if (actuatorSBFbFilterCounter <= actuatorFbFilter)
+                    {
+                        actuatorSBFbFilterStorage = actuatorSBFbFilterStorage + tempValueSb;
+                        actuatorSBFbFilterCounter++;
+
+                    } else
+                    {
+                        actuatorSBFbFilterStorage = actuatorSBFbFilterStorage / actuatorFbFilter;
+                        actuatorSBFbFilterCounter = 0;
+
+                        data.setFb_actuatorSBPos(tempValueSb);
                     }
                     break;
 
@@ -244,6 +303,15 @@ public class ReadSerialData implements Runnable
                     data.setFb_heading(Integer.parseInt(value));
                     //setHeading(Integer.parseInt(value));
                     break;
+                    
+                case "tmp1":
+                    data.setFb_tempMainElBoxFront(Double.parseDouble(value));
+                    break;
+                    
+                    case "tmp2":
+                    data.setFb_tempMainElBoxRear(Double.parseDouble(value));
+                    break;
+                    
 
                 /*
                 case "Satellites":

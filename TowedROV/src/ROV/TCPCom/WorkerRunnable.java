@@ -74,9 +74,17 @@ public class WorkerRunnable implements Runnable
                         inputData = inputData.substring(inputData.indexOf(start_char) + 1);
                         inputData = inputData.substring(0, inputData.indexOf(end_char));
                         inputData = inputData.replace("?", "");
-                        String[] data = inputData.split(sep_char);
-                        key = data[0];
-                        value = data[1];
+                        if (inputData.contains(":"))
+                        {
+                            String[] data = inputData.split(sep_char);
+                            key = data[0];
+                            value = data[1];
+                        } else
+                        {
+                            String[] data = inputData.split(sep_char);
+                            key = data[0];
+                        }
+
                     } else
                     {
                         key = (String) inputData;
@@ -86,7 +94,7 @@ public class WorkerRunnable implements Runnable
                     {
                         //Commands
 
-                        case "cmd_lightIntensity":                            
+                        case "cmd_lightIntensity":
                             dh.setCmd_lightIntensity(parseStringToInt(value));
                             System.out.println("Light intensity is: " + dh.getCmd_lightIntensity());
                             outToClient.println("Server: OK");
@@ -96,6 +104,7 @@ public class WorkerRunnable implements Runnable
                             dh.setCmd_actuatorPS(parseStringToInt(value));
                             System.out.println("actuatorPS is: " + dh.getCmd_actuatorPS());
                             outToClient.println("Server: OK");
+
                             break;
 
                         case "cmd_actuatorSB":
@@ -292,7 +301,7 @@ public class WorkerRunnable implements Runnable
                             outToClient.println("<get_cmd_pid_gain:" + dh.getCmd_pid_gain() + ">");
                             break;
 
-                        case "get_ROVComPorts":                            
+                        case "get_ROVComPorts":
                             String portListString = "<";
                             for (Entry e : dh.comPortList.entrySet())
                             {
