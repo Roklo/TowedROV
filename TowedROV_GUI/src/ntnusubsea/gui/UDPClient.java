@@ -49,6 +49,9 @@ public class UDPClient implements Runnable
     private DatagramPacket receivePacket;
     private InetAddress returnIP;
     private int returnPort;
+    private boolean connected = false;
+    private double endTime;
+    private double startTime;
 
     public UDPClient(int port, Data data)
     {
@@ -58,7 +61,7 @@ public class UDPClient implements Runnable
             this.port = port;
             //this.IP = IP;
             videoSocket = new DatagramSocket(this.port);
-            photoDirectory = new File("C://ROV_Photos/");
+            photoDirectory = new File("C://TowedROV/ROV_Photos/");
         } catch (Exception e)
         {
             System.out.println("Error connecting to the UDP Server: " + e.getMessage());
@@ -88,6 +91,29 @@ public class UDPClient implements Runnable
         }
     }
 
+    public void sendResetIMGcommand()
+    {
+        try
+        {
+            String message = "resetImgNumber";
+            byte arr[] = message.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, this.returnIP, this.returnPort);
+            videoSocket.send(sendPacket);
+            System.out.println("resetImgNumber command sent to Camera RPi!");
+
+        } catch (SocketException ex)
+        {
+            System.out.println("SocketException in UDPClient: " + ex.getMessage());
+
+        } catch (IOException ex)
+        {
+            System.out.println("IOException in UDPClient: " + ex.getMessage());
+        } catch (Exception ex)
+        {
+            System.out.println("Exception in UDPClient: " + ex.getMessage());
+        }
+    }
+
     @Override
     public void run()
     {
@@ -100,20 +126,20 @@ public class UDPClient implements Runnable
                 timer = System.currentTimeMillis();
                 System.out.println("Reconnected");
             }
-            //Createss new DatagramSocket for reciving DatagramPackets
 
+            //Createss new DatagramSocket for reciving DatagramPackets
             //Creating new DatagramPacket form the packet recived on the videoSocket
             byte[] receivedData = new byte[60000];
             receivePacket = new DatagramPacket(receivedData,
                     receivedData.length);
             if (receivePacket.getLength() > 0)
             {
-                double startTime = System.currentTimeMillis();
+                startTime = System.currentTimeMillis();
                 //Updates the videoImage from the received DatagramPacket
                 videoSocket.receive(receivePacket);
                 this.returnIP = receivePacket.getAddress();
                 this.returnPort = receivePacket.getPort();
-                double endTime = System.currentTimeMillis();
+                endTime = System.currentTimeMillis();
                 data.setPhotoModeDelay_FB((endTime - startTime) / 1000);
                 if (debug)
                 {
@@ -123,6 +149,11 @@ public class UDPClient implements Runnable
                 ByteArrayInputStream bais = new ByteArrayInputStream(receivedData);
                 videoImage = ImageIO.read(bais);
                 data.setVideoImage(videoImage);
+
+                if (lastPhotoMode && (endTime - startTime) > 500)
+                {
+                    data.increaseImageNumberByOne();
+                }
 
                 // Saves the photo to disk if photo mode is true
 //                if (data.isPhotoMode())
@@ -135,15 +166,15 @@ public class UDPClient implements Runnable
 //                            this.photoNumber++;
 //                        } else
 //                        {
-//                            System.out.println("No directory found, creating a new one at C://ROV_Photos/");
-//                            this.photoDirectory = new File("C://ROV_Photos/");
+//                            System.out.println("No directory found, creating a new one at C://TowedROV/ROV_Photos/");
+//                            this.photoDirectory.mkdir();
 //                        }
 //
 //                    } catch (Exception e)
 //                    {
 //                        System.out.println("Exception occured :" + e.getMessage());
 //                    }
-//                    System.out.println("Image were saved to disk succesfully at C:/ROV_Photos");
+//                    System.out.println("Image were saved to disk succesfully at C://TowedROV/ROV_Photos");
 //                }
                 // Sends the command to the ROV
                 if (data.isPhotoMode() != lastPhotoMode)
@@ -169,6 +200,5 @@ public class UDPClient implements Runnable
         {
             Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 }

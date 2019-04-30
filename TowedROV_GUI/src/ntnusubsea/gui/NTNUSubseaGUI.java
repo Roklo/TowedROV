@@ -33,8 +33,8 @@ public class NTNUSubseaGUI
     //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
-    protected static String IP_ROV = "192.168.0.1";
-    protected static String IP_camera = "192.168.0.2";
+    protected static String IP_ROV = "192.168.0.101";
+    protected static String IP_camera = "192.168.0.102";
     protected static int Port_ROV = 8080;
     protected static int Port_cameraStream = 8083;
     protected static int Port_cameraCom = 9006;
@@ -62,7 +62,7 @@ public class NTNUSubseaGUI
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);
         SwingUtilities.invokeLater(frame);
-        SwingUtilities.invokeLater(sonar);
+        //SwingUtilities.invokeLater(sonar);
         SwingUtilities.invokeLater(io);
         sonar.setVisible(false);
         data.addObserver(sonar);
@@ -73,7 +73,7 @@ public class NTNUSubseaGUI
         executor.scheduleAtFixedRate(lgh,
                 0, 5000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
-                20, 40, TimeUnit.MILLISECONDS);
+                5000, 40, TimeUnit.MILLISECONDS);
         //executor.scheduleAtFixedRate(nmea,
         //      0, 1000, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(client_ROV,
@@ -84,6 +84,8 @@ public class NTNUSubseaGUI
                 0, 20, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(cmt,
+                0, 100, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(sonar,
                 0, 100, TimeUnit.MILLISECONDS);
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(new Runnable()

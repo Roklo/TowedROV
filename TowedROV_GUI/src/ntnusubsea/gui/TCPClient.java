@@ -232,6 +232,29 @@ public class TCPClient implements Runnable
         return ping;
     }
 
+    public int getPort()
+    {
+        return port;
+    }
+
+    public void setPort(int port)
+    {
+        this.port = port;
+    }
+
+    public String getIP()
+    {
+        return IP;
+    }
+
+    public void setIP(String IP)
+    {
+        this.IP = IP;
+    }
+
+    
+    
+    
     void sendDepthCommand()
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

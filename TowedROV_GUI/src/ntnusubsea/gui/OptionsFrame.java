@@ -5,33 +5,45 @@
  */
 package ntnusubsea.gui;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 
 /**
  * This class allows the user to change options between every time the program
- * is loaded. It reads and writes from the ROV Options text file from the program
- * folder
- * 
+ * is loaded. It reads and writes from the ROV Options text file from the
+ * program folder
+ *
  * @author Marius Nonsvik
  */
-public class OptionsFrame extends javax.swing.JFrame {
+public class OptionsFrame extends javax.swing.JFrame
+{
 
     File file = new File("ROV Options.txt");
-    String defaultIP;
+    String IP_Rov;
+    String IP_Camera;
     ArrayList channels = new ArrayList<String>();
     private Data data;
 
     /**
      * Creates new form OptionsFrame
+     *
      * @param data Data containing shared variables.
      */
-    public OptionsFrame(Data data) {
+    public OptionsFrame(Data data)
+    {
         initComponents();
+        //setSize(640, 480);
+        this.pack();
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(null);
         this.data = data;
         getOptionsFromFile();
     }
@@ -43,13 +55,14 @@ public class OptionsFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         jLabelIPHeader = new javax.swing.JLabel();
         jButtonOK = new javax.swing.JButton();
         jButtonApply = new javax.swing.JButton();
         jButtonCanel = new javax.swing.JButton();
-        jTextFieldIP = new javax.swing.JTextField();
+        jTextFieldIP_Rov = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabelChannelsHeader = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -68,41 +81,53 @@ public class OptionsFrame extends javax.swing.JFrame {
         jTextFieldChannel6 = new javax.swing.JTextField();
         jTextFieldChannel7 = new javax.swing.JTextField();
         jTextFieldChannel8 = new javax.swing.JTextField();
+        jTextFieldIP_Camera = new javax.swing.JTextField();
+        jLabelIPHeader1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Options");
         setBackground(new java.awt.Color(39, 44, 50));
+        setForeground(new java.awt.Color(39, 44, 50));
+        setMaximumSize(new java.awt.Dimension(432, 333));
+        setMinimumSize(new java.awt.Dimension(432, 333));
         setResizable(false);
 
         jLabelIPHeader.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabelIPHeader.setText("Default IP");
+        jLabelIPHeader.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelIPHeader.setText("ROV IP");
 
         jButtonOK.setText("OK");
         jButtonOK.setPreferredSize(new java.awt.Dimension(65, 25));
-        jButtonOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonOK.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonOKActionPerformed(evt);
             }
         });
 
         jButtonApply.setText("Apply");
         jButtonApply.setPreferredSize(new java.awt.Dimension(65, 25));
-        jButtonApply.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonApply.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonApplyActionPerformed(evt);
             }
         });
 
         jButtonCanel.setText("Cancel");
         jButtonCanel.setPreferredSize(new java.awt.Dimension(65, 25));
-        jButtonCanel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonCanel.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonCanelActionPerformed(evt);
             }
         });
 
-        jTextFieldIP.setText("123.123.123.123");
-        jTextFieldIP.setToolTipText("");
+        jTextFieldIP_Rov.setText("123.123.123.123");
+        jTextFieldIP_Rov.setToolTipText("");
 
         jLabelChannelsHeader.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabelChannelsHeader.setText("Custom I/O");
@@ -132,15 +157,19 @@ public class OptionsFrame extends javax.swing.JFrame {
         jTextFieldChannel3.setText("Channel 3");
 
         jTextFieldChannel5.setText("Channel 5");
-        jTextFieldChannel5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jTextFieldChannel5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jTextFieldChannel5ActionPerformed(evt);
             }
         });
 
         jTextFieldChannel6.setText("Channel 6");
-        jTextFieldChannel6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jTextFieldChannel6.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jTextFieldChannel6ActionPerformed(evt);
             }
         });
@@ -149,37 +178,38 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         jTextFieldChannel8.setText("Channel 8");
 
+        jTextFieldIP_Camera.setText("123.123.123.123");
+        jTextFieldIP_Camera.setToolTipText("");
+
+        jLabelIPHeader1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabelIPHeader1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelIPHeader1.setText("Camera IP");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonApply, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonCanel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextFieldChannel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldChannel6, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldChannel7, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldChannel8, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator1)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabelIPHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabelChannelsHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonApply, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonCanel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextFieldChannel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldChannel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldChannel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldChannel8))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
@@ -194,21 +224,40 @@ public class OptionsFrame extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                                     .addComponent(jLabel4)
-                                    .addComponent(jTextFieldChannel3))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextFieldChannel4, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addContainerGap())
+                                    .addComponent(jTextFieldChannel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldChannel4, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabelChannelsHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(340, 346, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(73, 73, 73)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextFieldIP_Rov)
+                    .addComponent(jLabelIPHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextFieldIP_Camera)
+                    .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabelIPHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelIPHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldIP_Rov, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldIP_Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -250,9 +299,11 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     private void jButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKActionPerformed
         BufferedWriter writer = null;
-        try {
+        try
+        {
             writer = new BufferedWriter(new FileWriter(file, false));
-            writer.write(jTextFieldIP.getText() + System.getProperty("line.separator"));
+            writer.write(jTextFieldIP_Rov.getText() + System.getProperty("line.separator"));
+            writer.write(jTextFieldIP_Camera.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel1.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel2.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel3.getText() + System.getProperty("line.separator"));
@@ -261,14 +312,19 @@ public class OptionsFrame extends javax.swing.JFrame {
             writer.write(jTextFieldChannel6.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel7.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel8.getText() + System.getProperty("line.separator"));
-            data.setDefaultIP(jTextFieldIP.getText());
+            data.setIP_Rov(jTextFieldIP_Rov.getText());
+            data.setIP_Camera(jTextFieldIP_Camera.getText());
             data.setIOLabels(jTextFieldChannel1.getText(), jTextFieldChannel2.getText(), jTextFieldChannel3.getText(), jTextFieldChannel4.getText(), jTextFieldChannel5.getText(), jTextFieldChannel6.getText(), jTextFieldChannel7.getText(), jTextFieldChannel8.getText());
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             System.out.println(e.getMessage());
-        } finally {
-            try {
+        } finally
+        {
+            try
+            {
                 writer.close();
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 System.out.println(e.getMessage());
             }
         }
@@ -277,9 +333,11 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     private void jButtonApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonApplyActionPerformed
         BufferedWriter writer = null;
-        try {
+        try
+        {
             writer = new BufferedWriter(new FileWriter(file, false));
-            writer.write(jTextFieldIP.getText() + System.getProperty("line.separator"));
+            writer.write(jTextFieldIP_Rov.getText() + System.getProperty("line.separator"));
+            writer.write(jTextFieldIP_Camera.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel1.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel2.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel3.getText() + System.getProperty("line.separator"));
@@ -288,15 +346,20 @@ public class OptionsFrame extends javax.swing.JFrame {
             writer.write(jTextFieldChannel6.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel7.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel8.getText() + System.getProperty("line.separator"));
-            data.setDefaultIP(jTextFieldIP.getText());
+            data.setIP_Rov(jTextFieldIP_Rov.getText());
+            data.setIP_Camera(jTextFieldIP_Camera.getText());
             data.setIOLabels(jTextFieldChannel1.getText(), jTextFieldChannel2.getText(), jTextFieldChannel3.getText(), jTextFieldChannel4.getText(), jTextFieldChannel5.getText(), jTextFieldChannel6.getText(), jTextFieldChannel7.getText(), jTextFieldChannel8.getText());
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             System.out.println(e.getMessage());
-        } finally {
-            try {
+        } finally
+        {
+            try
+            {
                 writer.close();
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 System.out.println(e.getMessage());
             }
         }
@@ -305,11 +368,16 @@ public class OptionsFrame extends javax.swing.JFrame {
     /**
      * Reads the option files and displays the current settings
      */
-    public void getOptionsFromFile() {
-        try (BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt"))) {
-            defaultIP = br.readLine();
-            jTextFieldIP.setText(defaultIP);
-            for (int i = 0; i < 8; i++) {
+    public void getOptionsFromFile()
+    {
+        try (BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt")))
+        {
+            this.IP_Rov = br.readLine();
+            jTextFieldIP_Rov.setText(this.IP_Rov);
+            this.IP_Camera = br.readLine();
+            jTextFieldIP_Camera.setText(this.IP_Camera);
+            for (int i = 0; i < 8; i++)
+            {
                 channels.add(i, br.readLine());
             }
             jTextFieldChannel1.setText((String) channels.get(0));
@@ -320,7 +388,8 @@ public class OptionsFrame extends javax.swing.JFrame {
             jTextFieldChannel6.setText((String) channels.get(5));
             jTextFieldChannel7.setText((String) channels.get(6));
             jTextFieldChannel8.setText((String) channels.get(7));
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             System.out.println(e.getMessage());
         }
     }
@@ -352,6 +421,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabelChannelsHeader;
     private javax.swing.JLabel jLabelIPHeader;
+    private javax.swing.JLabel jLabelIPHeader1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField jTextFieldChannel1;
     private javax.swing.JTextField jTextFieldChannel2;
@@ -361,6 +431,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldChannel6;
     private javax.swing.JTextField jTextFieldChannel7;
     private javax.swing.JTextField jTextFieldChannel8;
-    private javax.swing.JTextField jTextFieldIP;
+    private javax.swing.JTextField jTextFieldIP_Camera;
+    private javax.swing.JTextField jTextFieldIP_Rov;
     // End of variables declaration//GEN-END:variables
 }

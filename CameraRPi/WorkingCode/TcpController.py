@@ -5,6 +5,8 @@ import RPi.GPIO as GPIO
 import socket 
 import threading
 import sys
+import os
+import shutil
 
 # values that can be set from remote:
 cameraPitch = 0.01
@@ -31,7 +33,7 @@ GPIO.setwarnings(False)
 GPIO.setup(PIN_CameraPitch, GPIO.OUT)
 GPIO.setup(PIN_LedLights, GPIO.OUT)
 GPIO.setup(PIN_WaterLeak, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-pwm_pitch = GPIO.PWM(PIN_CameraPitch, 400) # PIN_CameraPitch = GPIO pin 40, frequency 500
+pwm_pitch = GPIO.PWM(PIN_CameraPitch, 400) # PIN_CameraPitch = GPIO pin 40, frequency 400
 pwm_pitch.start(0)
 pwm_led = GPIO.PWM(PIN_LedLights, 200) # PIN_CameraPitch = GPIO pin 38, frequency 200
 pwm_led.start(0)
@@ -126,18 +128,18 @@ def SensorReader():
 			#time.sleep(0.1)
 
 	except (Exception, KeyboardInterrupt) as e:
-		pass
+		#pass
 		#connection.close()
-		#pwm_pitch.stop()
-		#pwm_led.stop()
-		#GPIO.cleanup()
+		pwm_pitch.stop()
+		pwm_led.stop()
+		GPIO.cleanup()
 	finally:
-		pass
 		# Clean up the connection
+		#pass
 		#connection.close()
-		#pwm_pitch.stop()
-		#pwm_led.stop()
-		#GPIO.cleanup()
+		pwm_pitch.stop()
+		pwm_led.stop()
+		GPIO.cleanup()
 			
 			
 # Start the SensorReader thread
@@ -173,26 +175,15 @@ leakThread = threading.Thread(target=LeakAlarmListener)
 leakThread.daemon = True
 leakThread.start()
 
-	
-# listening function for the thread
-#def tcpServer():
 
-#global pressure
-#global outsideTemp
-#global insideTemp
-#global cameraPitch
-#global ledLights
-#global pwm_pitch
-#global pwm_led
-#global GPIO
-	
+# Setting up the server
 print('Setting up the server...')
 sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
 #server_address = ('169.254.196.33', 9006) # ROV Camera RPi
 #server_address = ('169.254.99.196', 9006) # Bjørnars RPi
 #server_address = ('10.16.4.187', 9006) # Bjørnars RPi WIFI
 #server_address = ('10.16.8.140', 9006) # ROV Camera RPi WIFI
-server_address = ('192.168.0.2', 9006) # ROV Camera RPi Static IP address to be used
+server_address = ('192.168.0.102', 9006) # ROV Camera RPi Static IP address to be used
 print('Starting up on {} port {} ' .format(*server_address))
 sock.bind(server_address)
 sock.listen(1)
@@ -210,14 +201,17 @@ while True:
 			dataString = str(data, 'utf-8').rstrip("\r\n")
 			print('Received:', dataString)
 			if data:	
-				if dataString == "getData":
+				if dataString == "<getData>":
 					dataToBeSent = "<leakAlarm:{0}:depth:{1}:pressure:{2}:outsideTemp:{3}:insideTemp:{4}:humidity:{5}>\r\n".format(
 					leakAlarm, depth, pressure, outsideTemp, insideTemp, humidity)
 					
 					bytesToBeSent = dataToBeSent.encode()
 					print('Sending back data:', dataToBeSent.rstrip("\r\n"))
 					connection.sendall(bytesToBeSent)
-				elif "setPitch" in dataString:
+				elif "<setPitch:" in dataString:
+						dataString = dataString.replace("<","")
+						dataString = dataString.replace(">","")
+						#print(dataString)
 						arr = dataString.split(":")
 						value = arr[1]
 						intValue = int(value)
@@ -227,10 +221,13 @@ while True:
 							value = 75
 						cameraPitchDutyCycle = float(value)
 						pwm_pitch.ChangeDutyCycle(float(cameraPitchDutyCycle))
-						print("cameraPitch has been set to {0} from the ROV!".format(cameraPitchDutyCycle))
+						print("cameraPitch has been set to {0} from the GUI!".format(cameraPitchDutyCycle))
 						replyMessage = 'cameraPitch has been set to ' + str(value) + '!\r\n'
 						connection.sendall(replyMessage.encode())
-				elif "setLed" in dataString:
+				elif "<setLed:" in dataString:
+						dataString = dataString.replace("<","")
+						dataString = dataString.replace(">","")
+						#print(dataString)
 						arr = dataString.split(":")
 						value = arr[1]
 						intValue = int(value)
@@ -240,42 +237,45 @@ while True:
 							value = 40
 						ledLightsDutyCycle = float(value)
 						pwm_led.ChangeDutyCycle(ledLightsDutyCycle)
-						print("ledLights has been set to {0} from the ROV!".format(ledLightsDutyCycle))
+						print("ledLights has been set to {0} from the GUI!".format(ledLightsDutyCycle))
 						replyMessage = 'ledLights has been set to ' + str(value) + '!\r\n'
 						connection.sendall(replyMessage.encode())
+				elif "<clearImages>" in dataString:
+					dataString = dataString.replace("<","")
+					dataString = dataString.replace(">","")
+					# clear the image folder
+					numCleared = 0
+					numAmount = 0
+					folder = '/home/pi/ftp/images'
+					for the_file in os.listdir(folder):
+						numAmount = numAmount + 1
+						file_path = os.path.join(folder, the_file)
+						try:
+							if os.path.isfile(file_path):
+								os.unlink(file_path)
+								numCleared = numCleared + 1
+							#elif os.path.isdir(file_path): shutil.rmtree(file_path)
+						except Exception as e:
+							print(e)
+					print('Cleared the image folder.')
+					replyMessage = 'Cleared the image folder: ' + str(numCleared) + " of " + str(numAmount) + " images cleared." + '\r\n'
+					connection.sendall(replyMessage.encode())
+					
 				else:
 					print('Wrong command received: ' + dataString)
-					connection.sendall(b'Wrong command! Only _getData_ and _setPitch:value_ will work on this device.\r\n')
+					connection.sendall(b'Wrong command! Only <getData>, <setPitch:value> and <setLed:value> and <clearImages> will work on this device.\r\n')
 			else:
 				print('no data from', client_address)
 				break
 	except (Exception, KeyboardInterrupt) as e:
 		connection.close()
-		pwm_pitch.stop()
-		pwm_led.stop()
-		GPIO.cleanup()
+		#pwm_pitch.stop()
+		#pwm_led.stop()
+		#GPIO.cleanup()
 	finally:
 		# Clean up the connection
 		connection.close()
-		pwm_pitch.stop()
-		pwm_led.stop()
-		GPIO.cleanup()
-		
-		
-# Start the listening thread
-#t = threading.Thread(target=tcpServer)
-#t.daemon = True
-#t.start()
-
-
-
-#while True:
-#	try:
-#		pass # run program for ever
-#		
-#	except (Exception, KeyboardInterrupt) as e:
-#		connection.close()
-#		pwm_pitch.stop()
-#		pwm_led.stop()
-#		GPIO.cleanup()
+		#pwm_pitch.stop()
+		#pwm_led.stop()
+		#GPIO.cleanup()
 

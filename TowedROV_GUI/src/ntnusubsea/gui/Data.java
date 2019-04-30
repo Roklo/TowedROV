@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,9 +78,12 @@ public final class Data extends Observable
     public boolean startLogging = true;
 
     public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
+    public List<String> rovDepthDataList = new ArrayList<>();
+    public List<String> depthBeneathBoatDataList = new ArrayList<>();
 
-    private float seafloorRov = 0;
-    private float seafloorBoat = 0;
+    private double timeBetweenBoatAndRov = 4.0;
+    private float depthBeneathRov = 0;
+    private float depthBeneathBoat = 0;
     private float pitchAngle = 0;
     private float wingAngle = 0;
     private float rollAngle = 0;
@@ -92,7 +96,8 @@ public final class Data extends Observable
     private byte leakStatus = 0;
     private ArrayList<String> labels = new ArrayList();
     private float[] channelValues = new float[4];
-    private String defaultIP = "";
+    private String IP_Rov = "";
+    private String IP_Camera = "";
     private BufferedImage videoImage;
     private String Kp;
     private String Ki;
@@ -101,6 +106,7 @@ public final class Data extends Observable
     private boolean photoMode = false;
     private double photoModeDelay = 1;
     private double photoModeDelay_FB = 1;
+    private int imageNumber = 0;
     private int cameraPitchValue = 0;
     private boolean doRovCalibration = false;
 
@@ -112,7 +118,9 @@ public final class Data extends Observable
         try
         {
             BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt"));
-            defaultIP = br.readLine();
+            //this.updateRovDepthDataList();
+            IP_Rov = br.readLine();
+            IP_Camera = br.readLine();
             labels.add(0, br.readLine());
             labels.add(1, br.readLine());
             labels.add(2, br.readLine());
@@ -136,25 +144,47 @@ public final class Data extends Observable
     }
 
     /**
-     * Sets the default connection IP
+     * Sets the default ROV IP
      *
-     * @param ip The default connection IP
+     * @param ip The default ROV IP
      */
-    public synchronized void setDefaultIP(String ip)
+    public synchronized void setIP_Rov(String ip)
     {
-        defaultIP = ip;
+        this.IP_Rov = ip;
         setChanged();
         notifyObservers();
     }
 
     /**
-     * Returns the default connection IP
+     * Returns the default ROV IP
      *
-     * @return The default connection IP
+     * @return The default ROV IP
      */
-    public synchronized String getDefaultIP()
+    public synchronized String getIP_Rov()
     {
-        return defaultIP;
+        return IP_Rov;
+    }
+
+    /**
+     * Sets the default Camera IP
+     *
+     * @param ip The default Camera IP
+     */
+    public synchronized void setIP_Camera(String ip)
+    {
+        this.IP_Camera = ip;
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Returns the default Camera IP
+     *
+     * @return The default Camera IP
+     */
+    public synchronized String getIP_Camera()
+    {
+        return IP_Camera;
     }
 
     public synchronized String getKp()
@@ -411,14 +441,24 @@ public final class Data extends Observable
         return depth;
     }
 
+    public double getTimeBetweenBoatAndRov()
+    {
+        return timeBetweenBoatAndRov;
+    }
+
+    public void setTimeBetweenBoatAndRov(double timeBetweenBoatAndRov)
+    {
+        this.timeBetweenBoatAndRov = timeBetweenBoatAndRov;
+    }
+
     /**
      * Updates the current depth beneath the ROV
      *
      * @param depth Depth beneath the ROV
      */
-    public synchronized void setSeafloorRov(float depth)
+    public synchronized void setDepthBeneathRov(float depth)
     {
-        seafloorRov = depth;
+        depthBeneathRov = depth;
         setChanged();
         notifyObservers();
     }
@@ -428,9 +468,9 @@ public final class Data extends Observable
      *
      * @return Depth beneath the ROV
      */
-    public synchronized float getSeafloorRov()
+    public synchronized float getDepthBeneathRov()
     {
-        return seafloorRov;
+        return depthBeneathRov;
     }
 
     /**
@@ -438,9 +478,9 @@ public final class Data extends Observable
      *
      * @param depth Depth beneath the vessel
      */
-    public synchronized void setSeafloorBoat(float depth)
+    public synchronized void setDepthBeneathBoat(float depth)
     {
-        seafloorBoat = depth;
+        depthBeneathBoat = depth;
         setChanged();
         notifyObservers();
     }
@@ -450,9 +490,9 @@ public final class Data extends Observable
      *
      * @return Depth beneath the vessel
      */
-    public synchronized float getSeafloorBoat()
+    public synchronized float getDepthBeneathBoat()
     {
-        return seafloorBoat;
+        return depthBeneathBoat;
     }
 
     /**
@@ -678,6 +718,38 @@ public final class Data extends Observable
         this.cameraPitchValue = cameraPitchValue;
     }
 
+    /**
+     * Returns the image number value
+     *
+     * @return the image number value
+     */
+    public int getImageNumber()
+    {
+        return imageNumber;
+    }
+
+    /**
+     * Sets the image number value
+     *
+     * @param imageNumber the image number value
+     */
+    public void setImageNumber(int imageNumber)
+    {
+        this.imageNumber = imageNumber;
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Increases the image number by one
+     */
+    public void increaseImageNumberByOne()
+    {
+        this.imageNumber++;
+        setChanged();
+        notifyObservers();
+    }
+
     // CODE BELOW ADDED FROM THE BASESTATION PROJECT
     /**
      * Checks status of thread
@@ -807,6 +879,16 @@ public final class Data extends Observable
         notifyObservers();
     }
 
+    public int getRovDepth()
+    {
+        return rovDepth;
+    }
+
+    public void setRovDepth(int rovDepth)
+    {
+        this.rovDepth = rovDepth;
+    }
+
     public int getFb_actuatorPSPos()
     {
         return fb_actuatorPSPos;
@@ -887,7 +969,23 @@ public final class Data extends Observable
         this.SBActuatorMaxToMinTime = SBActuatorMaxToMinTime;
     }
 
- 
+    public void updateRovDepthDataList(String time, String value)
+    {
+        if (rovDepthDataList.size() >= 300)
+        {
+            rovDepthDataList.remove(0);
+        }
+        this.rovDepthDataList.add(time + ":" + value);
+    }
+
+    public void updateDepthBeneathBoatDataList(String time, String value)
+    {
+        if (depthBeneathBoatDataList.size() >= 300)
+        {
+            depthBeneathBoatDataList.remove(0);
+        }
+        this.depthBeneathBoatDataList.add(time + ":" + value);
+    }
 
     /**
      * Compare keys to controll values coming in from arduino, and puts correct
