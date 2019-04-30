@@ -17,6 +17,7 @@ import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  * The data class is a storage box that let's the different threads change and
@@ -137,6 +138,7 @@ public final class Data extends Observable
             channelValues[2] = channel3;
             channelValues[3] = channel4;
 //            videoImage = ImageIO.read(new File("C:\\Users\\marno\\OneDrive\\Documents\\NetBeansProjects\\NTNUSubsea GUI\\src\\ntnusubsea\\gui\\Images\\rsz_rovside.png"));
+            videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
         } catch (IOException ex)
         {
             Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);

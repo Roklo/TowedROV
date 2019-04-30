@@ -94,9 +94,9 @@ public class WorkerRunnable implements Runnable
                     {
                         //Commands
 
-                        case "cmd_lightIntensity":
-                            dh.setCmd_lightIntensity(parseStringToInt(value));
-                            System.out.println("Light intensity is: " + dh.getCmd_lightIntensity());
+                        case "cmd_lightMode":
+                            dh.setCmd_lightMode(parseStringToInt(value));
+                            System.out.println("LightMode: " + dh.getCmd_lightMode());
                             outToClient.println("Server: OK");
                             break;
 
@@ -212,8 +212,12 @@ public class WorkerRunnable implements Runnable
                             outToClient.println("<fb_tempSBactuatorBox:" + dh.getFb_tempSBactuatorBox() + ">");
                             break;
 
-                        case "fb_tempMainElBox":
-                            outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBox() + ">");
+                        case "fb_tempMainElBoxFront":
+                            outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBoxFront() + ">");
+                            break;
+
+                        case "fb_tempMainElBoxRear":
+                            outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBoxRear() + ">");
                             break;
 
                         case "fb_tempEchoBox":
@@ -257,8 +261,8 @@ public class WorkerRunnable implements Runnable
                             break;
 
                         //Stored Commands
-                        case "get_cmd_lightIntensity":
-                            outToClient.println("<get_cmd_lightIntensity:" + dh.getCmd_lightIntensity() + ">");
+                        case "get_cmd_lightMode":
+                            outToClient.println("<get_cmd_lightMode:" + dh.getCmd_lightMode() + ">");
                             break;
 
                         case "get_cmd_actuatorPS":

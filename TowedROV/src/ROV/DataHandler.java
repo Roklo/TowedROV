@@ -21,7 +21,7 @@ public class DataHandler extends Observable
     int pressureSensorOffset = 0;
 
     // Command values
-    int cmd_lightIntensity = 0;
+    int cmd_lightMode = 0;
     int cmd_actuatorPS = 0;
     int cmd_actuatorSB = 0;
     int cmd_actuatorPSMaxPos = 0;
@@ -380,14 +380,14 @@ public class DataHandler extends Observable
         this.fb_waterLeakChannel_4 = fb_waterLeakChannel_4;
     }
 
-    public int getCmd_lightIntensity()
+    public int getCmd_lightMode()
     {
-        return cmd_lightIntensity;
+        return cmd_lightMode;
     }
 
-    public void setCmd_lightIntensity(int cmd_lightIntensity)
+    public void setCmd_lightMode(int cmd_lightMode)
     {
-        this.cmd_lightIntensity = cmd_lightIntensity;
+        this.cmd_lightMode = this.cmd_lightMode;
     }
 
     public int getCmd_actuatorPS()

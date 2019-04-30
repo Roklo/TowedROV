@@ -43,7 +43,7 @@ public class NTNUSubseaGUI
      * @param args the command line arguments
      */
     public static void main(String[] args)
-    {
+    {        
         ClientManualTest cmt = new ClientManualTest();
 
         Data data = new Data();
@@ -66,7 +66,7 @@ public class NTNUSubseaGUI
         SwingUtilities.invokeLater(io);
         sonar.setVisible(false);
         data.addObserver(sonar);
-       // data.addObserver(logger);
+        // data.addObserver(logger);
         data.addObserver(frame);
         data.addObserver(encoder);
         data.addObserver(io);
@@ -76,12 +76,12 @@ public class NTNUSubseaGUI
                 5000, 40, TimeUnit.MILLISECONDS);
         //executor.scheduleAtFixedRate(nmea,
         //      0, 1000, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(client_ROV,
-                0, 100, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(client_Camera,
-                0, 100, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(stream,
-                0, 20, TimeUnit.MILLISECONDS);
+//        executor.scheduleAtFixedRate(client_ROV,
+//                0, 100, TimeUnit.MILLISECONDS);
+//        executor.scheduleAtFixedRate(client_Camera,
+//                0, 100, TimeUnit.MILLISECONDS);
+//        executor.scheduleAtFixedRate(stream,
+//                0, 20, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(cmt,
                 0, 100, TimeUnit.MILLISECONDS);
@@ -102,7 +102,6 @@ public class NTNUSubseaGUI
 //        LogFileHandler = new Thread(new LogFileHandler(data));
 //
 //        LogFileHandler.start();
-
         long timeDifference = 0;
         long lastTime = 0;
         long timeDelay = 5000;
@@ -193,7 +192,7 @@ public class NTNUSubseaGUI
             {
                 try
                 {
-                   // System.out.println(cmt.sendData("ping"));
+                    // System.out.println(cmt.sendData("ping"));
                 } catch (Exception e)
                 {
                 }
