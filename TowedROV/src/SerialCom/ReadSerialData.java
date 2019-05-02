@@ -23,7 +23,7 @@ public class ReadSerialData implements Runnable
 {
 
     // Filter values
-    int actuatorFbFilter = 10; // 1 equals off
+    int actuatorFbFilter = 1; // 1 equals off
 
     int actuatorPSFbFilterStorage = 0;
     int actuatorSBFbFilterStorage = 0;
@@ -129,7 +129,7 @@ public class ReadSerialData implements Runnable
         {
             try
             {
-                Thread.sleep(400);
+                Thread.sleep(50);
             } catch (Exception ex)
             {
 
@@ -205,39 +205,34 @@ public class ReadSerialData implements Runnable
             {
 
                 case "D":
-                    data.setFb_depth(Integer.parseInt(value));
+                    data.setFb_depthToSeabedEcho(Double.parseDouble(value));
                     break;
-                case "DBT:":
-                    data.setFb_depthBelowTransduser(Integer.parseInt(value));
+                case "DBT":
+                    data.setFb_depthBelowTransduser(Double.parseDouble(value));
                     break;
-                case "ch1:":
+                case "ch1":
                     data.setAnalogInputChannel_1(Double.parseDouble(value));
                     break;
-                case "ch2:":
+                case "ch2":
                     data.setAnalogInputChannel_2(Double.parseDouble(value));
                     break;
-                case "ch3:":
-                    data.setAnalogInputChannel_3(Double.parseDouble(value));
-                    break;
-                case "ch4:":
-                    data.setAnalogInputChannel_4(Double.parseDouble(value));
-                    break;
-                case "ch5:":
+
+                case "ch3":
                     if (value.equals("1.00"))
                     {
-                        data.setDigitalInputChannel_5(true);
+                        data.setDigitalInputChannel_3(true);
                     } else
                     {
-                        data.setDigitalInputChannel_5(false);
+                        data.setDigitalInputChannel_3(false);
                     }
                     break;
-                case "ch6:":
+                case "ch4":
                     if (value.equals("1.00"))
                     {
-                        data.setDigitalInputChannel_6(true);
+                        data.setDigitalInputChannel_4(true);
                     } else
                     {
-                        data.setDigitalInputChannel_6(false);
+                        data.setDigitalInputChannel_4(false);
                     }
                     break;
 
@@ -303,15 +298,15 @@ public class ReadSerialData implements Runnable
                     data.setFb_heading(Integer.parseInt(value));
                     //setHeading(Integer.parseInt(value));
                     break;
-                    
+
                 case "tmp1":
                     data.setFb_tempMainElBoxFront(Double.parseDouble(value));
                     break;
-                    
-                    case "tmp2":
+
+                case "tmp2":
                     data.setFb_tempMainElBoxRear(Double.parseDouble(value));
                     break;
-                    
+
 
                 /*
                 case "Satellites":

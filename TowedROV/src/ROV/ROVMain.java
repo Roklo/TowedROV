@@ -89,7 +89,8 @@ public class ROVMain
                 20, 40, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(logic,
-                20, 100, TimeUnit.MILLISECONDS);
+                20, 10, TimeUnit.MILLISECONDS);
+       
 
 //        int b1 = 0xC0;//0xC0 + (commandValue & 0x1F);
 //        int b2 = 0x7F; //(commandValue >> 5) & 0x7F;
@@ -134,14 +135,14 @@ public class ROVMain
 
             }
 
-            if (comPortValue.contains("ArduinoIO"))
+            if (comPortValue.contains("EchoSounder"))
             {
                 ArduinoIOThread = new Thread(new ReadSerialData(dh, comPortKey, 4800));
                 ArduinoIOThread.start();
                 ArduinoIOThread.setName(comPortValue);
 
             }
-            
+
             if (comPortValue.contains("ActuatorFBArduino"))
             {
                 ArduinoActuatorFBThread = new Thread(new ReadSerialData(dh, comPortKey, 38400));
@@ -149,29 +150,36 @@ public class ROVMain
                 ArduinoActuatorFBThread.setName(comPortValue);
 
             }
-            
-            
-            
-            
-            
+
         }
         System.out.println("Done");
+        dh.setFb_ROVReady(true);
+        try
+        {
+            dh.setCmd_BlueLED(1);
+            Thread.sleep(500);
+            dh.setCmd_BlueLED(0);
+        } catch (Exception e)
+        {
+        }
+
         while (true)
         {
             try
             {
-               //Thread.sleep(500);
-                System.out.println("------------------------------------");
-               System.out.println("FeedbackPS: " + dh.getFb_actuatorPSPos());
-            System.out.println("FeedbackSB: " + dh.getFb_actuatorSBPos());
-            
+                //Thread.sleep(500);
+//                System.out.println("------------------------------------");
+//                System.out.println("FeedbackPS: " + dh.getFb_actuatorPSPos());
+//                System.out.println("FeedbackSB: " + dh.getFb_actuatorSBPos());
+//                System.out.println("Temp1: " + dh.getFb_tempMainElBoxFront());
+//                System.out.println("Temp2: " + dh.getFb_tempMainElBoxRear());
+
             } catch (Exception e)
             {
             }
-            
+
             //  System.out.println("Roll: " + dh.getFb_roll());
             // System.out.println("Pitch: " + dh.getFb_pitch());
-
         }
         //serialRW.start();
 //        // ////////////////////////Robin's test area//////////////////////
