@@ -29,7 +29,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 /**
  * Frame to display a graph panel
  *
- * @author Marius Nonsvik
  */
 public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Observer
 {

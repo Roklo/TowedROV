@@ -13,7 +13,6 @@ import javax.swing.JPanel;
  * This class is an extended version of JPanel, with the added methods required
  * to display BufferedImages in the panel.
  *
- * @author Marius Nonsvik
  */
 public class ImagePanel extends JPanel {
 

@@ -29,7 +29,6 @@ import java.net.InetAddress;
  * This class handles incoming images from a DatagramPacket. It receives the
  * image on a DatagramSocket and returns it as a BufferedImage.
  *
- * @author MorSol and Marius Nonsvik
  */
 public class UDPClient implements Runnable
 {

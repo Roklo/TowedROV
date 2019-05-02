@@ -10,12 +10,13 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Client class that handles the connection to the server, retrieves the video
  * stream and sends commands to the server
  *
- * @author Marius Nonsvik
  */
 public class TCPClient implements Runnable
 {
@@ -30,6 +31,10 @@ public class TCPClient implements Runnable
     private int port;
     private String IP;
     private Data data;
+
+    String start_char = "<";
+    String end_char = ">";
+    String sep_char = ":";
 
     BufferedReader inFromServer;
     PrintWriter outToServer;
@@ -118,6 +123,35 @@ public class TCPClient implements Runnable
 
                 String serverResponse = inFromServer.readLine();
                 System.out.println("Server response: " + serverResponse);
+                if (cmd.equals("fb_allData") || cmd.equals("getData"))
+                {
+                    HashMap<String, String> newDataList = new HashMap<>();
+                    String key = "";
+                    String value = "";
+                    if (serverResponse.contains("<") && serverResponse.contains(">"))
+                    {
+                        serverResponse = serverResponse.substring(serverResponse.indexOf(start_char) + 1);
+                        serverResponse = serverResponse.substring(0, serverResponse.indexOf(end_char));
+                        serverResponse = serverResponse.replace("?", "");
+                        if (serverResponse.contains(":"))
+                        {
+                            String[] dataArray = serverResponse.split(sep_char);
+                            for (int i = 0; i < dataArray.length; i += 2)
+                            {
+                                newDataList.put(dataArray[i], dataArray[i + 1]);
+                            }
+                        } else
+                        {
+                            System.out.println("No data gotten...");
+                        }
+
+                    } else
+                    {
+                        System.out.println("The data string which was received was not complete...");
+                    }
+
+                    this.handleDataFromRemote(newDataList);
+                }
 
             } else
             {
@@ -252,11 +286,60 @@ public class TCPClient implements Runnable
         this.IP = IP;
     }
 
-    
-    
-    
     void sendDepthCommand()
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Compare keys to controll values coming in from arduino, and puts correct
+     * value to correct variable.
+     *
+     * @param newDataList
+     */
+    public void handleDataFromRemote(HashMap<String, String> newDataList)
+    {
+        for (Map.Entry e : newDataList.entrySet())
+        {
+            String key = (String) e.getKey();
+            String value = (String) e.getValue();
+
+//            switch (key)
+//            {
+//                case "Satellites":
+//                    setSatellites(Integer.parseInt(value));
+//                    break;
+//                case "Altitude":
+//                    setAltitude(Float.parseFloat(value));
+//                    break;
+//                case "Angle":
+//                    setAngle(Float.parseFloat(value));
+//                    break;
+//                case "Speed":
+//                    setSpeed(Float.parseFloat(value));
+//                    break;
+//                case "Latitude":
+//                    setLatitude(Float.parseFloat(value));
+//                    break;
+//                case "Longitude":
+//                    setLongitude(Float.parseFloat(value));
+//                    break;
+//                case "Depth":
+//                    setDepth(Float.parseFloat(value));
+//                    break;
+//                case "Temp":
+//                    setTemperature(Float.parseFloat(value));
+//                    break;
+//                case "Roll":
+//                    setRoll(Integer.parseInt(value));
+//                    break;
+//                case "Pitch":
+//                    setPitch(Integer.parseInt(value));
+//                    break;
+//                case "Heading":
+//                    setHeading(Integer.parseInt(value));
+//                    break;
+//            }
+        }
     }
 }

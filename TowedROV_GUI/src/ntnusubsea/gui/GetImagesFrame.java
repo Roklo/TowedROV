@@ -7,7 +7,6 @@ package ntnusubsea.gui;
 
 /**
  *
- * @author hakon
  */
 public class GetImagesFrame extends javax.swing.JFrame
 {

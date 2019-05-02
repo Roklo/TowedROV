@@ -23,7 +23,6 @@ import org.apache.commons.net.ftp.FTPReply;
 
 /**
  *
- * @author hakon
  */
 public class FtpClient implements Runnable
 {

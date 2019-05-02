@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 /**
  * Main class that launches the application and schedules the different threads
  *
- * @author Marius Nonsvik
  */
 public class NTNUSubseaGUI
 {
@@ -43,10 +42,11 @@ public class NTNUSubseaGUI
      * @param args the command line arguments
      */
     public static void main(String[] args)
-    {        
+    {
         ClientManualTest cmt = new ClientManualTest();
 
         Data data = new Data();
+        Sounder sounder = new Sounder();
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         //DataLogger logger = new DataLogger(data);
@@ -55,7 +55,7 @@ public class NTNUSubseaGUI
         TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
         UDPClient stream = new UDPClient(Port_cameraStream, data);
         IOControlFrame io = new IOControlFrame(data, client_ROV);
-        ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream);
+        ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream, sounder);
         VideoEncoder encoder = new VideoEncoder(data);
         //NmeaReceiver nmea = new NmeaReceiver(data);
         BufferedImage banan;

@@ -16,7 +16,6 @@ import java.util.Observer;
  * This class creates a text file and logs the data every second. The text file
  * contains time stamps and the desired data.
  *
- * @author Marius Nonsvik
  */
 public class DataLogger implements Observer, Runnable {
 
