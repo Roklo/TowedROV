@@ -46,6 +46,7 @@ public class SerialDataHandler
 
     private void saveUsableComPorts()
     {
+        int comCheck = 0;
         for (Entry e : portNamesList.entrySet())
         {
             String comPortKey = (String) e.getKey();
@@ -53,7 +54,14 @@ public class SerialDataHandler
             if (!comPortValue.contains("Unknown"))
             {
                 dh.comPortList.put(comPortKey, comPortValue);
+                comCheck++;
             }
+        }
+        if (comCheck < 3)
+        {
+            //Not all comports was found
+            System.out.println("ERROR: Not all com ports was found, trying again...");
+            findComPorts();
         }
 
     }
@@ -160,7 +168,7 @@ public class SerialDataHandler
             searchRuns++;
         }
         saveUsableComPorts();
-        
+
     }
 
     private String[] getAvailableComPorts()

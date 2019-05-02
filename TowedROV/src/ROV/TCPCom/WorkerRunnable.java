@@ -89,317 +89,335 @@ public class WorkerRunnable implements Runnable
                     {
                         key = (String) inputData;
                     }
-
-                    switch (key)
+                    if (!dh.getFb_ROVReady())
                     {
-                        //Commands
+                        outToClient.println("Server: ROV not ready");
+                    } else
+                    {
 
-                        case "cmd_lightMode":
-                            dh.setCmd_lightMode(parseStringToInt(value));
-                            System.out.println("LightMode: " + dh.getCmd_lightMode());
-                            outToClient.println("Server: OK");
-                            break;
+                        switch (key)
+                        {
+                            //Commands
 
-                        case "cmd_actuatorPS":
-                            dh.setCmd_actuatorPS(parseStringToInt(value));
-                            System.out.println("actuatorPS is: " + dh.getCmd_actuatorPS());
-                            outToClient.println("Server: OK");
+                            case "cmd_lightMode":
+                                dh.setCmd_lightMode(parseStringToInt(value));
+                                System.out.println("LightMode: " + dh.getCmd_lightMode());
+                                outToClient.println("Server: OK");
+                                break;
 
-                            break;
+                            case "cmd_actuatorPS":
+                                dh.setCmd_actuatorPS(parseStringToInt(value));
+                                System.out.println("actuatorPS is: " + dh.getCmd_actuatorPS());
+                                outToClient.println("Server: OK");
 
-                        case "cmd_actuatorSB":
-                            dh.setCmd_actuatorSB(parseStringToInt(value));
-                            System.out.println("actuatorSB is: " + dh.getCmd_actuatorSB());
-                            outToClient.println("Server: OK");
-                            break;
+                                break;
 
-                        case "cmd_depth":
-                            dh.setCmd_depth(parseStringToInt(value));
-                            System.out.println("cmd depth is: " + dh.getCmd_depth());
-                            outToClient.println("Server: OK");
-                            break;
+                            case "cmd_actuatorSB":
+                                dh.setCmd_actuatorSB(parseStringToInt(value));
+                                System.out.println("actuatorSB is: " + dh.getCmd_actuatorSB());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "cmd_cameraPitch":
-                            dh.setCmd_cameraPitch(parseStringToInt(value));
-                            System.out.println("cameraPitch is: " + dh.getCmd_cameraPitch());
-                            outToClient.println("Server: OK");
-                            break;
+                            case "actuator_test":
+                                dh.setCmd_actuatorSB(parseStringToInt(value));
 
-                        case "cmd_cameraRoll":
-                            dh.setCmd_cameraRoll(parseStringToInt(value));
-                            System.out.println("cameraRoll is: " + dh.getCmd_cameraRoll());
-                            outToClient.println("Server: OK");
-                            break;
+                                dh.setCmd_actuatorPS(parseStringToInt(value));
 
-                        case "cmd_cameraMode":
-                            dh.setCmd_cameraMode(parseStringToByte(value));
-                            System.out.println("cameraPitch is: " + dh.getCmd_cameraMode());
-                            outToClient.println("Server: OK");
-                            break;
+                                //System.out.println("actuatorSB is: " + dh.getCmd_actuatorSB());
+                                outToClient.println("Server: OK");
 
-                        case "cmd_pid_p":
-                            dh.setCmd_pid_p(parseStringToDouble(value));
-                            System.out.println("Pid_p is: " + dh.getCmd_pid_p());
-                            outToClient.println("Server: OK");
-                            break;
+//                            case "cmd_depth":
+//                                dh.setCmd_depth(parseStringToInt(value));
+//                                System.out.println("cmd depth is: " + dh.getCmd_depth());
+//                                outToClient.println("Server: OK");
+//                                break;
 
-                        case "cmd_pid_i":
-                            dh.setCmd_pid_i(parseStringToDouble(value));
-                            System.out.println("Pid_i is: " + dh.getCmd_pid_i());
-                            outToClient.println("Server: OK");
-                            break;
+                            case "cmd_cameraPitch":
+                                dh.setCmd_cameraPitch(parseStringToInt(value));
+                                System.out.println("cameraPitch is: " + dh.getCmd_cameraPitch());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "cmd_pid_d":
-                            dh.setCmd_pid_d(parseStringToDouble(value));
-                            System.out.println("Pid_d is: " + dh.getCmd_pid_d());
-                            outToClient.println("Server: OK");
-                            break;
+                            case "cmd_cameraRoll":
+                                dh.setCmd_cameraRoll(parseStringToInt(value));
+                                System.out.println("cameraRoll is: " + dh.getCmd_cameraRoll());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "cmd_pid_gain":
-                            dh.setCmd_pid_gain(parseStringToDouble(value));
-                            System.out.println("Pid_gain is: " + dh.getCmd_pid_gain());
-                            outToClient.println("Server: OK");
-                            break;
+                            case "cmd_cameraMode":
+                                dh.setCmd_cameraMode(parseStringToByte(value));
+                                System.out.println("cameraPitch is: " + dh.getCmd_cameraMode());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "cmd_emergencySurface":
-                            dh.setCmd_emergencySurface(parseStringToBoolean(value));
-                            System.out.println("EmergencySurface is: " + dh.isCmd_emergencySurface());
-                            outToClient.println("Server: OK");
-                            break;
+                            case "cmd_pid_p":
+                                dh.setCmd_pid_p(parseStringToDouble(value));
+                                System.out.println("Pid_p is: " + dh.getCmd_pid_p());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "cmd_BlueLED":
-                            dh.setCmd_BlueLED(parseStringToInt(value));
-                            outToClient.println("Server: OK");
-                            break;
+                            case "cmd_pid_i":
+                                dh.setCmd_pid_i(parseStringToDouble(value));
+                                System.out.println("Pid_i is: " + dh.getCmd_pid_i());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        //Feedback commands
-                        case "fb_depthToSeabedEcho":
-                            outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthToSeabedEcho() + ">");
-                            break;
+                            case "cmd_pid_d":
+                                dh.setCmd_pid_d(parseStringToDouble(value));
+                                System.out.println("Pid_d is: " + dh.getCmd_pid_d());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "fb_depthFromPressure":
-                            outToClient.println("<fb_depthFromPressure:" + dh.getFb_depthFromPressure() + ">");
-                            break;
+                            case "cmd_pid_gain":
+                                dh.setCmd_pid_gain(parseStringToDouble(value));
+                                System.out.println("Pid_gain is: " + dh.getCmd_pid_gain());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "fb_speedThroughWather":
-                            outToClient.println("<fb_speedThroughWather:" + dh.getFb_speedThroughWather() + ">");
-                            break;
+                            case "cmd_emergencySurface":
+                                dh.setCmd_emergencySurface(parseStringToBoolean(value));
+                                System.out.println("EmergencySurface is: " + dh.isCmd_emergencySurface());
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "fb_waterTemperature":
-                            outToClient.println("<fb_waterTemperature:" + dh.getFb_waterTemperature() + ">");
-                            break;
+                            case "cmd_BlueLED":
+                                dh.setCmd_BlueLED(parseStringToInt(value));
+                                outToClient.println("Server: OK");
+                                break;
 
-                        case "fb_pressure":
-                            outToClient.println("<fb_pressure:" + dh.getFb_pressure() + ">");
-                            break;
+                            //Feedback commands
+                            case "fb_allData":                               
+                                outToClient.println(dh.getDataToSend());
+                                break;
 
-                        case "fb_actuatorPSPos":
-                            outToClient.println("<fb_actuatorPSPos:" + dh.getFb_actuatorPSPos() + ">");
-                            break;
+                            case "fb_depthToSeabedEcho":
+                                outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthToSeabedEcho() + ">");
+                                break;
 
-                        case "fb_actuatorSBPos":
-                            outToClient.println("<fb_actuatorSBPos:" + dh.getFb_actuatorSBPos() + ">");
-                            break;
+                            case "fb_depthFromPressure":
+                                outToClient.println("<fb_depthFromPressure:" + dh.getFb_depthFromPressure() + ">");
+                                break;
 
-                        case "fb_tempInternalCamera":
-                            outToClient.println("<fb_tempInternalCamera:" + dh.getFb_tempInternalCamera() + ">");
-                            break;
+                            case "fb_speedThroughWather":
+                                outToClient.println("<fb_speedThroughWather:" + dh.getFb_speedThroughWather() + ">");
+                                break;
 
-                        case "fb_humidityInternalCamera":
-                            outToClient.println("<fb_humidityInternalCamera:" + dh.getFb_humidityInternalCamera() + ">");
-                            break;
+                            case "fb_waterTemperature":
+                                outToClient.println("<fb_waterTemperature:" + dh.getFb_waterTemperature() + ">");
+                                break;
 
-                        case "fb_tempPSactuatorBox":
-                            outToClient.println("<fb_tempPSactuatorBox:" + dh.getFb_tempPSactuatorBox() + ">");
-                            break;
+                            case "fb_pressure":
+                                outToClient.println("<fb_pressure:" + dh.getFb_pressure() + ">");
+                                break;
 
-                        case "fb_tempSBactuatorBox":
-                            outToClient.println("<fb_tempSBactuatorBox:" + dh.getFb_tempSBactuatorBox() + ">");
-                            break;
+                            case "fb_actuatorPSPos":
+                                outToClient.println("<fb_actuatorPSPos:" + dh.getFb_actuatorPSPos() + ">");
+                                break;
 
-                        case "fb_tempMainElBoxFront":
-                            outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBoxFront() + ">");
-                            break;
+                            case "fb_actuatorSBPos":
+                                outToClient.println("<fb_actuatorSBPos:" + dh.getFb_actuatorSBPos() + ">");
+                                break;
 
-                        case "fb_tempMainElBoxRear":
-                            outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBoxRear() + ">");
-                            break;
+                            case "fb_tempInternalCamera":
+                                outToClient.println("<fb_tempInternalCamera:" + dh.getFb_tempInternalCamera() + ">");
+                                break;
 
-                        case "fb_tempEchoBox":
-                            outToClient.println("<fb_tempEchoBox:" + dh.getFb_tempEchoBox() + ">");
-                            break;
+                            case "fb_humidityInternalCamera":
+                                outToClient.println("<fb_humidityInternalCamera:" + dh.getFb_humidityInternalCamera() + ">");
+                                break;
 
-                        case "fb_currentDraw":
-                            outToClient.println("<fb_currentDraw:" + dh.getFb_currentDraw() + ">");
-                            break;
+                            case "fb_tempPSactuatorBox":
+                                outToClient.println("<fb_tempPSactuatorBox:" + dh.getFb_tempPSactuatorBox() + ">");
+                                break;
 
-                        case "fb_pitch":
-                            outToClient.println("<fb_pitch:" + dh.getFb_pitch() + ">");
-                            break;
+                            case "fb_tempSBactuatorBox":
+                                outToClient.println("<fb_tempSBactuatorBox:" + dh.getFb_tempSBactuatorBox() + ">");
+                                break;
 
-                        case "fb_roll":
-                            outToClient.println("<fb_roll:" + dh.getFb_roll() + ">");
-                            break;
+                            case "fb_tempMainElBoxFront":
+                                outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBoxFront() + ">");
+                                break;
 
-                        case "fb_yaw":
-                            outToClient.println("<fb_yaw:" + dh.getFb_yaw() + ">");
-                            break;
+                            case "fb_tempMainElBoxRear":
+                                outToClient.println("<fb_tempMainElBox:" + dh.getFb_tempMainElBoxRear() + ">");
+                                break;
 
-                        case "fb_heading":
-                            outToClient.println("<fb_heading:" + dh.getFb_heading() + ">");
-                            break;
+                            case "fb_tempEchoBox":
+                                outToClient.println("<fb_tempEchoBox:" + dh.getFb_tempEchoBox() + ">");
+                                break;
 
-                        case "fb_waterLeakChannel_1":
-                            outToClient.println("<fb_waterLeakChannel_1:" + dh.isFb_waterLeakChannel_1() + ">");
-                            break;
+                            case "fb_currentDraw":
+                                outToClient.println("<fb_currentDraw:" + dh.getFb_currentDraw() + ">");
+                                break;
 
-                        case "fb_waterLeakChannel_2":
-                            outToClient.println("<fb_waterLeakChannel_2:" + dh.isFb_waterLeakChannel_2() + ">");
-                            break;
+                            case "fb_pitch":
+                                outToClient.println("<fb_pitch:" + dh.getFb_pitch() + ">");
+                                break;
 
-                        case "fb_waterLeakChannel_3":
-                            outToClient.println("<fb_waterLeakChannel_3:" + dh.isFb_waterLeakChannel_3() + ">");
-                            break;
+                            case "fb_roll":
+                                outToClient.println("<fb_roll:" + dh.getFb_roll() + ">");
+                                break;
 
-                        case "fb_waterLeakChannel_4":
-                            outToClient.println("<fb_waterLeakChannel_4:" + dh.isFb_waterLeakChannel_4() + ">");
-                            break;
+                            case "fb_yaw":
+                                outToClient.println("<fb_yaw:" + dh.getFb_yaw() + ">");
+                                break;
 
-                        //Stored Commands
-                        case "get_cmd_lightMode":
-                            outToClient.println("<get_cmd_lightMode:" + dh.getCmd_lightMode() + ">");
-                            break;
+                            case "fb_heading":
+                                outToClient.println("<fb_heading:" + dh.getFb_heading() + ">");
+                                break;
 
-                        case "get_cmd_actuatorPS":
-                            outToClient.println("<get_cmd_actuatorPS:" + dh.getCmd_actuatorPS() + ">");
-                            break;
+                            case "fb_waterLeakChannel_1":
+                                outToClient.println("<fb_waterLeakChannel_1:" + dh.isFb_waterLeakChannel_1() + ">");
+                                break;
 
-                        case "get_cmd_actuatorSB":
-                            outToClient.println("<get_cmd_actuatorSB:" + dh.getCmd_actuatorSB() + ">");
-                            break;
+                            case "fb_waterLeakChannel_2":
+                                outToClient.println("<fb_waterLeakChannel_2:" + dh.isFb_waterLeakChannel_2() + ">");
+                                break;
 
-                        case "get_cmd_depth":
-                            outToClient.println("<get_cmd_depth:" + dh.getCmd_depth() + ">");
-                            break;
+                            case "fb_waterLeakChannel_3":
+                                outToClient.println("<fb_waterLeakChannel_3:" + dh.isFb_waterLeakChannel_3() + ">");
+                                break;
 
-                        case "get_cmd_cameraPitch":
-                            outToClient.println("<get_cmd_cameraPitch:" + dh.getCmd_cameraPitch() + ">");
-                            break;
+                            case "fb_waterLeakChannel_4":
+                                outToClient.println("<fb_waterLeakChannel_4:" + dh.isFb_waterLeakChannel_4() + ">");
+                                break;
 
-                        case "get_cmd_cameraRoll":
-                            outToClient.println("<get_cmd_cameraRoll:" + dh.getCmd_cameraRoll() + ">");
-                            break;
+                            //Stored Commands
+                            case "get_cmd_lightMode":
+                                outToClient.println("<get_cmd_lightMode:" + dh.getCmd_lightMode() + ">");
+                                break;
 
-                        case "get_cmd_cameraMode":
-                            outToClient.println("<get_cmd_cameraMode:" + dh.getCmd_cameraMode() + ">");
-                            break;
+                            case "get_cmd_actuatorPS":
+                                outToClient.println("<get_cmd_actuatorPS:" + dh.getCmd_actuatorPS() + ">");
+                                break;
 
-                        case "get_cmd_pid_p":
-                            outToClient.println("<get_cmd_pid_p:" + dh.getCmd_pid_p() + ">");
-                            break;
+                            case "get_cmd_actuatorSB":
+                                outToClient.println("<get_cmd_actuatorSB:" + dh.getCmd_actuatorSB() + ">");
+                                break;
 
-                        case "get_cmd_pid_i":
-                            outToClient.println("<get_cmd_pid_i:" + dh.getCmd_pid_i() + ">");
-                            break;
+//                            case "get_cmd_depth":
+//                                outToClient.println("<get_cmd_depth:" + dh.getCmd_depth() + ">");
+//                                break;
 
-                        case "get_cmd_pid_d":
-                            outToClient.println("<get_cmd_pid_d:" + dh.getCmd_pid_d() + ">");
-                            break;
+                            case "get_cmd_cameraPitch":
+                                outToClient.println("<get_cmd_cameraPitch:" + dh.getCmd_cameraPitch() + ">");
+                                break;
 
-                        case "get_cmd_pid_gain":
-                            outToClient.println("<get_cmd_pid_gain:" + dh.getCmd_pid_gain() + ">");
-                            break;
+                            case "get_cmd_cameraRoll":
+                                outToClient.println("<get_cmd_cameraRoll:" + dh.getCmd_cameraRoll() + ">");
+                                break;
 
-                        case "get_ROVComPorts":
-                            String portListString = "<";
-                            for (Entry e : dh.comPortList.entrySet())
-                            {
-                                String comPortKey = (String) e.getKey();
-                                String comPortValue = (String) e.getValue();
-                                portListString = portListString + comPortKey + ":" + comPortValue + ":";
-                            }
-                            portListString = portListString + ">";
-                            outToClient.println(portListString);
-                            break;
+                            case "get_cmd_cameraMode":
+                                outToClient.println("<get_cmd_cameraMode:" + dh.getCmd_cameraMode() + ">");
+                                break;
 
-                        //Other  commands
-                        case "ping":
-                            //output.write(("<ping:true>").getBytes());
-                            outToClient.println("<ping:true>" + welcomeMessageIsSent);
-                            welcomeMessageIsSent = true;
-                            break;
+                            case "get_cmd_pid_p":
+                                outToClient.println("<get_cmd_pid_p:" + dh.getCmd_pid_p() + ">");
+                                break;
 
-                        case "ack":
-                            if (dh.isCmd_ack())
-                            {
-                                dh.setCmd_ack(false);
-                            } else
-                            {
-                                dh.setCmd_ack(true);
-                            }
-                            outToClient.println("Ack: " + dh.isCmd_ack());
-                            break;
+                            case "get_cmd_pid_i":
+                                outToClient.println("<get_cmd_pid_i:" + dh.getCmd_pid_i() + ">");
+                                break;
 
-                        case "getAlarms":
-                            String completeAlarmListString = "<";
+                            case "get_cmd_pid_d":
+                                outToClient.println("<get_cmd_pid_d:" + dh.getCmd_pid_d() + ">");
+                                break;
 
-                            for (Map.Entry e : dh.completeAlarmListDh.entrySet())
-                            {
-                                key = (String) e.getKey();
-                                if (e.getValue().equals(true))
+                            case "get_cmd_pid_gain":
+                                outToClient.println("<get_cmd_pid_gain:" + dh.getCmd_pid_gain() + ">");
+                                break;
+
+                            case "get_ROVComPorts":
+                                String portListString = "<";
+                                for (Entry e : dh.comPortList.entrySet())
                                 {
-                                    value = "true";
+                                    String comPortKey = (String) e.getKey();
+                                    String comPortValue = (String) e.getValue();
+                                    portListString = portListString + comPortKey + ":" + comPortValue + ":";
+                                }
+                                portListString = portListString + ">";
+                                outToClient.println(portListString);
+                                break;
+
+                            //Other  commands
+                            case "ping":
+                                //output.write(("<ping:true>").getBytes());
+                                outToClient.println("<ping:true>" + welcomeMessageIsSent);
+                                welcomeMessageIsSent = true;
+                                break;
+
+                            case "ack":
+                                if (dh.isCmd_ack())
+                                {
+                                    dh.setCmd_ack(false);
                                 } else
                                 {
-                                    value = "false";
+                                    dh.setCmd_ack(true);
+                                }
+                                outToClient.println("Ack: " + dh.isCmd_ack());
+                                break;
+
+                            case "getAlarms":
+                                String completeAlarmListString = "<";
+
+                                for (Map.Entry e : dh.completeAlarmListDh.entrySet())
+                                {
+                                    key = (String) e.getKey();
+                                    if (e.getValue().equals(true))
+                                    {
+                                        value = "true";
+                                    } else
+                                    {
+                                        value = "false";
+                                    }
+
+                                    completeAlarmListString = completeAlarmListString + key + ":" + value + ":";
+                                }
+                                outToClient.println(completeAlarmListString + ">");
+                                break;
+
+                            case "waterCh1":
+                                if (dh.isFb_waterLeakChannel_1())
+                                {
+                                    dh.setFb_waterLeakChannel_1(false);
+
+                                } else
+                                {
+                                    dh.setFb_waterLeakChannel_1(true);
+                                }
+                                outToClient.println("WaterLeak: " + dh.isFb_waterLeakChannel_1());
+
+                                break;
+
+                            case "inhibit_waterLeakSensor_1_Alarm":
+                                if (alarmHandler.inhibitedAlarms.get("inhibit_waterLeakSensor_1_Alarm"))
+                                {
+                                    alarmHandler.inhibitedAlarms.put("inhibit_waterLeakSensor_1_Alarm", false);
+                                } else
+                                {
+                                    alarmHandler.inhibitedAlarms.put("inhibit_waterLeakSensor_1_Alarm", true);
                                 }
 
-                                completeAlarmListString = completeAlarmListString + key + ":" + value + ":";
-                            }
-                            outToClient.println(completeAlarmListString + ">");
-                            break;
+                                break;
 
-                        case "waterCh1":
-                            if (dh.isFb_waterLeakChannel_1())
-                            {
-                                dh.setFb_waterLeakChannel_1(false);
+                            case "startupCalibration":
+                                StartupCalibration = new StartupCalibration(dh);
+                                outToClient.println("Starting calibration...");
+                                String data = StartupCalibration.doStartupCalibration();
+                                outToClient.println("Server: " + data);
+                                break;
 
-                            } else
-                            {
-                                dh.setFb_waterLeakChannel_1(true);
-                            }
-                            outToClient.println("WaterLeak: " + dh.isFb_waterLeakChannel_1());
+                            case "exit":
+                                output.close();
+                                input.close();
+                                clientOnline = false;
+                                break;
 
-                            break;
+                            default:
+                                outToClient.println("Error: Not a command");
+                                break;
 
-                        case "inhibit_waterLeakSensor_1_Alarm":
-                            if (alarmHandler.inhibitedAlarms.get("inhibit_waterLeakSensor_1_Alarm"))
-                            {
-                                alarmHandler.inhibitedAlarms.put("inhibit_waterLeakSensor_1_Alarm", false);
-                            } else
-                            {
-                                alarmHandler.inhibitedAlarms.put("inhibit_waterLeakSensor_1_Alarm", true);
-                            }
-
-                            break;
-
-                        case "startupCalibration":
-                            StartupCalibration = new StartupCalibration(dh);
-                            outToClient.println("Starting calibration...");
-                            String data = StartupCalibration.doStartupCalibration();
-                            outToClient.println("Server: " + data);
-                            break;
-
-                        case "exit":
-                            output.close();
-                            input.close();
-                            clientOnline = false;
-                            break;
-
-                        default:
-                            outToClient.println("Error: Not a command");
-                            break;
-
+                        }
                     }
                 }
 

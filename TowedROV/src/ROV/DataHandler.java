@@ -17,8 +17,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataHandler extends Observable
 {
 
+    //Internal variables for ROB
+    boolean ERROR_I2C = false;
+    String dataToSend = "";
+    boolean gatheringDataToSend = false;
+    
+
     // Calibration values
     int pressureSensorOffset = 0;
+    private final static int PS_ACTUATOR_ANGLEADJUST = 0;
+    private final static int SB_ACTUATOR_ANGLEADJUST = -30;
 
     // Command values
     int cmd_lightMode = 0;
@@ -33,7 +41,7 @@ public class DataHandler extends Observable
     int cmd_pressureAtSeaLevel = 0;
 
     byte cmd_mode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
-    int cmd_depth = 0;
+    //int cmd_depth = 0;
     int cmd_cameraPitch = 0;
     int cmd_cameraRoll = 0;
     byte cmd_cameraMode = 0;
@@ -51,10 +59,12 @@ public class DataHandler extends Observable
     int cmd_imuCalibratePitch = 0;
 
     // Sensor values
-    int fb_depthToSeabedEcho = 12;
+    boolean fb_ROVReady = false;
+
+    double fb_depthToSeabedEcho = 12;
     int fb_depthFromPressure = 0;
-    int fb_depthBelowTransduser = 0;
-    int fb_depth = 0;
+    double fb_depthBelowTransduser = 0;
+    double fb_depth = 0;
 
     int fb_speedThroughWather = 0;
     int fb_waterTemperature = 0;
@@ -69,8 +79,8 @@ public class DataHandler extends Observable
     double fb_tempMainElBoxRear = 0;
     int fb_tempEchoBox = 0;
     int fb_currentDraw = 0;
-    int fb_pitch = -1;
-    int fb_roll = -3;
+    int fb_pitch = 0;
+    int fb_roll = 0;
     int fb_yaw = 0;
     int fb_heading = 0;
 
@@ -82,10 +92,9 @@ public class DataHandler extends Observable
     //Input channels
     double analogInputChannel_1 = 0.00;
     double analogInputChannel_2 = 0.00;
-    double analogInputChannel_3 = 0.00;
-    double analogInputChannel_4 = 0.00;
-    boolean digitalInputChannel_5 = false;
-    boolean digitalInputChannel_6 = false;
+
+    boolean digitalInputChannel_3 = false;
+    boolean digitalInputChannel_4 = false;
 
     //Class variables
     private int counter = 0;
@@ -148,13 +157,15 @@ public class DataHandler extends Observable
     }
 
     //Sensor values getters and setters
-    public int getFb_depthToSeabedEcho()
+    public double getFb_depthToSeabedEcho()
     {
         return fb_depthToSeabedEcho;
     }
 
-    public void setFb_depthToSeabedEcho(int fb_depthToSeabedEcho)
+    public void setFb_depthToSeabedEcho(double fb_depthToSeabedEcho)
     {
+//        setChanged();
+//        notifyObservers();
         this.fb_depthToSeabedEcho = fb_depthToSeabedEcho;
     }
 
@@ -200,12 +211,15 @@ public class DataHandler extends Observable
 
     public int getFb_actuatorPSPos()
     {
+
         return fb_actuatorPSPos;
     }
 
     public void setFb_actuatorPSPos(int fb_actuatorPSPos)
     {
-        this.fb_actuatorPSPos = fb_actuatorPSPos;
+//        setChanged();
+//        notifyObservers();
+        this.fb_actuatorPSPos = fb_actuatorPSPos + PS_ACTUATOR_ANGLEADJUST;
     }
 
     public int getFb_actuatorSBPos()
@@ -215,8 +229,9 @@ public class DataHandler extends Observable
 
     public void setFb_actuatorSBPos(int fb_actuatorSBPos)
     {
-
-        this.fb_actuatorSBPos = fb_actuatorSBPos;
+//        setChanged();
+//        notifyObservers();
+        this.fb_actuatorSBPos = fb_actuatorSBPos + SB_ACTUATOR_ANGLEADJUST;
 
     }
 
@@ -307,16 +322,21 @@ public class DataHandler extends Observable
 
     public void setFb_pitch(int fb_pitch)
     {
+//        setChanged();
+//        notifyObservers();
         this.fb_pitch = fb_pitch;
     }
 
     public int getFb_roll()
     {
+
         return fb_roll + getCmd_imuCalibrateRoll();
     }
 
     public void setFb_roll(int fb_roll)
     {
+//        setChanged();
+//        notifyObservers();
         this.fb_roll = fb_roll;
     }
 
@@ -425,15 +445,15 @@ public class DataHandler extends Observable
         this.cmd_mode = cmd_mode;
     }
 
-    public int getCmd_depth()
-    {
-        return cmd_depth;
-    }
-
-    public void setCmd_depth(int cmd_depth)
-    {
-        this.cmd_depth = cmd_depth;
-    }
+//    public int getCmd_depth()
+//    {
+//        return cmd_depth;
+//    }
+//
+//    public void setCmd_depth(int cmd_depth)
+//    {
+//        this.cmd_depth = cmd_depth;
+//    }
 
     public int getCmd_cameraPitch()
     {
@@ -525,26 +545,28 @@ public class DataHandler extends Observable
         this.cmd_manualWingControl = cmd_manualWingControl;
     }
 
-    public int getFb_depthBelowTransduser()
+    public double getFb_depthBelowTransduser()
     {
         return fb_depthBelowTransduser;
     }
 
-    public void setFb_depthBelowTransduser(int fb_depthBelowTransduser)
+    public void setFb_depthBelowTransduser(double fb_depthBelowTransduser)
     {
+//        setChanged();
+//        notifyObservers();
         this.fb_depthBelowTransduser = fb_depthBelowTransduser;
 
     }
 
-    public int getFb_depth()
-    {
-        return fb_depth;
-    }
-
-    public void setFb_depth(int fb_depth)
-    {
-        this.fb_depth = fb_depth;
-    }
+//    public double getFb_depth()
+//    {
+//        return fb_depth;
+//    }
+//
+//    public void setFb_depth(double fb_depth)
+//    {
+//        this.fb_depth = fb_depth;
+//    }
 
     //Alarm flags
     //Alarm getters and setters
@@ -578,44 +600,24 @@ public class DataHandler extends Observable
         this.analogInputChannel_2 = analogInputChannel_2;
     }
 
-    public double getAnalogInputChannel_3()
+    public boolean isDigitalInputChannel_3()
     {
-        return analogInputChannel_3;
+        return digitalInputChannel_3;
     }
 
-    public void setAnalogInputChannel_3(double analogInputChannel_3)
+    public void setDigitalInputChannel_3(boolean digitalInputChannel_3)
     {
-        this.analogInputChannel_3 = analogInputChannel_3;
+        this.digitalInputChannel_3 = digitalInputChannel_3;
     }
 
-    public double getAnalogInputChannel_4()
+    public boolean isDigitalInputChannel_4()
     {
-        return analogInputChannel_4;
+        return digitalInputChannel_4;
     }
 
-    public void setAnalogInputChannel_4(double analogInputChannel_4)
+    public void setDigitalInputChannel_4(boolean digitalInputChannel_4)
     {
-        this.analogInputChannel_4 = analogInputChannel_4;
-    }
-
-    public boolean isDigitalInputChannel_5()
-    {
-        return digitalInputChannel_5;
-    }
-
-    public void setDigitalInputChannel_5(boolean digitalInputChannel_5)
-    {
-        this.digitalInputChannel_5 = digitalInputChannel_5;
-    }
-
-    public boolean isDigitalInputChannel_6()
-    {
-        return digitalInputChannel_6;
-    }
-
-    public void setDigitalInputChannel_6(boolean digitalInputChannel_6)
-    {
-        this.digitalInputChannel_6 = digitalInputChannel_6;
+        this.digitalInputChannel_4 = digitalInputChannel_4;
     }
 
     public int getCmd_imuCalibrateRoll()
@@ -646,6 +648,50 @@ public class DataHandler extends Observable
     public void setCmd_BlueLED(int cmd_BlueLED)
     {
         this.cmd_BlueLED = cmd_BlueLED;
+        setChanged();
+        notifyObservers();
+    }
+
+    public boolean getFb_ROVReady()
+    {
+//        setChanged();
+//        notifyObservers();
+        return fb_ROVReady;
+    }
+
+    public void setFb_ROVReady(boolean fb_ROVReady)
+    {
+        this.fb_ROVReady = fb_ROVReady;
+    }
+
+    public boolean getERROR_I2C()
+    {
+        return ERROR_I2C;
+    }
+
+    public void setERROR_I2C(boolean ERROR_I2C)
+    {
+        this.ERROR_I2C = ERROR_I2C;
+    }
+
+    public String getDataToSend()
+    {
+        return dataToSend;
+    }
+
+    public void setDataToSend(String dataToSend)
+    {
+        this.dataToSend = dataToSend;
+    }
+
+    public boolean isGatheringDataToSend()
+    {
+        return gatheringDataToSend;
+    }
+
+    public void setGatheringDataToSend(boolean gatheringDataToSend)
+    {
+        this.gatheringDataToSend = gatheringDataToSend;
         setChanged();
         notifyObservers();
     }

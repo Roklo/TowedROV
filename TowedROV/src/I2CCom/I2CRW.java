@@ -27,9 +27,14 @@ public class I2CRW implements Runnable
     I2CDevice actuatorSB;
     I2CDevice actuatorPS;
 
+    //User settings
+    //SB and PS 180 target equals 0 degrees wing pos
+    private final static int PS_ACTUATOR_SPEED = 125;
+    private final static int SB_ACTUATOR_SPEED = 50;
+
     //Polulu JRK drive commands 
-    private final static int PS_ACTUATOR_ADDRESS = 0x0F;
-    private final static int SB_ACTUATOR_ADDRESS = 0x10;
+    private final static int PS_ACTUATOR_ADDRESS = 0x10;
+    private final static int SB_ACTUATOR_ADDRESS = 0x0F;
     private final static int ACTUATOR_STOP = 0xFF;
 
     //Arduino Address
@@ -54,7 +59,7 @@ public class I2CRW implements Runnable
         try
         {
             //System.out.println("Creatingbus");
-            I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
+            I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_3);
             //System.out.println("Creatingdevices");
             arduinoIO = bus.getDevice(ARDUINO_IO_ADDRESS);
             actuatorSB = bus.getDevice(SB_ACTUATOR_ADDRESS);
@@ -63,6 +68,22 @@ public class I2CRW implements Runnable
         } catch (Exception e)
         {
             System.out.println("Failed to instansiate I2 Bus");
+        }
+
+    }
+
+    private void initiateI2Cbus()
+    {
+        try
+        {
+            //System.out.println("Creatingbus");
+            I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_3);
+            //System.out.println("Creatingdevices");
+            arduinoIO = bus.getDevice(ARDUINO_IO_ADDRESS);
+            actuatorSB = bus.getDevice(SB_ACTUATOR_ADDRESS);
+            actuatorPS = bus.getDevice(PS_ACTUATOR_ADDRESS);
+        } catch (Exception e)
+        {
         }
 
     }
@@ -214,63 +235,113 @@ public class I2CRW implements Runnable
             switch (device)
             {
                 case "ActuatorPS_setTarget":
-                    if (commandValue >= 127 && commandValue < 255)
+
+                    if (commandValue > data.getFb_actuatorPSPos()
+                            && commandValue > 0
+                            && commandValue <= 254)
                     {
-                        if (commandValue == 127)
-                        {
-                            // commandValue = commandValue - 1;
-                        }
-                        commandValue = (byte) (commandValue);
-                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) commandValue);
+                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
                     }
-                    if (commandValue > 0 && commandValue < 127)
+//                    if (commandValue >= 127 && commandValue <= 254)
+//                    {
+//                        if (commandValue == 127)
+//                        {
+//                            // commandValue = commandValue - 1;
+//                        }
+////                        commandValue = (byte) (commandValue);
+//                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
+//                    }
+
+                    if (commandValue < data.getFb_actuatorPSPos()
+                            && commandValue > 0
+                            && commandValue <= 254)
                     {
-                        if (commandValue == 1)
-                        {
-                            commandValue = commandValue + 1;
-                        }
-                        commandValue = (byte) (commandValue - 127);
-                        actuatorPS.write(JRK_setTargetLowResRev, (byte) commandValue);
+                        actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
                     }
+
+//                    if (commandValue > 0 && commandValue < 127)
+//                    {
+//                        if (commandValue == 1)
+//                        {
+//                            commandValue = (commandValue + 1);
+//                        }
+////                        commandValue = (byte) (commandValue); // - 127
+//                        actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
+//                    }
                     if (commandValue == 0)
                     {
-                        actuatorPS.write(JRK_setTargetLowResRev, (byte) commandValue);
+                        actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
                     }
                     break;
                 case "ActuatorSB_setTarget":
-                    if (commandValue >= 127 && commandValue < 255)
+
+                    if (commandValue > data.getFb_actuatorSBPos()
+                            && commandValue > 0
+                            && commandValue <= 254)
                     {
-                        if (commandValue == 127)
-                        {
-                            commandValue = commandValue + 1;
-                        }
-                        commandValue = (byte) (commandValue - 127);
-                        actuatorSB.write(JRK_setTargetLowResFwd, (byte) commandValue);
+                        actuatorSB.write(JRK_setTargetLowResFwd, (byte) SB_ACTUATOR_SPEED);
                     }
-                    if (commandValue > 0 && commandValue < 127)
+
+                    if (commandValue < data.getFb_actuatorSBPos()
+                            && commandValue > 0
+                            && commandValue <= 254)
                     {
-                        if (commandValue == 1)
-                        {
-                            commandValue = commandValue - 1;
-                        }
-                        commandValue = (byte) (127 - commandValue);
-                        actuatorSB.write(JRK_setTargetLowResRev, (byte) commandValue);
+                        actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
                     }
+
+//                    //Wing up
+//                    if (commandValue >= 127 && commandValue < 255)
+//                    {
+//                        if (commandValue == 127)
+//                        {
+//                            commandValue = (commandValue + 1);
+//                        }
+//                        //commandValue =  (commandValue - 127);
+//                        actuatorSB.write(JRK_setTargetLowResFwd, (byte) SB_ACTUATOR_SPEED);
+//                    }
+//                    //Wing down
+//                    if (commandValue > 0 && commandValue < 127)
+//                    {
+//                        if (commandValue == 1)
+//                        {
+//                            commandValue = (commandValue - 1);
+//                        }
+////                        commandValue = (byte) (127 - commandValue);
+//                        actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
+//                    }
                     if (commandValue == 0)
                     {
-                        actuatorSB.write(JRK_setTargetLowResRev, (byte) commandValue);
+                        actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
                     }
                     break;
                 case "ActuatorSB_stopMotor":
-                    actuatorSB.write((byte) ACTUATOR_STOP);
+                    //actuatorSB.write((byte) ACTUATOR_STOP);
+                    try
+                    {
+                        Thread.sleep(25);
+                    } catch (Exception e)
+                    {
+                    }
+
+                    actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
                     break;
                 case "ActuatorPS_stopMotor":
-                    actuatorPS.write((byte) ACTUATOR_STOP);
+                    try
+                    {
+                        Thread.sleep(25);
+                    } catch (Exception e)
+                    {
+                    }
+                    //actuatorPS.write((byte) ACTUATOR_STOP);
+                    actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
                     break;
 
             }
         } catch (Exception e)
         {
+            data.setERROR_I2C(true);
+            System.out.println("Error at I2C read write");
+            System.out.println(e);
             //Error writing to i2c
         }
     }
