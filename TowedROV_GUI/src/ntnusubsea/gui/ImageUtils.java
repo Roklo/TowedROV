@@ -21,7 +21,6 @@ import javax.swing.ImageIcon;
  
 /**
  * This class contains utilities to change and handle images.
- * @author Marius Nonsvik
  */
 public class ImageUtils {
  

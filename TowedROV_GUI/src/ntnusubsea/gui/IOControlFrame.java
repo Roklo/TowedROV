@@ -17,7 +17,6 @@ import javax.swing.JFrame;
  * This frame lets the user control the different inputs and outputs. Sends a
  * new command whenever a button is pressed.
  *
- * @author Marius Nonsvik
  */
 public class IOControlFrame extends javax.swing.JFrame implements Runnable, Observer
 {

@@ -20,7 +20,6 @@ import org.jcodec.api.awt.AWTSequenceEncoder;
  * The class video encoder uses buffered image and encodes there images to a
  * video file.
  *
- * @author Marius Nonsvik
  *
  */
 public class VideoEncoder implements Runnable, Observer

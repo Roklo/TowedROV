@@ -26,7 +26,6 @@ import javax.imageio.ImageIO;
  * their values whenever they change. Data is made thread safe by the use of
  * synchronized methods.
  *
- * @author Marius Nonsvik
  */
 public final class Data extends Observable
 {
@@ -105,11 +104,12 @@ public final class Data extends Observable
     private String Kd;
     private long timer = System.currentTimeMillis();
     private boolean photoMode = false;
-    private double photoModeDelay = 1;
-    private double photoModeDelay_FB = 1;
+    private double photoModeDelay = 1.00;
+    private double photoModeDelay_FB = 1.00;
     private int imageNumber = 0;
     private int cameraPitchValue = 0;
     private boolean doRovCalibration = false;
+    private boolean emergencyMode = false;
 
     /**
      * Creates an object of the class Data.
@@ -786,6 +786,18 @@ public final class Data extends Observable
     {
         return this.dataFromArduinoAvailable;
     }
+    
+    public void setEmergencyMode(boolean status)
+    {
+        this.emergencyMode = status;
+        setChanged();
+        notifyObservers();
+    }
+    
+    public boolean isEmergencyMode()
+    {
+        return this.emergencyMode;
+    }
 
     public synchronized boolean isDataUpdated()
     {
@@ -988,52 +1000,4 @@ public final class Data extends Observable
         }
         this.depthBeneathBoatDataList.add(time + ":" + value);
     }
-
-    /**
-     * Compare keys to controll values coming in from arduino, and puts correct
-     * value to correct variable.
-     */
-//    public synchronized void handleDataFromRemote()
-//    {
-//        for (Map.Entry e : data.entrySet())
-//        {
-//            String key = (String) e.getKey();
-//            String value = (String) e.getValue();
-//
-//            switch (key)
-//            {
-//                case "Satellites":
-//                    setSatellites(Integer.parseInt(value));
-//                    break;
-//                case "Altitude":
-//                    setAltitude(Float.parseFloat(value));
-//                    break;
-//                case "Angle":
-//                    setAngle(Float.parseFloat(value));
-//                    break;
-//                case "Speed":
-//                    setSpeed(Float.parseFloat(value));
-//                    break;
-//                case "Latitude":
-//                    setLatitude(Float.parseFloat(value));
-//                    break;
-//                case "Longitude":
-//                    setLongitude(Float.parseFloat(value));
-//                    break;
-//                case "Depth":
-//                    setDepth(Float.parseFloat(value));
-//                    break;
-//                case "Temp":
-//                    setTemperature(Float.parseFloat(value));
-//                    break;
-//                case "Roll":
-//                    setRoll(Integer.parseInt(value));
-//                    break;
-//                case "Pitch":
-//                    setPitch(Integer.parseInt(value));
-//                    break;
-//                case "Heading":
-//                    setHeading(Integer.parseInt(value));
-//                    break;
-//            }
 }

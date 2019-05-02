@@ -20,7 +20,6 @@ import javax.swing.*;
 /**
  * A class that represents a panel where graphs can we drawn to display data
  * to the user in a visual manner.
- * @author Marius Nonsvik
  */
 @SuppressWarnings("serial")
 public class GraphPanel extends JPanel {
