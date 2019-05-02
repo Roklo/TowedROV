@@ -304,42 +304,61 @@ public class TCPClient implements Runnable
             String key = (String) e.getKey();
             String value = (String) e.getValue();
 
-//            switch (key)
-//            {
-//                case "Satellites":
-//                    setSatellites(Integer.parseInt(value));
+            switch (key)
+            {
+                // From ROV RPi:
+                case "Fb_actuatorPSPos":
+                    data.setFb_actuatorPSPos(Integer.parseInt(value));
+                    break;
+                case "Fb_actuatorSBPos":
+                    data.setFb_actuatorSBPos(Integer.parseInt(value));
+                    break;
+                case "Fb_rollAngle":
+                    data.setRollAngle(Integer.parseInt(value));
+                    break;
+                case "Fb_pitchAngle":
+                    data.setPitchAngle(Integer.parseInt(value));
+                    break;
+//                case "Fb_depthToSeabedEcho":
+//                    data.setDepthBeneathRov(Float.parseFloat(value));
 //                    break;
-//                case "Altitude":
-//                    setAltitude(Float.parseFloat(value));
-//                    break;
-//                case "Angle":
-//                    setAngle(Float.parseFloat(value));
-//                    break;
-//                case "Speed":
-//                    setSpeed(Float.parseFloat(value));
-//                    break;
-//                case "Latitude":
-//                    setLatitude(Float.parseFloat(value));
-//                    break;
-//                case "Longitude":
-//                    setLongitude(Float.parseFloat(value));
-//                    break;
-//                case "Depth":
-//                    setDepth(Float.parseFloat(value));
-//                    break;
-//                case "Temp":
-//                    setTemperature(Float.parseFloat(value));
-//                    break;
-//                case "Roll":
-//                    setRoll(Integer.parseInt(value));
-//                    break;
-//                case "Pitch":
-//                    setPitch(Integer.parseInt(value));
-//                    break;
-//                case "Heading":
-//                    setHeading(Integer.parseInt(value));
-//                    break;
-//            }
+                case "Fb_depthBelowTransduser":
+                    data.setDepthBeneathRov(Float.parseFloat(value));
+                    break;
+                case "Fb_ROVReady":
+                    data.setRovReady(Boolean.parseBoolean(value));
+                    break;
+                case "ERROR_I2C":
+                    data.setI2cError(Boolean.parseBoolean(value));
+                    break;
+
+                // From Camera RPi:
+                case "leakAlarm":
+                    if (value.equals("1"))
+                    {
+                        data.setLeakStatus(true);
+                    } else if (equals("0"))
+                    {
+                        data.setLeakStatus(false);
+                    }
+                    break;
+                case "depth":
+                    data.setRovDepth(Double.parseDouble(value));
+                    break;
+                case "pressure":
+                    data.setPressure(Double.parseDouble(value));
+                    break;
+                case "outsideTemp":
+                    data.setOutsideTemp(Double.parseDouble(value));
+                    break;
+                case "insideTemp":
+                    data.setInsideTemp(Double.parseDouble(value));
+                    break;
+                case "humidity":
+                    data.setHumidity(Double.parseDouble(value));
+                    break;
+
+            }
         }
     }
 }

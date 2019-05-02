@@ -127,7 +127,7 @@ public class LogFileHandler implements Runnable
             photoLocationTrack = "";
             photoLocationTrack = photoLocationNumb + ","
                     + data.getLatitude() + "," + data.getLongitude() + ","
-                    + data.getSpeed() + "," + data.rovDepth;
+                    + data.getSpeed() + "," + data.getRovDepth();
 
             bw.append(photoLocationTrack);
             bw.append('\n');
@@ -160,7 +160,7 @@ public class LogFileHandler implements Runnable
             shipTrack = "";
             shipTrack = shipTrackPointNumb + ","
                     + data.getLatitude() + "," + data.getLongitude() + ","
-                    + data.getSpeed() + "," + data.rovDepth + "," + data.getHeading();
+                    + data.getSpeed() + "," + data.getRovDepth() + "," + data.getHeading();
             outputWriterShipPos.append('\n');
             outputWriterShipPos.append(shipTrack);
             outputWriterShipPos.flush();            
