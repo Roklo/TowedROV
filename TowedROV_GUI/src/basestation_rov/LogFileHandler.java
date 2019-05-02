@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import ntnusubsea.gui.Data;
 import org.apache.commons.io.FileUtils;
@@ -35,20 +36,27 @@ public class LogFileHandler implements Runnable
     double adjustedCoordinateRovOffset = ((lenghtOfUmbillicalCord / 100) * 0.000892);
 
     String shipTrack = "null";
+    String Data = "null";
     String photoLocationTrack = "null";
 
     int shipTrackPointNumb = 1;
+    int DataPointNumb = 1;
     int photoLocationNumb = 1;
+
+    String timeStampString = "";
 
     String logStorageLocation = "C:\\TowedROV\\Log\\";
 
     String photoPosLog = "";
     String shipPosLog = "";
+    String dataLog = "";
     boolean setupIsDone = false;
 
     File shipPosLogFile = null;
+    File dataLogFile = null;
 
     BufferedWriter outputWriterShipPos = null;
+    BufferedWriter outputWriterData = null;
 
     public LogFileHandler(Data data)
     {
@@ -67,14 +75,21 @@ public class LogFileHandler implements Runnable
                 shipPosLogFile = new File(logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv");
                 FileUtils.touch(shipPosLogFile);
 
-                File photoPosLog = new File(logStorageLocation + "PhotoPos_LOG_" + formatter.format(date) + ".csv");
-                FileUtils.touch(photoPosLog);
+//                File photoPosLog = new File(logStorageLocation + "PhotoPos_LOG_" + formatter.format(date) + ".csv");
+//                FileUtils.touch(photoPosLog);
+                dataLogFile = new File(logStorageLocation + "Data_LOG_" + formatter.format(date) + ".csv");
+                FileUtils.touch(dataLogFile);
 //                         
                 outputWriterShipPos = new BufferedWriter(new FileWriter(shipPosLogFile));
 
-                outputWriterShipPos.append("Point, Latitude, Longtitude, Speed, ROV Depth, Heading");
+                outputWriterData = new BufferedWriter(new FileWriter(dataLogFile));
+
+                outputWriterShipPos.append("Point, Time, Latitude, Longtitude, Speed, ROV Depth, Heading");
                 outputWriterShipPos.flush();
-             
+
+                outputWriterData.append("Point, Time, Roll, Pitch, Depth, DepthToSeaFloor, ROV Depth, Emergency");
+                outputWriterData.flush();
+
                 setupIsDone = true;
 
             } catch (Exception ex)
@@ -84,9 +99,13 @@ public class LogFileHandler implements Runnable
         }
         if (data.startLogging)
         {
-            logShipPosition();         
+            
+            timeStampString = String.valueOf(java.time.LocalTime.now());
+            logShipPosition();
+            logData();
+
         }
-      
+
     }
 
     private void logPhotoPosition(BufferedWriter bw)
@@ -146,10 +165,35 @@ public class LogFileHandler implements Runnable
         try
         {
             outputWriterShipPos.close();
+            outputWriterData.close();
         } catch (Exception e)
         {
             System.out.println("Problem closing log file");
         }
+
+    }
+
+    private void logData()
+    {
+        try
+        {
+            dataLog = "";
+            dataLog = DataPointNumb + "," + timeStampString + ","
+                    + data.getRollAngle() + "," + data.getPitchAngle() + ","
+                    + data.getDepth() + "," + data.getDepthBeneathRov() + ","
+                    + data.getRovDepth() + "," + data.getFb_actuatorPSPos() + ","
+                    + data.getFb_actuatorSBPos();
+            outputWriterData.append('\n');
+            outputWriterData.append(shipTrack);
+            outputWriterData.flush();
+            shipTrackPointNumb++;
+        } catch (Exception e)
+        {
+        }
+    }
+
+    private void logErrorMessages()
+    {
 
     }
 
@@ -158,12 +202,12 @@ public class LogFileHandler implements Runnable
         try
         {
             shipTrack = "";
-            shipTrack = shipTrackPointNumb + ","
+            shipTrack = shipTrackPointNumb + "," + timeStampString + ","
                     + data.getLatitude() + "," + data.getLongitude() + ","
                     + data.getSpeed() + "," + data.getRovDepth() + "," + data.getHeading();
             outputWriterShipPos.append('\n');
             outputWriterShipPos.append(shipTrack);
-            outputWriterShipPos.flush();            
+            outputWriterShipPos.flush();
             shipTrackPointNumb++;
 
         } catch (Exception e)

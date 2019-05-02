@@ -72,7 +72,7 @@ public class NTNUSubseaGUI
         data.addObserver(encoder);
         data.addObserver(io);
         executor.scheduleAtFixedRate(lgh,
-                0, 5000, TimeUnit.MILLISECONDS);
+                0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
                 5000, 40, TimeUnit.MILLISECONDS);
         //executor.scheduleAtFixedRate(nmea,
