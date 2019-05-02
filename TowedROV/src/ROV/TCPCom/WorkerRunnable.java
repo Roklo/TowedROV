@@ -87,7 +87,7 @@ public class WorkerRunnable implements Runnable
 
                     } else
                     {
-                        key = (String) inputData;
+                       // key = (String) inputData;
                     }
                     if (!dh.getFb_ROVReady())
                     {
