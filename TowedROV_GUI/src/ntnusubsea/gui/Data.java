@@ -58,15 +58,24 @@ public final class Data extends Observable
     public float longitude = (float) 0;
     public float depth = (float) 0.01;
     public float temperature = (float) 0.01;
-    public float voltage = (float) 0.00;
+    public double voltage = (double) 40.00;
 
-    //Feedback from IMU
+    // Feedback from IMU
     public float roll = 0;
     public float pitch = 0;
     public float heading = 100;
 
+    // Feedback from the Camera RPi
+    private boolean leakStatus = false;
+    private double rovDepth;
+    private double pressure = 0.0;
+    private double outsideTemp = 0.0;
+    private double insideTemp = 0.0;
+    private double humidity = 0.0;
+
     // Feedback from ROV
-    public int rovDepth;
+    private boolean rovReady;
+    private boolean i2cError;
     private int fb_actuatorPSPos;
     private int fb_actuatorSBPos;
     private int fb_actuatorPScmd;
@@ -87,16 +96,14 @@ public final class Data extends Observable
     private double timeBetweenBoatAndRov = 4.0;
     private float depthBeneathRov = 0;
     private float depthBeneathBoat = 0;
-    private float pitchAngle = 0;
+    private int pitchAngle = 0;
     private float wingAngle = 0;
-    private float rollAngle = 0;
-    private float pressure = 0;
+    private int rollAngle = 0;
     private float channel1 = 0;
     private float channel2 = 0;
     private float channel3 = 0;
     private float channel4 = 0;
     private byte actuatorStatus = 0;
-    private byte leakStatus = 0;
     private ArrayList<String> labels = new ArrayList();
     private float[] channelValues = new float[4];
     private String IP_Rov = "";
@@ -297,7 +304,7 @@ public final class Data extends Observable
      *
      * @param angle Current pitch angle of the ROV
      */
-    public synchronized void setPitchAngle(float angle)
+    public synchronized void setPitchAngle(int angle)
     {
         pitchAngle = angle;
         setChanged();
@@ -309,7 +316,7 @@ public final class Data extends Observable
      *
      * @return Current pitch angle of the ROV
      */
-    public synchronized float getPitchAngle()
+    public synchronized int getPitchAngle()
     {
         return pitchAngle;
     }
@@ -319,7 +326,7 @@ public final class Data extends Observable
      *
      * @param angle Current roll angle of the ROV
      */
-    public synchronized void setRollAngle(float angle)
+    public synchronized void setRollAngle(int angle)
     {
         rollAngle = angle;
         setChanged();
@@ -331,7 +338,7 @@ public final class Data extends Observable
      *
      * @return Current roll angle of the ROV
      */
-    public synchronized float getRollAngle()
+    public synchronized int getRollAngle()
     {
         return rollAngle;
     }
@@ -549,9 +556,13 @@ public final class Data extends Observable
      *
      * @param leak Current leak status of the ROV
      */
-    public synchronized void setLeakStatus(byte leak)
+    public synchronized void setLeakStatus(boolean leak)
     {
         leakStatus = leak;
+        if (!leak)
+        {
+            setEmergencyMode(false);
+        }
         setChanged();
         notifyObservers();
     }
@@ -564,13 +575,7 @@ public final class Data extends Observable
      */
     public synchronized boolean getLeakStatus()
     {
-        if (leakStatus == 1)
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
+        return leakStatus;
     }
 
     /**
@@ -600,7 +605,7 @@ public final class Data extends Observable
      *
      * @param pres Pressure surrounding the ROV
      */
-    public synchronized void setPressure(float pres)
+    public synchronized void setPressure(double pres)
     {
         pressure = pres;
         setChanged();
@@ -612,9 +617,39 @@ public final class Data extends Observable
      *
      * @return Current pressure around the ROV
      */
-    public synchronized float getPressure()
+    public synchronized double getPressure()
     {
         return pressure;
+    }
+
+    public double getOutsideTemp()
+    {
+        return outsideTemp;
+    }
+
+    public void setOutsideTemp(double outsideTemp)
+    {
+        this.outsideTemp = outsideTemp;
+    }
+
+    public double getInsideTemp()
+    {
+        return insideTemp;
+    }
+
+    public void setInsideTemp(double insideTemp)
+    {
+        this.insideTemp = insideTemp;
+    }
+
+    public double getHumidity()
+    {
+        return humidity;
+    }
+
+    public void setHumidity(double humidity)
+    {
+        this.humidity = humidity;
     }
 
     /**
@@ -872,12 +907,12 @@ public final class Data extends Observable
         notifyObservers();
     }
 
-    public synchronized float getVoltage()
+    public synchronized double getVoltage()
     {
         return voltage;
     }
 
-    public synchronized void setVoltage(float voltage)
+    public synchronized void setVoltage(double voltage)
     {
         this.voltage = voltage;
         setChanged();
@@ -896,12 +931,32 @@ public final class Data extends Observable
         notifyObservers();
     }
 
-    public int getRovDepth()
+    public boolean isRovReady()
+    {
+        return rovReady;
+    }
+
+    public void setRovReady(boolean rovReady)
+    {
+        this.rovReady = rovReady;
+    }
+
+    public boolean isI2cError()
+    {
+        return i2cError;
+    }
+
+    public void setI2cError(boolean i2cError)
+    {
+        this.i2cError = i2cError;
+    }
+
+    public Double getRovDepth()
     {
         return rovDepth;
     }
 
-    public void setRovDepth(int rovDepth)
+    public void setRovDepth(Double rovDepth)
     {
         this.rovDepth = rovDepth;
     }
