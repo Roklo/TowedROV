@@ -69,6 +69,9 @@ public final class Data extends Observable
     public int rovDepth;
     private int fb_actuatorPSPos;
     private int fb_actuatorSBPos;
+    private int fb_actuatorPScmd;
+    private int fb_actuatorSBcmd;
+
     private int fb_actuatorPSMinPos;
     private int fb_actuatorSBMinPos;
     private int fb_actuatorPSMaxPos;
@@ -786,14 +789,14 @@ public final class Data extends Observable
     {
         return this.dataFromArduinoAvailable;
     }
-    
+
     public void setEmergencyMode(boolean status)
     {
         this.emergencyMode = status;
         setChanged();
         notifyObservers();
     }
-    
+
     public boolean isEmergencyMode()
     {
         return this.emergencyMode;
@@ -1000,4 +1003,26 @@ public final class Data extends Observable
         }
         this.depthBeneathBoatDataList.add(time + ":" + value);
     }
+
+    public int getFb_actuatorPScmd()
+    {
+        return fb_actuatorPScmd;
+    }
+
+    public void setFb_actuatorPScmd(int fb_actuatorPScmd)
+    {
+        this.fb_actuatorPScmd = fb_actuatorPScmd;
+    }
+
+    public int getFb_actuatorSBcmd()
+    {
+        return fb_actuatorSBcmd;
+    }
+
+    public void setFb_actuatorSBcmd(int fb_actuatorSBcmd)
+    {
+        this.fb_actuatorSBcmd = fb_actuatorSBcmd;
+    }
+    
+    
 }

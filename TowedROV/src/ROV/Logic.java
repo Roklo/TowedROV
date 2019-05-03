@@ -29,6 +29,8 @@ public class Logic implements Runnable, Observer
     I2CRW i2cRw = null;
     int old_cmd_actuatorPS = 0;
     int old_cmd_actuatorSB = 0;
+    int old_cmd_bothActuators = 0;
+
     int old_cmd_BlueLED = 0;
 
     int old_cmd_actuatorPS_2 = 0;
@@ -90,26 +92,34 @@ public class Logic implements Runnable, Observer
     public void update(Observable o, Object arg)
     {
         //Commands
-        if (old_cmd_actuatorPS != data.getCmd_actuatorPS())
+        if (data.getcmd_targetMode() == 3)
         {
-            old_cmd_actuatorPS = data.getCmd_actuatorPS();
-            i2cRw.sendI2CData("ActuatorPS_setTarget", data.cmd_actuatorPS);
+            if (old_cmd_actuatorPS != data.getCmd_actuatorPS())
+            {
+                old_cmd_actuatorPS = data.getCmd_actuatorPS();
+                i2cRw.sendI2CData("ActuatorPS_setTarget", data.cmd_actuatorPS);
+            }
+
+            if (old_cmd_actuatorSB != data.getCmd_actuatorSB())
+            {
+                old_cmd_actuatorSB = data.getCmd_actuatorSB();
+                i2cRw.sendI2CData("ActuatorSB_setTarget", data.cmd_actuatorSB);
+            }
+        } else
+        {
+            if (old_cmd_bothActuators != data.getCmd_bothActuators())
+            {
+                old_cmd_bothActuators = data.getCmd_bothActuators();
+                i2cRw.sendI2CData("ActuatorSB_setTarget", data.getCmd_bothActuators());
+                i2cRw.sendI2CData("ActuatorPS_setTarget", data.getCmd_bothActuators());
+            }
 
         }
-
-        if (old_cmd_actuatorSB != data.getCmd_actuatorSB())
-        {
-            old_cmd_actuatorSB = data.getCmd_actuatorSB();
-            i2cRw.sendI2CData("ActuatorSB_setTarget", data.cmd_actuatorSB);
-
-        }
-
         if (old_cmd_BlueLED != data.getCmd_BlueLED())
         {
             BlueLED_PIN.toggle();
             old_cmd_BlueLED = data.getCmd_BlueLED();
         }
-
 //         gatherFbData();
     }
 
@@ -118,14 +128,13 @@ public class Logic implements Runnable, Observer
 
         newDataToSend.put("Fb_actuatorPSPos", String.valueOf(data.getFb_actuatorPSPos()));
         newDataToSend.put("Fb_actuatorSBPos", String.valueOf(data.getFb_actuatorSBPos()));
-        newDataToSend.put("Fb_roll", String.valueOf(data.getFb_roll()));
-        newDataToSend.put("Fb_pitch", String.valueOf(data.getFb_pitch()));
+        newDataToSend.put("Fb_rollAngle", String.valueOf(data.getFb_rollAngle()));
+        newDataToSend.put("Fb_pitchAngle", String.valueOf(data.getFb_pitchAngle()));
         newDataToSend.put("Fb_depthToSeabedEcho", String.valueOf(data.getFb_depthToSeabedEcho()));
         newDataToSend.put("Fb_depthBelowTransduser", String.valueOf(data.getFb_depthBelowTransduser()));
-       
+
         newDataToSend.put("Fb_ROVReady", String.valueOf(data.getFb_ROVReady()));
         newDataToSend.put("ERROR_I2C", String.valueOf(data.ERROR_I2C));
-        
 
         String dataToSend = "<";
         for (Map.Entry e : newDataToSend.entrySet())

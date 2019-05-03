@@ -87,7 +87,10 @@ public class LogFileHandler implements Runnable
                 outputWriterShipPos.append("Point, Time, Latitude, Longtitude, Speed, ROV Depth, Heading");
                 outputWriterShipPos.flush();
 
-                outputWriterData.append("Point, Time, Roll, Pitch, Depth, DepthToSeaFloor, ROV Depth, Emergency");
+                outputWriterData.append("Point, Time, Roll, Pitch, Depth,"
+                        + " DepthToSeaFloor, ROV Depth, ActuatorPS_feedback,"
+                        + "ActuatorSB_feedback, ActuatorPS_command,"
+                        + "ActuatorSB_command, Emergency");
                 outputWriterData.flush();
 
                 setupIsDone = true;
@@ -182,7 +185,8 @@ public class LogFileHandler implements Runnable
                     + data.getRollAngle() + "," + data.getPitchAngle() + ","
                     + data.getDepth() + "," + data.getDepthBeneathRov() + ","
                     + data.getRovDepth() + "," + data.getFb_actuatorPSPos() + ","
-                    + data.getFb_actuatorSBPos();
+                    + data.getFb_actuatorSBPos() + data.getFb_actuatorPScmd() + ","
+                    + data.getFb_actuatorSBcmd();
             outputWriterData.append('\n');
             outputWriterData.append(shipTrack);
             outputWriterData.flush();
