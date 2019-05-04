@@ -47,8 +47,10 @@ void output_angles()
    // LOG_PORT.println("Heading: " + String(roundedFilteredDegHeading));
    int roundedPitch = round(TO_DEG(pitch));
    int roundedRoll = round(TO_DEG(roll));
+   double compPitch = -1.50;
+   double compRoll = -0.70;
 
-    LOG_PORT.println("<Heading:" + String(roundedFilteredDegHeading) + ":Roll:" + roundedRoll + ":Pitch:" + roundedPitch + ">");
+    LOG_PORT.println("<Heading:" + String(roundedFilteredDegHeading) + ":Roll:" + (compRoll - TO_DEG(roll)) + ":Pitch:" + (compPitch - TO_DEG(pitch)) + ">");
     
 
 

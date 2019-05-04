@@ -227,11 +227,11 @@ public class ReadSerialData implements Runnable
                     //setTemperature(Float.parseFloat(value));
                     break;
                 case "Roll":
-                    data.setRoll(Integer.parseInt(value));
+                    data.setRoll(Double.parseDouble(value));
                     //setRoll(Integer.parseInt(value));
                     break;
                 case "Pitch":
-                    data.setPitch(Integer.parseInt(value));
+                    data.setPitch(Double.parseDouble(value));
                     //setPitch(Integer.parseInt(value));
                     break;
                 case "Heading":
@@ -239,7 +239,7 @@ public class ReadSerialData implements Runnable
                     //setHeading(Integer.parseInt(value));
                     break;
                 case "Volt":
-                    data.setVoltage(Float.parseFloat(value));
+                    data.setVoltage(Double.parseDouble(value));
                     break;
 
             }

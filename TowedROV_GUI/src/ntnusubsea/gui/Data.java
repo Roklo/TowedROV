@@ -61,8 +61,8 @@ public final class Data extends Observable
     public double voltage = (double) 40.00;
 
     // Feedback from IMU
-    public float roll = 0;
-    public float pitch = 0;
+    public double roll = 0;
+    public double pitch = 0;
     public float heading = 100;
 
     // Feedback from the Camera RPi
@@ -883,24 +883,24 @@ public final class Data extends Observable
         notifyObservers();
     }
 
-    public synchronized float getRoll()
+    public synchronized double getRoll()
     {
         return roll;
     }
 
-    public synchronized void setRoll(int roll)
+    public synchronized void setRoll(double roll)
     {
         this.roll = roll;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized float getPitch()
+    public synchronized double getPitch()
     {
         return pitch;
     }
 
-    public synchronized void setPitch(int pitch)
+    public synchronized void setPitch(double pitch)
     {
         this.pitch = pitch;
         setChanged();
