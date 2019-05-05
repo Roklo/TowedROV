@@ -61,7 +61,7 @@ public final class Data extends Observable
     public float longitude = (float) 0;
     public float depth = (float) 0.01;
     public float temperature = (float) 0.01;
-    public double voltage = (double) 40.00;
+    public double voltage = (double) 36.01;
 
     // Feedback from IMU
     public double roll = 0;

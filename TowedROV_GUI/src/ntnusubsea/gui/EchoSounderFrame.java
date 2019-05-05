@@ -92,9 +92,9 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
     private XYDataset createDataset()
     {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries series1 = new XYSeries("Surface");
-        XYSeries series2 = new XYSeries("ROV Depth");
-        XYSeries series3 = new XYSeries("Sea floor");
+        XYSeries series1 = new XYSeries("ROV Depth");
+        XYSeries series2 = new XYSeries("Seafloor");
+        XYSeries series3 = new XYSeries("Surface");
 
         series1.add(0.0, 0.0);
         series1.add(5.0, 0.2);
@@ -123,9 +123,9 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
     private XYDataset createDataset_2()
     {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries series1 = new XYSeries("Surface");
-        XYSeries series2 = new XYSeries("ROV Depth");
-        XYSeries series3 = new XYSeries("Sea floor");
+        XYSeries series1 = new XYSeries("ROV Depth");
+        XYSeries series2 = new XYSeries("Seafloor");
+        XYSeries series3 = new XYSeries("Surface");
 
         Iterator it = data.rovDepthDataList.iterator();
         while (it.hasNext())
