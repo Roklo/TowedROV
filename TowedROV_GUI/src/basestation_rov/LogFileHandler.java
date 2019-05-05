@@ -84,13 +84,13 @@ public class LogFileHandler implements Runnable
 
                 outputWriterData = new BufferedWriter(new FileWriter(dataLogFile));
 
-                outputWriterShipPos.append("Point, Time, Latitude, Longtitude, Speed, ROV Depth, Heading");
+                outputWriterShipPos.append("Point,Time,Latitude,Longtitude,Speed,ROV Depth,Heading");
                 outputWriterShipPos.flush();
 
-                outputWriterData.append("Point, Time, Roll, Pitch, Depth,"
-                        + " DepthToSeaFloor, ROV Depth, ActuatorPS_feedback,"
-                        + "ActuatorSB_feedback, ActuatorPS_command,"
-                        + "ActuatorSB_command, Voltage, Emergency");
+                outputWriterData.append("Point,Time,Roll,Pitch,Depth,"
+                        + "DepthToSeaFloor,ROV_Depth,ActuatorPS_feedback,"
+                        + "ActuatorSB_feedback,ActuatorPS_command,"
+                        + "ActuatorSB_command,Voltage,Emergency");
                 outputWriterData.flush();
 
                 setupIsDone = true;
@@ -102,7 +102,7 @@ public class LogFileHandler implements Runnable
         }
         if (data.startLogging)
         {
-            
+
             timeStampString = String.valueOf(java.time.LocalTime.now());
             logShipPosition();
             logData();
@@ -111,58 +111,57 @@ public class LogFileHandler implements Runnable
 
     }
 
-    private void logPhotoPosition(BufferedWriter bw)
-    {
-        try
-        {
-            double shipsLatitude = data.getLatitude();
-            double shipsLontitude = data.getLongitude();
-            double rovHeadingRelToShip = data.getHeading() - 180;
-            if (rovHeadingRelToShip < 0)
-            {
-                rovHeadingRelToShip = rovHeadingRelToShip + 360;
-            }
-            //convert to radians
-
-            double normalizedHeading = Math.atan2(Math.sin(rovHeadingRelToShip), Math.cos(rovHeadingRelToShip));
-            double rovHeadingRelToShipSin = sin(normalizedHeading * PI / 180);
-            double rovHeadingRelToShipSinRest = 0;
-
-            if (rovHeadingRelToShipSin < 0)
-            {
-                rovHeadingRelToShipSinRest = 1 + rovHeadingRelToShipSin;
-
-            }
-
-            double rovLatitude = 0;
-            double rovLongtitude = 0;
-
-            rovLatitude = data.getLatitude() - (adjustedCoordinateRovOffset * rovHeadingRelToShipSinRest);
-            if (rovHeadingRelToShipSinRest != 0)
-            {
-                rovLongtitude = data.getLongitude() + (adjustedCoordinateRovOffset * rovHeadingRelToShipSin);
-            } else
-            {
-                rovLongtitude = data.getLongitude();
-            }
-
-            photoLocationTrack = "";
-            photoLocationTrack = photoLocationNumb + ","
-                    + data.getLatitude() + "," + data.getLongitude() + ","
-                    + data.getSpeed() + "," + data.getRovDepth();
-
-            bw.append(photoLocationTrack);
-            bw.append('\n');
-            bw.flush();
-
-            photoLocationNumb++;
-        } catch (Exception e)
-        {
-            System.out.println("Error: " + e);
-        }
-
-    }
-
+//    private void logPhotoPosition(BufferedWriter bw)
+//    {
+//        try
+//        {
+//            double shipsLatitude = data.getLatitude();
+//            double shipsLontitude = data.getLongitude();
+//            double rovHeadingRelToShip = data.getHeading() - 180;
+//            if (rovHeadingRelToShip < 0)
+//            {
+//                rovHeadingRelToShip = rovHeadingRelToShip + 360;
+//            }
+//            //convert to radians
+//
+//            double normalizedHeading = Math.atan2(Math.sin(rovHeadingRelToShip), Math.cos(rovHeadingRelToShip));
+//            double rovHeadingRelToShipSin = sin(normalizedHeading * PI / 180);
+//            double rovHeadingRelToShipSinRest = 0;
+//
+//            if (rovHeadingRelToShipSin < 0)
+//            {
+//                rovHeadingRelToShipSinRest = 1 + rovHeadingRelToShipSin;
+//
+//            }
+//
+//            double rovLatitude = 0;
+//            double rovLongtitude = 0;
+//
+//            rovLatitude = data.getLatitude() - (adjustedCoordinateRovOffset * rovHeadingRelToShipSinRest);
+//            if (rovHeadingRelToShipSinRest != 0)
+//            {
+//                rovLongtitude = data.getLongitude() + (adjustedCoordinateRovOffset * rovHeadingRelToShipSin);
+//            } else
+//            {
+//                rovLongtitude = data.getLongitude();
+//            }
+//
+//            photoLocationTrack = "";
+//            photoLocationTrack = photoLocationNumb + ","
+//                    + data.getLatitude() + "," + data.getLongitude() + ","
+//                    + data.getSpeed() + "," + data.getRovDepth();
+//
+//            bw.append(photoLocationTrack);
+//            bw.append('\n');
+//            bw.flush();
+//
+//            photoLocationNumb++;
+//        } catch (Exception e)
+//        {
+//            System.out.println("Error: " + e);
+//        }
+//
+//    }
     public void closeLog()
     {
         try
@@ -181,16 +180,47 @@ public class LogFileHandler implements Runnable
         try
         {
             dataLog = "";
-            dataLog = DataPointNumb + "," + timeStampString + ","
-                    + data.getRollAngle() + "," + data.getPitchAngle() + ","
-                    + data.getDepth() + "," + data.getDepthBeneathRov() + ","
-                    + data.getRovDepth() + "," + data.getFb_actuatorPSPos() + ","
-                    + data.getFb_actuatorSBPos() + data.getFb_actuatorPScmd() + ","
-                    + data.getFb_actuatorSBcmd() + data.voltage;
+
+            dataLog = DataPointNumb + ","
+                    + timeStampString + ","
+                    + String.valueOf(data.getRollAngle()) + ","
+                    + String.valueOf(data.getPitchAngle()) + ","
+                    + String.valueOf(data.getDepth()) + ","
+                    + String.valueOf(data.getDepthBeneathRov()) + ","
+                    + String.valueOf(data.getRovDepth()) + ","
+                    + String.valueOf(data.getFb_actuatorPSPos()) + ","
+                    + String.valueOf(data.getFb_actuatorSBPos()) + ","
+                    + String.valueOf(data.getFb_actuatorPScmd()) + ","
+                    + String.valueOf(data.getFb_actuatorSBcmd()) + ","
+                    + String.valueOf(data.getVoltage());
+
+//            outputWriterData.append(String.valueOf(DataPointNumb));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(timeStampString));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getRollAngle()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getPitchAngle()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getDepth()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getDepthBeneathRov()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getRovDepth()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getFb_actuatorPSPos()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getFb_actuatorSBPos()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getFb_actuatorPScmd()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getFb_actuatorSBcmd()));
+//            outputWriterData.append(',');
+//            outputWriterData.append(String.valueOf(data.getVoltage()));
             outputWriterData.append('\n');
-            outputWriterData.append(shipTrack);
+            outputWriterData.append(dataLog);
             outputWriterData.flush();
-            shipTrackPointNumb++;
+            DataPointNumb++;
         } catch (Exception e)
         {
         }

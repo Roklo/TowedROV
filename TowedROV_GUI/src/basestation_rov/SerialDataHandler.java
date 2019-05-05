@@ -122,6 +122,12 @@ public class SerialDataHandler
                                     String key = (String) e.getKey();
                                     portNamesList.put(key, "EchoSounder");
                                 }
+                                 if (data[i].contains("ROVDummy") || data[i].contains("Test"))
+                                {
+                                    String key = (String) e.getKey();
+                                    portNamesList.put(key, "ROVDummy");
+                                }
+                                
 
                             }
 

@@ -28,6 +28,7 @@ public class NTNUSubseaGUI
     private static Thread imuThread;
     private static Thread gpsThread;
     private static Thread echoSounderThread;
+    private static Thread ROVDummyThread;
 
     //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
@@ -49,6 +50,7 @@ public class NTNUSubseaGUI
         Sounder sounder = new Sounder();
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
+        
         //DataLogger logger = new DataLogger(data);
         LogFileHandler lgh = new LogFileHandler(data);
         TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
@@ -169,6 +171,14 @@ public class NTNUSubseaGUI
                         echoSounderThread.start();
                         echoSounderThread.setName(comPortValue);
                     }
+
+                    if (comPortValue.contains("ROVDummy"))
+                    {
+                        ROVDummyThread = new Thread(new ReadSerialData(data, comPortKey, 115200));
+                        ROVDummyThread.start();
+                        ROVDummyThread.setName(comPortValue);
+                    }
+
                 }
 
             }
@@ -203,8 +213,8 @@ public class NTNUSubseaGUI
                 lastTime = System.currentTimeMillis();
             }
 
-            System.out.println("Pitch: : " + data.getPitch()
-                    + "    Roll: " + data.getRoll());
+            System.out.println("Pitch: : " + data.getPitchAngle()
+                    + "    TestDepth: " + data.getTestDepth());
         }
     }
 }

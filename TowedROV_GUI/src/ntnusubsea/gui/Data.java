@@ -48,6 +48,9 @@ public final class Data extends Observable
     private byte requestCodeFromArduino;
     private boolean threadStatus = true;
     private boolean dataUpdated = false;
+    
+    //Dummy signals
+    public double TestDepth = 0;
 
     // Feedback from GPS
     public int satellites = 0;
@@ -96,9 +99,9 @@ public final class Data extends Observable
     private double timeBetweenBoatAndRov = 4.0;
     private float depthBeneathRov = 0;
     private float depthBeneathBoat = 0;
-    private int pitchAngle = 0;
+    private double pitchAngle = 0;
     private float wingAngle = 0;
-    private int rollAngle = 0;
+    private double rollAngle = 0;
     private float channel1 = 0;
     private float channel2 = 0;
     private float channel3 = 0;
@@ -304,7 +307,7 @@ public final class Data extends Observable
      *
      * @param angle Current pitch angle of the ROV
      */
-    public synchronized void setPitchAngle(int angle)
+    public synchronized void setPitchAngle(double angle)
     {
         pitchAngle = angle;
         setChanged();
@@ -316,7 +319,7 @@ public final class Data extends Observable
      *
      * @return Current pitch angle of the ROV
      */
-    public synchronized int getPitchAngle()
+    public synchronized double getPitchAngle()
     {
         return pitchAngle;
     }
@@ -326,7 +329,7 @@ public final class Data extends Observable
      *
      * @param angle Current roll angle of the ROV
      */
-    public synchronized void setRollAngle(int angle)
+    public synchronized void setRollAngle(double angle)
     {
         rollAngle = angle;
         setChanged();
@@ -338,7 +341,7 @@ public final class Data extends Observable
      *
      * @return Current roll angle of the ROV
      */
-    public synchronized int getRollAngle()
+    public synchronized double getRollAngle()
     {
         return rollAngle;
     }
@@ -1078,6 +1081,19 @@ public final class Data extends Observable
     {
         this.fb_actuatorSBcmd = fb_actuatorSBcmd;
     }
+
+    public double getTestDepth()
+    {
+        return TestDepth;
+    }
+
+    public void setTestDepth(double TestDepth)
+    {
+        this.TestDepth = TestDepth;
+    }
+    
+    
+    
     
     
 }

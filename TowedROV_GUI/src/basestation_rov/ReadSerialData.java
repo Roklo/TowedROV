@@ -241,6 +241,9 @@ public class ReadSerialData implements Runnable
                 case "Volt":
                     data.setVoltage(Double.parseDouble(value));
                     break;
+                case "TestDepth":
+                    data.setTestDepth(Double.parseDouble(value));
+                    break;
 
             }
         }
