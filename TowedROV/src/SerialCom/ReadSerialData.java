@@ -33,6 +33,7 @@ public class ReadSerialData implements Runnable
 
     boolean portIsOpen = false;
     String comPort = "";
+    String myName = "";
     int baudRate = 0;
     DataHandler data = null;
 
@@ -41,9 +42,10 @@ public class ReadSerialData implements Runnable
     private static volatile double depth;
     private static volatile double tempC;
 
-    public ReadSerialData(DataHandler data, String comPort, int baudRate)
+    public ReadSerialData(DataHandler data, String comPort, int baudRate, String myName)
     {
         this.comPort = comPort;
+        this.myName = myName;
         this.baudRate = baudRate;
         this.data = data;
     }
@@ -188,7 +190,7 @@ public class ReadSerialData implements Runnable
 //            }
             } catch (Exception ex)
             {
-
+                System.out.println("Lost connection to " + myName);
             }
 
         }
@@ -205,11 +207,11 @@ public class ReadSerialData implements Runnable
             {
 
                 case "D":
-                    data.setFb_depthToSeabedEcho(Double.parseDouble(value));
+                    data.setFb_depthBeneathROV(Double.parseDouble(value));
                     break;
-                case "DBT":
-                    data.setFb_depthBelowTransduser(Double.parseDouble(value));
-                    break;
+//                case "DBT":
+//                    data.setFb_depthBelowTransduser(Double.parseDouble(value));
+//                    break;
                 case "ch1":
                     data.setAnalogInputChannel_1(Double.parseDouble(value));
                     break;

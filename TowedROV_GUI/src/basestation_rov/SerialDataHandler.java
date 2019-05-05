@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import jssc.SerialPort;
 import jssc.SerialPortList;
- 
 
 /**
  *
@@ -28,6 +27,7 @@ public class SerialDataHandler
     String start_char = "<";
     String end_char = ">";
     String sep_char = ":";
+    int comCheck = 0;
 
     public SerialDataHandler(Data dh)
     {
@@ -53,7 +53,14 @@ public class SerialDataHandler
             if (!comPortValue.contains("Unknown"))
             {
                 dh.comPortList.put(comPortKey, comPortValue);
+                comCheck++;
             }
+        }
+        if (comCheck < 3)
+        {
+            //Not all comports was found
+            System.out.println("ERROR: Not all com ports was found, trying again...");
+            findComPorts();
         }
 
     }
@@ -85,8 +92,12 @@ public class SerialDataHandler
             for (Entry e : portNamesList.entrySet())
             {
                 String comPortKey = (String) e.getKey();
-                serialPort = new SerialPort(comPortKey);
+                String comPortValue = (String) e.getValue();
 
+                if (comPortValue.contains("Unknown"))
+                {
+                    serialPort = new SerialPort(comPortKey);
+                }
                 try
                 {
                     serialPort.openPort();
@@ -102,7 +113,7 @@ public class SerialDataHandler
                         {
                             buffer = buffer.substring(buffer.indexOf(start_char) + 1);
                             buffer = buffer.substring(0, buffer.indexOf(end_char));
-                            buffer = buffer.replace("?", "");
+                           // buffer = buffer.replace("?", "");
                             String[] data = buffer.split(sep_char);
 
                             for (int i = 0; i < data.length; i = i + 2)
@@ -122,12 +133,11 @@ public class SerialDataHandler
                                     String key = (String) e.getKey();
                                     portNamesList.put(key, "EchoSounder");
                                 }
-                                 if (data[i].contains("ROVDummy") || data[i].contains("Test"))
+                                if (data[i].contains("ROVDummy") || data[i].contains("Test"))
                                 {
                                     String key = (String) e.getKey();
                                     portNamesList.put(key, "ROVDummy");
                                 }
-                                
 
                             }
 

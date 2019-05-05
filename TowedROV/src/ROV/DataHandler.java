@@ -66,10 +66,9 @@ public class DataHandler extends Observable
     // Sensor values
     boolean fb_ROVReady = false;
 
-    double fb_depthToSeabedEcho = 12;
-    int fb_depthFromPressure = 0;
-    double fb_depthBelowTransduser = 0;
-    double fb_depth = 0;
+    double fb_depthBeneathROV = 12;
+    double fb_depthBeneathBoat = 0;
+    double cmd_currentROVdepth = 0;
 
     int fb_speedThroughWather = 0;
     int fb_waterTemperature = 0;
@@ -162,27 +161,51 @@ public class DataHandler extends Observable
     }
 
     //Sensor values getters and setters
-    public double getFb_depthToSeabedEcho()
+
+    public double getFb_depthBeneathROV()
     {
-        return fb_depthToSeabedEcho;
+        return fb_depthBeneathROV;
     }
 
-    public void setFb_depthToSeabedEcho(double fb_depthToSeabedEcho)
+    public void setFb_depthBeneathROV(double fb_depthBeneathROV)
     {
-//        setChanged();
-//        notifyObservers();
-        this.fb_depthToSeabedEcho = fb_depthToSeabedEcho;
+        this.fb_depthBeneathROV = fb_depthBeneathROV;
     }
 
-    public int getFb_depthFromPressure()
+    public double getFb_depthBeneathBoat()
     {
-        return fb_depthFromPressure;
+        return fb_depthBeneathBoat;
     }
 
-    public void setFb_depthFromPressure(int fb_depthFromPressure)
+    public void setFb_depthBeneathBoat(double fb_depthBeneathBoat)
     {
-        this.fb_depthFromPressure = fb_depthFromPressure;
+        this.fb_depthBeneathBoat = fb_depthBeneathBoat;
     }
+    
+    
+    
+    
+//    public double getFb_depthToSeabedEcho()
+//    {
+//        return fb_depthToSeabedEcho;
+//    }
+//
+//    public void setFb_depthToSeabedEcho(double fb_depthToSeabedEcho)
+//    {
+////        setChanged();
+////        notifyObservers();
+//        this.fb_depthToSeabedEcho = fb_depthToSeabedEcho;
+//    }
+
+//    public int getFb_depthFromPressure()
+//    {
+//        return fb_depthFromPressure;
+//    }
+//
+//    public void setFb_depthFromPressure(int fb_depthFromPressure)
+//    {
+//        this.fb_depthFromPressure = fb_depthFromPressure;
+//    }
 
     public int getFb_speedThroughWather()
     {
@@ -549,28 +572,31 @@ public class DataHandler extends Observable
         this.cmd_manualWingControl = cmd_manualWingControl;
     }
 
-    public double getFb_depthBelowTransduser()
-    {
-        return fb_depthBelowTransduser;
-    }
-
-    public void setFb_depthBelowTransduser(double fb_depthBelowTransduser)
-    {
-//        setChanged();
-//        notifyObservers();
-        this.fb_depthBelowTransduser = fb_depthBelowTransduser;
-
-    }
-
-//    public double getFb_depth()
+//    public double getFb_depthBelowTransduser()
 //    {
-//        return fb_depth;
+//        return fb_depthBelowTransduser;
 //    }
 //
-//    public void setFb_depth(double fb_depth)
+//    public void setFb_depthBelowTransduser(double fb_depthBelowTransduser)
 //    {
-//        this.fb_depth = fb_depth;
+////        setChanged();
+////        notifyObservers();
+//        this.fb_depthBelowTransduser = fb_depthBelowTransduser;
+//
 //    }
+
+    public double getCmd_currentROVdepth()
+    {
+        return cmd_currentROVdepth;
+    }
+
+    public void setCmd_currentROVdepth(double cmd_currentROVdepth)
+    {
+        this.cmd_currentROVdepth = cmd_currentROVdepth;
+    }
+
+ 
+
     //Alarm flags
     //Alarm getters and setters
     public int getCounter()
@@ -754,7 +780,7 @@ public class DataHandler extends Observable
                 switch (key)
                 {
                     case "fb_depthToSeabed":
-                        this.fb_depthToSeabedEcho = Integer.parseInt(value);
+                        this.fb_depthBeneathROV = Integer.parseInt(value);
                         break;
                     case "fb_speedThroughWather":
                         this.fb_speedThroughWather = Integer.parseInt(value);

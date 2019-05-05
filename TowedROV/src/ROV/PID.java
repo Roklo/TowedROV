@@ -44,12 +44,12 @@ public class PID implements Runnable, Observer
             if (data.getcmd_targetMode() == 0)
             {
                 //Goal: Get to desired depth
-                actual = data.getFb_depthFromPressure();
+                actual = data.getCmd_currentROVdepth();
             }
             if (data.getcmd_targetMode() == 1)
             {
                 //Goal: Get to desired elevation above seafloor
-                actual = data.getFb_depthToSeabedEcho();
+                actual = data.getFb_depthBeneathROV();
             }
 
             target = data.getCmd_targetDistance();

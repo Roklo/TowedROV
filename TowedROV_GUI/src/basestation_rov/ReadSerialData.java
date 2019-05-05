@@ -24,6 +24,7 @@ public class ReadSerialData implements Runnable
 
     boolean portIsOpen = false;
     String comPort = "";
+    String myName = "";
     int baudRate = 0;
     Data data = null;
 
@@ -32,8 +33,10 @@ public class ReadSerialData implements Runnable
     private static volatile double depth;
     private static volatile double tempC;
 
-    public ReadSerialData(Data data, String comPort, int baudRate)
+    public ReadSerialData(Data data, String comPort, int baudRate, String myName)
     {
+        this.myName = myName;
+
         this.comPort = comPort;
         this.baudRate = baudRate;
         this.data = data;
@@ -120,7 +123,7 @@ public class ReadSerialData implements Runnable
         {
             try
             {
-                Thread.sleep(400);
+                Thread.sleep(50);
             } catch (Exception ex)
             {
 
@@ -179,9 +182,9 @@ public class ReadSerialData implements Runnable
 //            }
             } catch (Exception ex)
             {
+                System.out.println("Lost connection to " + myName);
 
             }
-
         }
     }
 

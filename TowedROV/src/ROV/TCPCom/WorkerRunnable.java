@@ -184,6 +184,11 @@ public class WorkerRunnable implements Runnable
                                 outToClient.println("Server: OK");
                                 break;
 
+                            case "cmd_rovDepth":
+                                dh.setCmd_currentROVdepth(parseStringToDouble(value));
+                                outToClient.println("Server: OK");
+                                break;
+
                             //Feedback commands
                             case "fb_allData":
                                 outToClient.println(dh.getDataToSend());
@@ -191,11 +196,7 @@ public class WorkerRunnable implements Runnable
                                 break;
 
                             case "fb_depthToSeabedEcho":
-                                outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthToSeabedEcho() + ">");
-                                break;
-
-                            case "fb_depthFromPressure":
-                                outToClient.println("<fb_depthFromPressure:" + dh.getFb_depthFromPressure() + ">");
+                                outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthBeneathROV() + ">");
                                 break;
 
                             case "fb_speedThroughWather":

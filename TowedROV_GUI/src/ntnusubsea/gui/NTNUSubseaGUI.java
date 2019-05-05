@@ -151,7 +151,7 @@ public class NTNUSubseaGUI
                     String comPortValue = (String) e.getValue();
                     if (comPortValue.contains("IMU"))
                     {
-                        imuThread = new Thread(new ReadSerialData(data, comPortKey, 115200));
+                        imuThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
                         imuThread.start();
                         imuThread.setName(comPortValue);
 
@@ -159,7 +159,7 @@ public class NTNUSubseaGUI
 
                     if (comPortValue.contains("GPS"))
                     {
-                        gpsThread = new Thread(new ReadSerialData(data, comPortKey, 115200));
+                        gpsThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
                         gpsThread.start();
                         gpsThread.setName(comPortValue);
 
@@ -167,14 +167,14 @@ public class NTNUSubseaGUI
 
                     if (comPortValue.contains("EchoSounder"))
                     {
-                        echoSounderThread = new Thread(new ReadSerialData(data, comPortKey, 4800));
+                        echoSounderThread = new Thread(new ReadSerialData(data, comPortKey, 4800, comPortValue));
                         echoSounderThread.start();
                         echoSounderThread.setName(comPortValue);
                     }
 
                     if (comPortValue.contains("ROVDummy"))
                     {
-                        ROVDummyThread = new Thread(new ReadSerialData(data, comPortKey, 115200));
+                        ROVDummyThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
                         ROVDummyThread.start();
                         ROVDummyThread.setName(comPortValue);
                     }

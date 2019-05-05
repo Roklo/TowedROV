@@ -131,30 +131,34 @@ public class ROVMain
             String comPortValue = (String) e.getValue();
             if (comPortValue.contains("IMU"))
             {
-                imuThread = new Thread(new ReadSerialData(dh, comPortKey, 115200));
+                imuThread = new Thread(new ReadSerialData(dh, comPortKey, 115200, comPortValue));
                 imuThread.start();
                 imuThread.setName(comPortValue);
+                System.out.println("IMU found");
 
             }
 
             if (comPortValue.contains("EchoSounder"))
             {
-                ArduinoIOThread = new Thread(new ReadSerialData(dh, comPortKey, 4800));
+                ArduinoIOThread = new Thread(new ReadSerialData(dh, comPortKey, 4800, comPortValue));
                 ArduinoIOThread.start();
                 ArduinoIOThread.setName(comPortValue);
+                System.out.println("EchoSounder found");
 
             }
 
             if (comPortValue.contains("ActuatorFBArduino"))
             {
-                ArduinoActuatorFBThread = new Thread(new ReadSerialData(dh, comPortKey, 38400));
+                ArduinoActuatorFBThread = new Thread(new ReadSerialData(dh, comPortKey, 38400, comPortValue));
                 ArduinoActuatorFBThread.start();
                 ArduinoActuatorFBThread.setName(comPortValue);
+                System.out.println("ActuatorFBArduino found");
 
             }
 
         }
         System.out.println("Done");
+        
         dh.setFb_ROVReady(true);
         try
         {
@@ -169,6 +173,7 @@ public class ROVMain
         {
             try
             {
+                System.out.println("Current depth: " + dh.getCmd_currentROVdepth());
                 //Thread.sleep(500);
 //                System.out.println("------------------------------------");
 //                System.out.println("FeedbackPS: " + dh.getFb_actuatorPSPos());

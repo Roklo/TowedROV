@@ -54,15 +54,15 @@ public class SerialDataHandler
             if (!comPortValue.contains("Unknown"))
             {
                 dh.comPortList.put(comPortKey, comPortValue);
-                comCheck++;
+//                comCheck++;
             }
         }
-        if (comCheck < 3)
-        {
-            //Not all comports was found
-            System.out.println("ERROR: Not all com ports was found, trying again...");
-            findComPorts();
-        }
+//        if (comCheck < 3)
+//        {
+//            //Not all comports was found
+//            System.out.println("ERROR: Not all com ports was found, trying again...");
+//            findComPorts();
+//        }
 
     }
 
