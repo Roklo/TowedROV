@@ -21,7 +21,7 @@ public class DataHandler extends Observable
     boolean ERROR_I2C = false;
     String dataToSend = "";
     boolean gatheringDataToSend = false;
-    
+    int actuatorDifference = 0;
 
     // Calibration values
     int pressureSensorOffset = 0;
@@ -32,15 +32,20 @@ public class DataHandler extends Observable
     int cmd_lightMode = 0;
     int cmd_actuatorPS = 0;
     int cmd_actuatorSB = 0;
+    int cmd_bothActuators = 0;
     int cmd_actuatorPSMaxPos = 0;
     int cmd_actuatorPSMinPos = 0;
     int cmd_actuatorSBMaxPos = 0;
     int cmd_actuatorSBMinPos = 0;
     int cmd_BlueLED = 0;
 
+    boolean cmd_disableMotors = true;
+
     int cmd_pressureAtSeaLevel = 0;
 
-    byte cmd_mode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
+    byte cmd_targetMode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
+    double cmd_targetDistance = 0;
+
     //int cmd_depth = 0;
     int cmd_cameraPitch = 0;
     int cmd_cameraRoll = 0;
@@ -55,8 +60,8 @@ public class DataHandler extends Observable
     boolean cmd_ack = false;
     boolean cmd_manualWingControl = false;
 
-    int cmd_imuCalibrateRoll = 0;
-    int cmd_imuCalibratePitch = 0;
+    double cmd_imuCalibrateRoll = 0;
+    double cmd_imuCalibratePitch = 0;
 
     // Sensor values
     boolean fb_ROVReady = false;
@@ -79,8 +84,8 @@ public class DataHandler extends Observable
     double fb_tempMainElBoxRear = 0;
     int fb_tempEchoBox = 0;
     int fb_currentDraw = 0;
-    int fb_pitch = 0;
-    int fb_roll = 0;
+    double fb_pitchAngle = 0;
+    double fb_rollAngle = 0;
     int fb_yaw = 0;
     int fb_heading = 0;
 
@@ -315,29 +320,29 @@ public class DataHandler extends Observable
         this.fb_currentDraw = fb_currentDraw;
     }
 
-    public int getFb_pitch()
+    public double getFb_pitchAngle()
     {
-        return fb_pitch + getCmd_imuCalibratePitch();
+        return fb_pitchAngle + getCmd_imuCalibratePitch();
     }
 
-    public void setFb_pitch(int fb_pitch)
+    public void setFb_pitchAngle(double fb_pitchAngle)
     {
 //        setChanged();
 //        notifyObservers();
-        this.fb_pitch = fb_pitch;
+        this.fb_pitchAngle = fb_pitchAngle;
     }
 
-    public int getFb_roll()
+    public double getFb_rollAngle()
     {
 
-        return fb_roll + getCmd_imuCalibrateRoll();
+        return fb_rollAngle + getCmd_imuCalibrateRoll();
     }
 
-    public void setFb_roll(int fb_roll)
+    public void setFb_rollAngle(double fb_rollAngle)
     {
 //        setChanged();
 //        notifyObservers();
-        this.fb_roll = fb_roll;
+        this.fb_rollAngle = fb_rollAngle;
     }
 
     public int getFb_yaw()
@@ -435,14 +440,14 @@ public class DataHandler extends Observable
         notifyObservers();
     }
 
-    public byte getCmd_mode()
+    public byte getcmd_targetMode()
     {
-        return cmd_mode;
+        return cmd_targetMode;
     }
 
-    public void setCmd_mode(byte cmd_mode)
+    public void setcmd_targetMode(byte cmd_targetMode)
     {
-        this.cmd_mode = cmd_mode;
+        this.cmd_targetMode = cmd_targetMode;
     }
 
 //    public int getCmd_depth()
@@ -454,7 +459,6 @@ public class DataHandler extends Observable
 //    {
 //        this.cmd_depth = cmd_depth;
 //    }
-
     public int getCmd_cameraPitch()
     {
         return cmd_cameraPitch;
@@ -567,7 +571,6 @@ public class DataHandler extends Observable
 //    {
 //        this.fb_depth = fb_depth;
 //    }
-
     //Alarm flags
     //Alarm getters and setters
     public int getCounter()
@@ -620,22 +623,22 @@ public class DataHandler extends Observable
         this.digitalInputChannel_4 = digitalInputChannel_4;
     }
 
-    public int getCmd_imuCalibrateRoll()
+    public double getCmd_imuCalibrateRoll()
     {
         return cmd_imuCalibrateRoll;
     }
 
-    public void setCmd_imuCalibrateRoll(int cmd_imuCalibrateRoll)
+    public void setCmd_imuCalibrateRoll(double cmd_imuCalibrateRoll)
     {
         this.cmd_imuCalibrateRoll = cmd_imuCalibrateRoll;
     }
 
-    public int getCmd_imuCalibratePitch()
+    public double getCmd_imuCalibratePitch()
     {
         return cmd_imuCalibratePitch;
     }
 
-    public void setCmd_imuCalibratePitch(int cmd_imuCalibratePitch)
+    public void setCmd_imuCalibratePitch(double cmd_imuCalibratePitch)
     {
         this.cmd_imuCalibratePitch = cmd_imuCalibratePitch;
     }
@@ -694,6 +697,48 @@ public class DataHandler extends Observable
         this.gatheringDataToSend = gatheringDataToSend;
         setChanged();
         notifyObservers();
+    }
+
+    public int getCmd_bothActuators()
+    {
+        return cmd_bothActuators;
+    }
+
+    public void setCmd_bothActuators(int cmd_bothActuators)
+    {
+        this.cmd_bothActuators = cmd_bothActuators;
+        setChanged();
+        notifyObservers();
+    }
+
+    public int getActuatorDifference()
+    {
+        return actuatorDifference;
+    }
+
+    public void setActuatorDifference(int actuatorDifference)
+    {
+        this.actuatorDifference = actuatorDifference;
+    }
+
+    public double getCmd_targetDistance()
+    {
+        return cmd_targetDistance;
+    }
+
+    public void setCmd_targetDistance(double cmd_targetDistance)
+    {
+        this.cmd_targetDistance = cmd_targetDistance;
+    }
+
+    public boolean getCmd_disableMotors()
+    {
+        return cmd_disableMotors;
+    }
+
+    public void setCmd_disableMotors(boolean cmd_disableMotors)
+    {
+        this.cmd_disableMotors = cmd_disableMotors;
     }
 
     public void handleDataFromI2C()

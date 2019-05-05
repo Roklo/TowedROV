@@ -61,8 +61,8 @@ public final class Data extends Observable
     public double voltage = (double) 36.01;
 
     // Feedback from IMU
-    public float roll = 0;
-    public float pitch = 0;
+    public double roll = 0;
+    public double pitch = 0;
     public float heading = 100;
 
     // Feedback from the Camera RPi
@@ -78,6 +78,9 @@ public final class Data extends Observable
     private boolean i2cError;
     private int fb_actuatorPSPos;
     private int fb_actuatorSBPos;
+    private int fb_actuatorPScmd;
+    private int fb_actuatorSBcmd;
+
     private int fb_actuatorPSMinPos;
     private int fb_actuatorSBMinPos;
     private int fb_actuatorPSMaxPos;
@@ -880,24 +883,24 @@ public final class Data extends Observable
         notifyObservers();
     }
 
-    public synchronized float getRoll()
+    public synchronized double getRoll()
     {
         return roll;
     }
 
-    public synchronized void setRoll(int roll)
+    public synchronized void setRoll(double roll)
     {
         this.roll = roll;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized float getPitch()
+    public synchronized double getPitch()
     {
         return pitch;
     }
 
-    public synchronized void setPitch(int pitch)
+    public synchronized void setPitch(double pitch)
     {
         this.pitch = pitch;
         setChanged();
@@ -1055,4 +1058,26 @@ public final class Data extends Observable
         }
         this.depthBeneathBoatDataList.add(time + ":" + value);
     }
+
+    public int getFb_actuatorPScmd()
+    {
+        return fb_actuatorPScmd;
+    }
+
+    public void setFb_actuatorPScmd(int fb_actuatorPScmd)
+    {
+        this.fb_actuatorPScmd = fb_actuatorPScmd;
+    }
+
+    public int getFb_actuatorSBcmd()
+    {
+        return fb_actuatorSBcmd;
+    }
+
+    public void setFb_actuatorSBcmd(int fb_actuatorSBcmd)
+    {
+        this.fb_actuatorSBcmd = fb_actuatorSBcmd;
+    }
+    
+    
 }

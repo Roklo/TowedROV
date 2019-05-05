@@ -87,7 +87,7 @@ public class WorkerRunnable implements Runnable
 
                     } else
                     {
-                       // key = (String) inputData;
+                        key = (String) inputData;
                     }
                     if (!dh.getFb_ROVReady())
                     {
@@ -126,11 +126,10 @@ public class WorkerRunnable implements Runnable
                                 //System.out.println("actuatorSB is: " + dh.getCmd_actuatorSB());
                                 outToClient.println("Server: OK");
 
-//                            case "cmd_depth":
-//                                dh.setCmd_depth(parseStringToInt(value));
-//                                System.out.println("cmd depth is: " + dh.getCmd_depth());
-//                                outToClient.println("Server: OK");
-//                                break;
+                            case "cmd_targetDistance":
+                                dh.setCmd_targetDistance(parseStringToDouble(value));
+                                outToClient.println("Server: OK");
+                                break;
 
                             case "cmd_cameraPitch":
                                 dh.setCmd_cameraPitch(parseStringToInt(value));
@@ -186,8 +185,9 @@ public class WorkerRunnable implements Runnable
                                 break;
 
                             //Feedback commands
-                            case "fb_allData":                               
+                            case "fb_allData":
                                 outToClient.println(dh.getDataToSend());
+                                System.out.println("Sent all data");
                                 break;
 
                             case "fb_depthToSeabedEcho":
@@ -250,12 +250,12 @@ public class WorkerRunnable implements Runnable
                                 outToClient.println("<fb_currentDraw:" + dh.getFb_currentDraw() + ">");
                                 break;
 
-                            case "fb_pitch":
-                                outToClient.println("<fb_pitch:" + dh.getFb_pitch() + ">");
+                            case "fb_pitchAngel":
+                                outToClient.println("<fb_pitchAngle:" + dh.getFb_pitchAngle() + ">");
                                 break;
 
-                            case "fb_roll":
-                                outToClient.println("<fb_roll:" + dh.getFb_roll() + ">");
+                            case "fb_rollAngle":
+                                outToClient.println("<fb_rollAngle:" + dh.getFb_rollAngle() + ">");
                                 break;
 
                             case "fb_yaw":
@@ -298,7 +298,6 @@ public class WorkerRunnable implements Runnable
 //                            case "get_cmd_depth":
 //                                outToClient.println("<get_cmd_depth:" + dh.getCmd_depth() + ">");
 //                                break;
-
                             case "get_cmd_cameraPitch":
                                 outToClient.println("<get_cmd_cameraPitch:" + dh.getCmd_cameraPitch() + ">");
                                 break;

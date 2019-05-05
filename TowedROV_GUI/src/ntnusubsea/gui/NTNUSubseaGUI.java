@@ -203,8 +203,8 @@ public class NTNUSubseaGUI
                 lastTime = System.currentTimeMillis();
             }
 
-            //System.out.println("Latitude: " + data.getLatitude() 
-            //        + "    Roll: " + data.getRoll());
+            System.out.println("Pitch: : " + data.getPitch()
+                    + "    Roll: " + data.getRoll());
         }
     }
 }

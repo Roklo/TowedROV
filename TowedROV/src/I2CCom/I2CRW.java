@@ -230,18 +230,20 @@ public class I2CRW implements Runnable
 //    }
     public void sendI2CData(String device, int commandValue)
     {
-        try
+        if (!data.getCmd_disableMotors())
         {
-            switch (device)
+            try
             {
-                case "ActuatorPS_setTarget":
+                switch (device)
+                {
+                    case "ActuatorPS_setTarget":
 
-                    if (commandValue > data.getFb_actuatorPSPos()
-                            && commandValue > 0
-                            && commandValue <= 254)
-                    {
-                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
-                    }
+                        if (commandValue > data.getFb_actuatorPSPos()
+                                && commandValue > 0
+                                && commandValue <= 254)
+                        {
+                            actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
+                        }
 //                    if (commandValue >= 127 && commandValue <= 254)
 //                    {
 //                        if (commandValue == 127)
@@ -252,12 +254,12 @@ public class I2CRW implements Runnable
 //                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
 //                    }
 
-                    if (commandValue < data.getFb_actuatorPSPos()
-                            && commandValue > 0
-                            && commandValue <= 254)
-                    {
-                        actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
-                    }
+                        if (commandValue < data.getFb_actuatorPSPos()
+                                && commandValue > 0
+                                && commandValue <= 254)
+                        {
+                            actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
+                        }
 
 //                    if (commandValue > 0 && commandValue < 127)
 //                    {
@@ -268,26 +270,26 @@ public class I2CRW implements Runnable
 ////                        commandValue = (byte) (commandValue); // - 127
 //                        actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
 //                    }
-                    if (commandValue == 0)
-                    {
-                        actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
-                    }
-                    break;
-                case "ActuatorSB_setTarget":
+                        if (commandValue == 0)
+                        {
+                            actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
+                        }
+                        break;
+                    case "ActuatorSB_setTarget":
 
-                    if (commandValue > data.getFb_actuatorSBPos()
-                            && commandValue > 0
-                            && commandValue <= 254)
-                    {
-                        actuatorSB.write(JRK_setTargetLowResFwd, (byte) SB_ACTUATOR_SPEED);
-                    }
+                        if (commandValue > data.getFb_actuatorSBPos()
+                                && commandValue > 0
+                                && commandValue <= 254)
+                        {
+                            actuatorSB.write(JRK_setTargetLowResFwd, (byte) SB_ACTUATOR_SPEED);
+                        }
 
-                    if (commandValue < data.getFb_actuatorSBPos()
-                            && commandValue > 0
-                            && commandValue <= 254)
-                    {
-                        actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
-                    }
+                        if (commandValue < data.getFb_actuatorSBPos()
+                                && commandValue > 0
+                                && commandValue <= 254)
+                        {
+                            actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
+                        }
 
 //                    //Wing up
 //                    if (commandValue >= 127 && commandValue < 255)
@@ -309,40 +311,41 @@ public class I2CRW implements Runnable
 ////                        commandValue = (byte) (127 - commandValue);
 //                        actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
 //                    }
-                    if (commandValue == 0)
-                    {
+                        if (commandValue == 0)
+                        {
+                            actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
+                        }
+                        break;
+                    case "ActuatorSB_stopMotor":
+                        //actuatorSB.write((byte) ACTUATOR_STOP);
+                        try
+                        {
+                            Thread.sleep(25);
+                        } catch (Exception e)
+                        {
+                        }
+
                         actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
-                    }
-                    break;
-                case "ActuatorSB_stopMotor":
-                    //actuatorSB.write((byte) ACTUATOR_STOP);
-                    try
-                    {
-                        Thread.sleep(25);
-                    } catch (Exception e)
-                    {
-                    }
+                        break;
+                    case "ActuatorPS_stopMotor":
+                        try
+                        {
+                            Thread.sleep(25);
+                        } catch (Exception e)
+                        {
+                        }
+                        //actuatorPS.write((byte) ACTUATOR_STOP);
+                        actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
+                        break;
 
-                    actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
-                    break;
-                case "ActuatorPS_stopMotor":
-                    try
-                    {
-                        Thread.sleep(25);
-                    } catch (Exception e)
-                    {
-                    }
-                    //actuatorPS.write((byte) ACTUATOR_STOP);
-                    actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
-                    break;
-
+                }
+            } catch (Exception e)
+            {
+                data.setERROR_I2C(true);
+                System.out.println("Error at I2C read write");
+                System.out.println(e);
+                //Error writing to i2c
             }
-        } catch (Exception e)
-        {
-            data.setERROR_I2C(true);
-            System.out.println("Error at I2C read write");
-            System.out.println(e);
-            //Error writing to i2c
         }
     }
 

@@ -287,11 +287,11 @@ public class ReadSerialData implements Runnable
                     break;
 
                 case "Roll":
-                    data.setFb_roll(Integer.parseInt(value));
+                    data.setFb_rollAngle(Double.parseDouble(value));
                     //setRoll(Integer.parseInt(value));
                     break;
                 case "Pitch":
-                    data.setFb_pitch(Integer.parseInt(value));
+                    data.setFb_pitchAngle(Double.parseDouble(value));
                     //setPitch(Integer.parseInt(value));
                     break;
                 case "Heading":

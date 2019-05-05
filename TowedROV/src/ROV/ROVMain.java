@@ -81,6 +81,8 @@ public class ROVMain
 
         I2CRW I2CRW_this = new I2CRW(dh);
         Logic logic = new Logic(dh, I2CRW_this);
+        
+        PID pid = new PID (dh);
         dh.addObserver(logic);
 
         SerialDataHandler sdh = new SerialDataHandler(dh);
