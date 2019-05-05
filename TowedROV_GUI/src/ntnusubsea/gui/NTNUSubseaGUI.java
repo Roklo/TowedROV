@@ -58,7 +58,7 @@ public class NTNUSubseaGUI
         ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream, sounder);
         VideoEncoder encoder = new VideoEncoder(data);
         //NmeaReceiver nmea = new NmeaReceiver(data);
-        DataUpdater dataUpdater = new DataUpdater(client_ROV, client_Camera);
+        DataUpdater dataUpdater = new DataUpdater(client_ROV, client_Camera, data);
         BufferedImage banan;
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);

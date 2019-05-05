@@ -18,11 +18,13 @@ public class DataUpdater implements Runnable
 
     private TCPClient client_Rov;
     private TCPClient client_Camera;
+    private Data data;
 
-    public DataUpdater(TCPClient client_Rov, TCPClient client_Camera)
+    public DataUpdater(TCPClient client_Rov, TCPClient client_Camera, Data data)
     {
         this.client_Rov = client_Rov;
         this.client_Camera = client_Camera;
+        this.data = data;
     }
 
     @Override
@@ -33,6 +35,7 @@ public class DataUpdater implements Runnable
             try
             {
                 client_Rov.sendCommand("fb_allData");
+                client_Rov.sendCommand("cmd_rovDepth:" + data.getRovDepth());
             } catch (IOException ex)
             {
                 System.out.println("Error while getting data from remote: " + ex.getMessage());
