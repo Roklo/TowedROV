@@ -36,6 +36,9 @@ public class Logic implements Runnable, Observer
     int old_cmd_actuatorPS_2 = 0;
     int old_cmd_actuatorSB_2 = 0;
 
+    int old_cmd_actuatorSB_man = 0;
+    int old_cmd_actuatorPS_man = 0;
+
     private final static int actuatorPShysteresis = 5;
     private final static int actuatorSBhysteresis = 5;
     private HashMap<String, String> newDataToSend = new HashMap<>();
@@ -58,6 +61,7 @@ public class Logic implements Runnable, Observer
         {
             if (old_cmd_actuatorPS_2 != data.getCmd_actuatorPS())
             {
+
                 System.out.println("Distance to target(PS): " + (data.getFb_actuatorPSPos() - data.getCmd_actuatorPS()));
                 if (data.fb_actuatorPSPos >= data.getCmd_actuatorPS() - actuatorPShysteresis
                         && data.fb_actuatorPSPos <= data.getCmd_actuatorPS() + actuatorPShysteresis)
@@ -76,6 +80,7 @@ public class Logic implements Runnable, Observer
                     old_cmd_actuatorSB_2 = data.getCmd_actuatorSB();
                 }
             }
+
             gatherFbData();
 
 //            Thread.sleep(1000);
@@ -92,7 +97,7 @@ public class Logic implements Runnable, Observer
     public void update(Observable o, Object arg)
     {
         //Commands
-        if (data.getcmd_targetMode() == 3)
+        if (data.getcmd_targetMode() != 2)
         {
             if (old_cmd_actuatorPS != data.getCmd_actuatorPS())
             {
@@ -107,11 +112,34 @@ public class Logic implements Runnable, Observer
             }
         } else
         {
-            if (old_cmd_bothActuators != data.getCmd_bothActuators())
+            if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB()
+                    || old_cmd_actuatorPS_man != data.getCmd_actuatorPS())
             {
-                old_cmd_bothActuators = data.getCmd_bothActuators();
-                i2cRw.sendI2CData("ActuatorSB_setTarget", data.getCmd_bothActuators());
-                i2cRw.sendI2CData("ActuatorPS_setTarget", data.getCmd_bothActuators());
+                try
+                {
+//                    System.out.println("Distance to target(SB): " + (data.getFb_actuatorSBPos() - data.getCmd_actuatorSB()));
+//                    System.out.println("Distance to target(PS): " + (data.getFb_actuatorPSPos() - data.getCmd_actuatorPS()));
+
+//                    if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB()
+//                            || old_cmd_actuatorPS_man != data.getCmd_actuatorPS())
+//                    {
+                    if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB())
+                    {
+                        i2cRw.sendI2CData("ActuatorSB_setTarget", data.getCmd_actuatorSB());
+                    }
+
+                    Thread.sleep(50);
+                    if (old_cmd_actuatorPS_man != data.getCmd_actuatorPS())
+                    {
+                        i2cRw.sendI2CData("ActuatorPS_setTarget", data.getCmd_actuatorPS());
+                    }
+//                    }
+                    old_cmd_actuatorSB_man = data.getCmd_actuatorSB();
+                    old_cmd_actuatorPS_man = data.getCmd_actuatorPS();
+                } catch (Exception e)
+                {
+                }
+
             }
 
         }
@@ -131,7 +159,6 @@ public class Logic implements Runnable, Observer
         newDataToSend.put("Fb_rollAngle", String.valueOf(data.getFb_rollAngle()));
         newDataToSend.put("Fb_pitchAngle", String.valueOf(data.getFb_pitchAngle()));
         newDataToSend.put("Fb_ROVdepth", String.valueOf(data.getCmd_currentROVdepth()));
-        
 
         newDataToSend.put("Fb_ROVReady", String.valueOf(data.getFb_ROVReady()));
         newDataToSend.put("ERROR_I2C", String.valueOf(data.ERROR_I2C));

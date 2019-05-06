@@ -147,7 +147,7 @@ public class SerialDataHandler
 
                 } catch (Exception ex)
                 {
-
+                    System.out.println("Error: " + ex);
                 }
             }
             saveUsableComPorts();

@@ -39,11 +39,11 @@ public class DataHandler extends Observable
     int cmd_actuatorSBMinPos = 0;
     int cmd_BlueLED = 0;
 
-    boolean cmd_disableMotors = true;
+    boolean cmd_disableMotors = false;
 
     int cmd_pressureAtSeaLevel = 0;
 
-    byte cmd_targetMode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
+    int cmd_targetMode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
     double cmd_targetDistance = 0;
 
     //int cmd_depth = 0;
@@ -161,7 +161,6 @@ public class DataHandler extends Observable
     }
 
     //Sensor values getters and setters
-
     public double getFb_depthBeneathROV()
     {
         return fb_depthBeneathROV;
@@ -181,10 +180,7 @@ public class DataHandler extends Observable
     {
         this.fb_depthBeneathBoat = fb_depthBeneathBoat;
     }
-    
-    
-    
-    
+
 //    public double getFb_depthToSeabedEcho()
 //    {
 //        return fb_depthToSeabedEcho;
@@ -196,7 +192,6 @@ public class DataHandler extends Observable
 ////        notifyObservers();
 //        this.fb_depthToSeabedEcho = fb_depthToSeabedEcho;
 //    }
-
 //    public int getFb_depthFromPressure()
 //    {
 //        return fb_depthFromPressure;
@@ -206,7 +201,6 @@ public class DataHandler extends Observable
 //    {
 //        this.fb_depthFromPressure = fb_depthFromPressure;
 //    }
-
     public int getFb_speedThroughWather()
     {
         return fb_speedThroughWather;
@@ -463,14 +457,16 @@ public class DataHandler extends Observable
         notifyObservers();
     }
 
-    public byte getcmd_targetMode()
+    public int getcmd_targetMode()
     {
         return cmd_targetMode;
     }
 
-    public void setcmd_targetMode(byte cmd_targetMode)
+    public void setcmd_targetMode(int cmd_targetMode)
     {
         this.cmd_targetMode = cmd_targetMode;
+        setChanged();
+        notifyObservers();
     }
 
 //    public int getCmd_depth()
@@ -584,7 +580,6 @@ public class DataHandler extends Observable
 //        this.fb_depthBelowTransduser = fb_depthBelowTransduser;
 //
 //    }
-
     public double getCmd_currentROVdepth()
     {
         return cmd_currentROVdepth;
@@ -593,9 +588,10 @@ public class DataHandler extends Observable
     public void setCmd_currentROVdepth(double cmd_currentROVdepth)
     {
         this.cmd_currentROVdepth = cmd_currentROVdepth;
-    }
+        setChanged();
+        notifyObservers();
 
- 
+    }
 
     //Alarm flags
     //Alarm getters and setters

@@ -151,25 +151,25 @@ public class WorkerRunnable implements Runnable
 
                             case "cmd_pid_p":
                                 dh.setCmd_pid_p(parseStringToDouble(value));
-                                System.out.println("Pid_p is: " + dh.getCmd_pid_p());
+//                                System.out.println("Pid_p is: " + dh.getCmd_pid_p());
                                 outToClient.println("Server: OK");
                                 break;
 
                             case "cmd_pid_i":
                                 dh.setCmd_pid_i(parseStringToDouble(value));
-                                System.out.println("Pid_i is: " + dh.getCmd_pid_i());
+//                                System.out.println("Pid_i is: " + dh.getCmd_pid_i());
                                 outToClient.println("Server: OK");
                                 break;
 
                             case "cmd_pid_d":
                                 dh.setCmd_pid_d(parseStringToDouble(value));
-                                System.out.println("Pid_d is: " + dh.getCmd_pid_d());
+//                                System.out.println("Pid_d is: " + dh.getCmd_pid_d());
                                 outToClient.println("Server: OK");
                                 break;
 
                             case "cmd_pid_gain":
                                 dh.setCmd_pid_gain(parseStringToDouble(value));
-                                System.out.println("Pid_gain is: " + dh.getCmd_pid_gain());
+//                                System.out.println("Pid_gain is: " + dh.getCmd_pid_gain());
                                 outToClient.println("Server: OK");
                                 break;
 
@@ -188,11 +188,16 @@ public class WorkerRunnable implements Runnable
                                 dh.setCmd_currentROVdepth(parseStringToDouble(value));
                                 outToClient.println("Server: OK");
                                 break;
+                                
+                            case "cmd_targetMode":
+                                dh.setcmd_targetMode(parseStringToInt(value));
+                                outToClient.println("Server: OK");
+                                break;
 
                             //Feedback commands
                             case "fb_allData":
                                 outToClient.println(dh.getDataToSend());
-                                System.out.println("Sent all data");
+                                //System.out.println("Sent all data");
                                 break;
 
                             case "fb_depthToSeabedEcho":
