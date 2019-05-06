@@ -124,6 +124,7 @@ public final class Data extends Observable
     private int cameraPitchValue = 0;
     private boolean doRovCalibration = false;
     private boolean emergencyMode = false;
+    private boolean streaming = false;
 
     /**
      * Creates an object of the class Data.
@@ -855,6 +856,18 @@ public final class Data extends Observable
     {
         return this.emergencyMode;
     }
+
+    public boolean isStreaming()
+    {
+        return streaming;
+    }
+
+    public void setStreaming(boolean streaming)
+    {
+        this.streaming = streaming;
+    }
+    
+    
 
     public synchronized boolean isDataUpdated()
     {

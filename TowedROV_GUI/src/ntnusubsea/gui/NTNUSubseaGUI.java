@@ -60,8 +60,8 @@ public class NTNUSubseaGUI
         TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
         UDPClient stream = new UDPClient(Port_cameraStream, data);
         IOControlFrame io = new IOControlFrame(data, client_ROV);
-        ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream, sounder);
-        VideoEncoder encoder = new VideoEncoder(data);
+        ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream, sounder, lgh);
+//        VideoEncoder encoder = new VideoEncoder(data);
         //NmeaReceiver nmea = new NmeaReceiver(data);
         DataUpdater dataUpdater = new DataUpdater(client_ROV, client_Camera, data);
         BufferedImage banan;
@@ -74,12 +74,12 @@ public class NTNUSubseaGUI
         data.addObserver(sonar);
         // data.addObserver(logger);
         data.addObserver(frame);
-        data.addObserver(encoder);
+//        data.addObserver(encoder);
         data.addObserver(io);
         executor.scheduleAtFixedRate(lgh,
                 0, 100, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(encoder,
-                5000, 40, TimeUnit.MILLISECONDS);
+//        executor.scheduleAtFixedRate(encoder,
+//                5000, 40, TimeUnit.MILLISECONDS);
         InputControllerThread = new Thread(new InputController(data, client_ROV));
         InputControllerThread.start();
         InputControllerThread.setName("InputController");
@@ -98,17 +98,17 @@ public class NTNUSubseaGUI
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(dataUpdater,
                 1000, 100, TimeUnit.MILLISECONDS);
-        Runtime.getRuntime()
-                .addShutdownHook(new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        executor.shutdown();
-                        encoder.finishVideo();
-                    }
-                },
-                        "Shutdown-thread"));
+//        Runtime.getRuntime()
+//                .addShutdownHook(new Thread(new Runnable()
+//                {
+//                    @Override
+//                    public void run()
+//                    {
+//                        executor.shutdown();
+//                        encoder.finishVideo();
+//                    }
+//                },
+//                        "Shutdown-thread"));
 
 //        LogFileHandler = new Thread(new LogFileHandler(data));
 //

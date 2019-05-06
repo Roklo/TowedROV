@@ -5,6 +5,7 @@
  */
 package ntnusubsea.gui;
 
+import basestation_rov.LogFileHandler;
 import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -53,7 +54,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private TCPClient client_Camera;
     private UDPClient udpClient;
     private Sounder sounder;
+    private LogFileHandler lgh;
+    private VideoEncoder encoder;
     private ScheduledExecutorService clientThreadExecutor;
+    private ScheduledExecutorService encoderThreadExecutor;
     private IOControlFrame io;
     private int cameraPitchValue = 0;
     private double photoModeDelay = 1.0;
@@ -71,9 +75,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
      * @param client TCP client to send commands and receive data
      * @param io I/O frame to control inputs and outputs
      */
-    public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPClient client_ROV, TCPClient client_Camera, UDPClient udpClient, Sounder sounder)
+    public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPClient client_ROV, TCPClient client_Camera, UDPClient udpClient, Sounder sounder, LogFileHandler lgh)
     {
         this.clientThreadExecutor = null;
+        this.encoderThreadExecutor = null;
         initComponents();
         this.data = data;
         this.echoSounder = echoSounder;
@@ -83,6 +88,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         this.options = new OptionsFrame(this.data, this.client_ROV);
         this.io = io;
         this.sounder = sounder;
+        this.lgh = lgh;
         this.getContentPane().setBackground(new Color(39, 44, 50));
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         videoSheet = new ImagePanel(cameraPanel.getWidth(), cameraPanel.getHeight());
@@ -280,6 +286,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuCalibrate = new javax.swing.JMenu();
         calibrateMenuItem = new javax.swing.JMenuItem();
         jMenuRovReady = new javax.swing.JMenu();
+        jMenuLogger = new javax.swing.JMenu();
+        jMenuItemStartLogging = new javax.swing.JMenuItem();
+        jMenuItemStopLogging = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMenuVoltage = new javax.swing.JMenu();
 
@@ -1052,7 +1061,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                                 .addComponent(photoModeDelay_FB_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())))
                     .addGroup(cameraControlPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addGroup(cameraControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(cameraControlPanelLayout.createSequentialGroup()
                                 .addComponent(cameraPitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1823,6 +1831,43 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuRovReady.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jMenuRovReady.setFocusable(false);
         jMenuBar.add(jMenuRovReady);
+
+        jMenuLogger.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))); // NOI18N
+        jMenuLogger.setText("Not logging");
+        jMenuLogger.setActionCommand("jMenuLogger");
+        jMenuLogger.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenuLogger.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuLoggerActionPerformed(evt);
+            }
+        });
+
+        jMenuItemStartLogging.setText("Start logging");
+        jMenuItemStartLogging.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenuItemStartLogging.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItemStartLoggingActionPerformed(evt);
+            }
+        });
+        jMenuLogger.add(jMenuItemStartLogging);
+
+        jMenuItemStopLogging.setText("Stop logging");
+        jMenuItemStopLogging.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenuItemStopLogging.setEnabled(false);
+        jMenuItemStopLogging.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItemStopLoggingActionPerformed(evt);
+            }
+        });
+        jMenuLogger.add(jMenuItemStopLogging);
+
+        jMenuBar.add(jMenuLogger);
 
         jMenu1.setText("                ");
         jMenu1.setBorderPainted(false);
@@ -2669,6 +2714,70 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         }
     }//GEN-LAST:event_InputControllerButtonActionPerformed
 
+    private void jMenuLoggerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuLoggerActionPerformed
+    {//GEN-HEADEREND:event_jMenuLoggerActionPerformed
+
+    }//GEN-LAST:event_jMenuLoggerActionPerformed
+
+    private void jMenuItemStartLoggingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemStartLoggingActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemStartLoggingActionPerformed
+        this.data.setStartLogging(true);
+        encoder = new VideoEncoder(this.data);
+        this.data.addObserver(encoder);
+        this.encoderThreadExecutor = Executors.newScheduledThreadPool(1);
+        encoderThreadExecutor.scheduleAtFixedRate(encoder,
+                0, 40, TimeUnit.MILLISECONDS);
+
+        Runtime.getRuntime()
+                .addShutdownHook(new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        if (encoder != null)
+                        {
+                            encoder.finishVideo();
+                        }
+                        if (encoderThreadExecutor != null)
+                        {
+                            encoderThreadExecutor.shutdown();
+                        }
+                    }
+                },
+                        "Shutdown-thread"));
+        jMenuLogger.setText("Logging!");
+        jMenuItemStartLogging.setEnabled(false);
+        jMenuItemStopLogging.setEnabled(true);
+        try
+        {
+            jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+        } catch (IOException ex)
+        {
+            System.out.println("Error setting icon: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_jMenuItemStartLoggingActionPerformed
+
+    private void jMenuItemStopLoggingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemStopLoggingActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemStopLoggingActionPerformed
+        this.data.setStartLogging(false);
+        this.lgh.closeLog();
+        encoderThreadExecutor.shutdown();
+        encoder.finishVideo();
+        encoderThreadExecutor = null;
+        encoder = null;
+        jMenuLogger.setText("Not logging");
+        jMenuItemStopLogging.setEnabled(false);
+        jMenuItemStartLogging.setEnabled(true);
+
+        try
+        {
+            jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+        } catch (IOException ex)
+        {
+            System.out.println("Error setting icon: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_jMenuItemStopLoggingActionPerformed
+
     Action exitFullscreenAction = new AbstractAction()
     {
         public void actionPerformed(ActionEvent e)
@@ -2808,6 +2917,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JMenuItem jMenuItemConnect;
     private javax.swing.JMenuItem jMenuItemDisconnect;
     private javax.swing.JMenuItem jMenuItemExit;
+    private javax.swing.JMenuItem jMenuItemStartLogging;
+    private javax.swing.JMenuItem jMenuItemStopLogging;
+    private javax.swing.JMenu jMenuLogger;
     private javax.swing.JMenuItem jMenuOptions;
     private javax.swing.JMenu jMenuRovReady;
     private javax.swing.JMenu jMenuTools;

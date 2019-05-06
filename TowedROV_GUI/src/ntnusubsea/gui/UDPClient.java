@@ -123,7 +123,9 @@ public class UDPClient implements Runnable
                 videoSocket.close();
                 videoSocket = new DatagramSocket(this.port);
                 timer = System.currentTimeMillis();
-                System.out.println("Reconnected");
+                //System.out.println("Reconnected");
+                this.connected = true;
+                this.data.setStreaming(true);
             }
 
             //Createss new DatagramSocket for reciving DatagramPackets
@@ -131,6 +133,8 @@ public class UDPClient implements Runnable
             byte[] receivedData = new byte[60000];
             receivePacket = new DatagramPacket(receivedData,
                     receivedData.length);
+            this.connected = true;
+            this.data.setStreaming(true);
             if (receivePacket.getLength() > 0)
             {
                 startTime = System.currentTimeMillis();
@@ -194,13 +198,19 @@ public class UDPClient implements Runnable
         } catch (SocketException sex)
         {
             System.out.println("SocketException: " + sex.getMessage());
+            this.connected = false;
+            this.data.setStreaming(false);
 
         } catch (IOException ioex)
         {
             System.out.println("IOException: " + ioex.getMessage());
+            this.connected = false;
+            this.data.setStreaming(false);
         } catch (Exception ex)
         {
             System.out.println("Exception: " + ex.getMessage());
+            this.connected = false;
+            this.data.setStreaming(false);
         }
     }
 }
