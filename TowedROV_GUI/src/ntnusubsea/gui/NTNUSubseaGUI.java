@@ -5,6 +5,7 @@
  */
 package ntnusubsea.gui;
 
+import InputController.InputController;
 import basestation_rov.LogFileHandler;
 import basestation_rov.ReadSerialData;
 import java.awt.image.BufferedImage;
@@ -15,6 +16,7 @@ import javax.swing.SwingUtilities;
 import TCPCom.*;
 import basestation_rov.SerialDataHandler;
 import java.util.Map.Entry;
+import InputController.InputController;
 
 /**
  * Main class that launches the application and schedules the different threads
@@ -29,6 +31,7 @@ public class NTNUSubseaGUI
     private static Thread gpsThread;
     private static Thread echoSounderThread;
     private static Thread ROVDummyThread;
+    private static Thread InputControllerThread;
 
     //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
@@ -50,7 +53,7 @@ public class NTNUSubseaGUI
         Sounder sounder = new Sounder();
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
-        
+
         //DataLogger logger = new DataLogger(data);
         LogFileHandler lgh = new LogFileHandler(data);
         TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
@@ -77,6 +80,10 @@ public class NTNUSubseaGUI
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
                 5000, 40, TimeUnit.MILLISECONDS);
+        InputControllerThread = new Thread(new InputController());
+        InputControllerThread.start();
+        InputControllerThread.setName("InputController");
+
         //executor.scheduleAtFixedRate(nmea,
         //      0, 1000, TimeUnit.MILLISECONDS);
 //        executor.scheduleAtFixedRate(client_ROV,
@@ -85,7 +92,6 @@ public class NTNUSubseaGUI
 //                0, 100, TimeUnit.MILLISECONDS);
 //        executor.scheduleAtFixedRate(stream,
 //                0, 20, TimeUnit.MILLISECONDS);
-
         executor.scheduleAtFixedRate(cmt,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(sonar,

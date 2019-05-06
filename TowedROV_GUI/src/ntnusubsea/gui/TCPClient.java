@@ -142,7 +142,7 @@ public class TCPClient implements Runnable
                             }
                         } else
                         {
-                            System.out.println("No data gotten...");
+                            System.out.println(serverResponse);
                         }
 
                     } else
@@ -151,7 +151,7 @@ public class TCPClient implements Runnable
                     }
 
                     this.handleDataFromRemote(newDataList);
-                }
+                } 
 
             } else
             {
@@ -314,16 +314,16 @@ public class TCPClient implements Runnable
                     data.setFb_actuatorSBPos(Integer.parseInt(value));
                     break;
                 case "Fb_rollAngle":
-                    data.setRollAngle(Integer.parseInt(value));
+                    data.setRollAngle(Double.parseDouble(value));
                     break;
                 case "Fb_pitchAngle":
-                    data.setPitchAngle(Integer.parseInt(value));
+                    data.setPitchAngle(Double.parseDouble(value));
                     break;
 //                case "Fb_depthToSeabedEcho":
-//                    data.setDepthBeneathRov(Float.parseFloat(value));
+//                    data.setDepthBeneathRov(Double.parseDouble(value));
 //                    break;
                 case "Fb_depthBelowTransduser":
-                    data.setDepthBeneathRov(Float.parseFloat(value));
+                    data.setDepthBeneathRov(Double.parseDouble(value));
                     break;
                 case "Fb_ROVReady":
                     data.setRovReady(Boolean.parseBoolean(value));

@@ -37,6 +37,7 @@ public class LogFileHandler implements Runnable
 
     String shipTrack = "null";
     String Data = "null";
+    String telementry = "null";
     String photoLocationTrack = "null";
 
     int shipTrackPointNumb = 1;
@@ -44,19 +45,25 @@ public class LogFileHandler implements Runnable
     int photoLocationNumb = 1;
 
     String timeStampString = "";
+    SimpleDateFormat timeAndDateCSV;
 
     String logStorageLocation = "C:\\TowedROV\\Log\\";
 
     String photoPosLog = "";
     String shipPosLog = "";
     String dataLog = "";
+    String telementryLog = "";
     boolean setupIsDone = false;
 
     File shipPosLogFile = null;
     File dataLogFile = null;
+    File telementryLogFile = null;
+    
+    Date date;
 
     BufferedWriter outputWriterShipPos = null;
     BufferedWriter outputWriterData = null;
+    BufferedWriter outputWriterTelementry = null;
 
     public LogFileHandler(Data data)
     {
@@ -70,7 +77,7 @@ public class LogFileHandler implements Runnable
             try
             {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-                Date date = new Date(System.currentTimeMillis());
+                 date = new Date(System.currentTimeMillis());
 
                 shipPosLogFile = new File(logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv");
                 FileUtils.touch(shipPosLogFile);
@@ -79,10 +86,15 @@ public class LogFileHandler implements Runnable
 //                FileUtils.touch(photoPosLog);
                 dataLogFile = new File(logStorageLocation + "Data_LOG_" + formatter.format(date) + ".csv");
                 FileUtils.touch(dataLogFile);
-//                         
+
+                telementryLogFile = new File(logStorageLocation + "Telementry_LOG_" + formatter.format(date) + ".csv");
+                FileUtils.touch(telementryLogFile);
+                  
                 outputWriterShipPos = new BufferedWriter(new FileWriter(shipPosLogFile));
 
                 outputWriterData = new BufferedWriter(new FileWriter(dataLogFile));
+
+                outputWriterTelementry = new BufferedWriter(new FileWriter(telementryLogFile));
 
                 outputWriterShipPos.append("Point,Time,Latitude,Longtitude,Speed,ROV Depth,Heading");
                 outputWriterShipPos.flush();
@@ -92,6 +104,10 @@ public class LogFileHandler implements Runnable
                         + "ActuatorSB_feedback,ActuatorPS_command,"
                         + "ActuatorSB_command,Voltage,Emergency");
                 outputWriterData.flush();
+
+                outputWriterTelementry.append("Latitude,Longtitude");
+//                        + "Elevation,Heading,Time");
+                outputWriterTelementry.flush();
 
                 setupIsDone = true;
 
@@ -104,8 +120,12 @@ public class LogFileHandler implements Runnable
         {
 
             timeStampString = String.valueOf(java.time.LocalTime.now());
+            timeAndDateCSV = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            
+
             logShipPosition();
             logData();
+            logTelementry();
 
         }
 
@@ -171,6 +191,28 @@ public class LogFileHandler implements Runnable
         } catch (Exception e)
         {
             System.out.println("Problem closing log file");
+        }
+
+    }
+
+    private void logTelementry()
+    {
+        try
+        {
+            telementryLog = "";
+            telementryLog = data.getLongitude() + ","
+                    + data.getLatitude() ;
+//                    + ","
+//                    + data.getDepth() + ","
+//                    + timeAndDateCSV.format(date);
+
+            outputWriterTelementry.append('\n');
+            outputWriterTelementry.append(telementryLog);
+            outputWriterTelementry.flush();
+            
+        } catch (Exception e)
+        {
+            System.out.println("Error writing telementry...");
         }
 
     }

@@ -77,7 +77,7 @@ public final class Data extends Observable
     private double humidity = 0.0;
 
     // Feedback from ROV
-    private boolean rovReady;
+    private boolean rovReady = false;
     private boolean i2cError;
     private int fb_actuatorPSPos;
     private int fb_actuatorSBPos;
@@ -97,8 +97,8 @@ public final class Data extends Observable
     public List<String> depthBeneathBoatDataList = new ArrayList<>();
 
     private double timeBetweenBoatAndRov = 4.0;
-    private float depthBeneathRov = 0;
-    private float depthBeneathBoat = 0;
+    private double depthBeneathRov = 0;
+    private double depthBeneathBoat = 0;
     private double pitchAngle = 0;
     private float wingAngle = 0;
     private double rollAngle = 0;
@@ -471,7 +471,7 @@ public final class Data extends Observable
      *
      * @param depth Depth beneath the ROV
      */
-    public synchronized void setDepthBeneathRov(float depth)
+    public synchronized void setDepthBeneathRov(double depth)
     {
         depthBeneathRov = depth;
         setChanged();
@@ -483,7 +483,7 @@ public final class Data extends Observable
      *
      * @return Depth beneath the ROV
      */
-    public synchronized float getDepthBeneathRov()
+    public synchronized double getDepthBeneathRov()
     {
         return depthBeneathRov;
     }
@@ -493,7 +493,7 @@ public final class Data extends Observable
      *
      * @param depth Depth beneath the vessel
      */
-    public synchronized void setDepthBeneathBoat(float depth)
+    public synchronized void setDepthBeneathBoat(double depth)
     {
         depthBeneathBoat = depth;
         setChanged();
@@ -505,7 +505,7 @@ public final class Data extends Observable
      *
      * @return Depth beneath the vessel
      */
-    public synchronized float getDepthBeneathBoat()
+    public synchronized double getDepthBeneathBoat()
     {
         return depthBeneathBoat;
     }
