@@ -80,7 +80,7 @@ public class NTNUSubseaGUI
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(encoder,
                 5000, 40, TimeUnit.MILLISECONDS);
-        InputControllerThread = new Thread(new InputController());
+        InputControllerThread = new Thread(new InputController(data, client_ROV));
         InputControllerThread.start();
         InputControllerThread.setName("InputController");
 
@@ -97,7 +97,7 @@ public class NTNUSubseaGUI
         executor.scheduleAtFixedRate(sonar,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(dataUpdater,
-                1000, 1000, TimeUnit.MILLISECONDS);
+                1000, 100, TimeUnit.MILLISECONDS);
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(new Runnable()
                 {

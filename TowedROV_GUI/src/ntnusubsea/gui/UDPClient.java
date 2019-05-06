@@ -191,13 +191,16 @@ public class UDPClient implements Runnable
                 //System.out.println(endTime - startTime);
             }
 
-        } catch (SocketException ex)
+        } catch (SocketException sex)
         {
-            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("SocketException: " + sex.getMessage());
 
-        } catch (IOException ex)
+        } catch (IOException ioex)
         {
-            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("IOException: " + ioex.getMessage());
+        } catch (Exception ex)
+        {
+            System.out.println("Exception: " + ex.getMessage());
         }
     }
 }

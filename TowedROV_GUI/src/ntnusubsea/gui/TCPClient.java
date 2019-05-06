@@ -122,36 +122,42 @@ public class TCPClient implements Runnable
                 outToServer.flush();
 
                 String serverResponse = inFromServer.readLine();
-                System.out.println("Server response: " + serverResponse);
-                if (cmd.equals("fb_allData") || cmd.equals("getData"))
+                if (serverResponse.contains("not ready"))
                 {
-                    HashMap<String, String> newDataList = new HashMap<>();
-                    String key = "";
-                    String value = "";
-                    if (serverResponse.contains("<") && serverResponse.contains(">"))
+                    System.out.println("Server not ready!");
+                } else
+                {
+                    System.out.println("Server response: " + serverResponse);
+                    if (cmd.equals("fb_allData") || cmd.equals("getData"))
                     {
-                        serverResponse = serverResponse.substring(serverResponse.indexOf(start_char) + 1);
-                        serverResponse = serverResponse.substring(0, serverResponse.indexOf(end_char));
-                        serverResponse = serverResponse.replace("?", "");
-                        if (serverResponse.contains(":"))
+                        HashMap<String, String> newDataList = new HashMap<>();
+                        String key = "";
+                        String value = "";
+                        if (serverResponse.contains("<") && serverResponse.contains(">"))
                         {
-                            String[] dataArray = serverResponse.split(sep_char);
-                            for (int i = 0; i < dataArray.length; i += 2)
+                            serverResponse = serverResponse.substring(serverResponse.indexOf(start_char) + 1);
+                            serverResponse = serverResponse.substring(0, serverResponse.indexOf(end_char));
+                            serverResponse = serverResponse.replace("?", "");
+                            if (serverResponse.contains(":"))
                             {
-                                newDataList.put(dataArray[i], dataArray[i + 1]);
+                                String[] dataArray = serverResponse.split(sep_char);
+                                for (int i = 0; i < dataArray.length; i += 2)
+                                {
+                                    newDataList.put(dataArray[i], dataArray[i + 1]);
+                                }
+                            } else
+                            {
+                                System.out.println(serverResponse);
                             }
+
                         } else
                         {
-                            System.out.println(serverResponse);
+                            System.out.println("The data string which was received was not complete...");
                         }
 
-                    } else
-                    {
-                        System.out.println("The data string which was received was not complete...");
+                        this.handleDataFromRemote(newDataList);
                     }
-
-                    this.handleDataFromRemote(newDataList);
-                } 
+                }
 
             } else
             {

@@ -48,7 +48,8 @@ public final class Data extends Observable
     private byte requestCodeFromArduino;
     private boolean threadStatus = true;
     private boolean dataUpdated = false;
-    
+    private boolean controllerEnabled = false;
+
     //Dummy signals
     public double TestDepth = 0;
 
@@ -143,9 +144,9 @@ public final class Data extends Observable
             labels.add(5, br.readLine());
             labels.add(6, br.readLine());
             labels.add(7, br.readLine());
-            Kp = br.readLine();
-            Ki = br.readLine();
-            Kd = br.readLine();
+            setKp(br.readLine());
+            setKi(br.readLine());
+            setKd(br.readLine());
             channelValues[0] = channel1;
             channelValues[1] = channel2;
             channelValues[2] = channel3;
@@ -202,14 +203,29 @@ public final class Data extends Observable
         return IP_Camera;
     }
 
+    public void setKp(String value)
+    {
+        this.Kp = value;
+    }
+
     public synchronized String getKp()
     {
         return Kp;
     }
 
+    public void setKi(String value)
+    {
+        this.Kp = value;
+    }
+
     public synchronized String getKi()
     {
         return Ki;
+    }
+
+    public void setKd(String value)
+    {
+        this.Kp = value;
     }
 
     public synchronized String getKd()
@@ -850,6 +866,16 @@ public final class Data extends Observable
         this.dataUpdated = dataUpdated;
     }
 
+    public boolean isControllerEnabled()
+    {
+        return controllerEnabled;
+    }
+
+    public void setControllerEnabled(boolean controllerEnabled)
+    {
+        this.controllerEnabled = controllerEnabled;
+    }
+
     public synchronized int getSatellites()
     {
         return satellites;
@@ -1091,9 +1117,5 @@ public final class Data extends Observable
     {
         this.TestDepth = TestDepth;
     }
-    
-    
-    
-    
-    
+
 }

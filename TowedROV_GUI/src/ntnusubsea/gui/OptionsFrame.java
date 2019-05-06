@@ -30,13 +30,17 @@ public class OptionsFrame extends javax.swing.JFrame
     String IP_Camera;
     ArrayList channels = new ArrayList<String>();
     private Data data;
+    private TCPClient client_ROV;
+    private double Kp;
+    private double Ki;
+    private double Kd;
 
     /**
      * Creates new form OptionsFrame
      *
      * @param data Data containing shared variables.
      */
-    public OptionsFrame(Data data)
+    public OptionsFrame(Data data, TCPClient client_ROV)
     {
         initComponents();
         //setSize(640, 480);
@@ -44,6 +48,7 @@ public class OptionsFrame extends javax.swing.JFrame
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.data = data;
+        this.client_ROV = client_ROV;
         getOptionsFromFile();
     }
 
@@ -82,6 +87,13 @@ public class OptionsFrame extends javax.swing.JFrame
         jTextFieldChannel8 = new javax.swing.JTextField();
         jTextFieldIP_Camera = new javax.swing.JTextField();
         jLabelIPHeader1 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        KpTextField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        KiTextField = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        KdTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Options");
@@ -184,6 +196,22 @@ public class OptionsFrame extends javax.swing.JFrame
         jLabelIPHeader1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelIPHeader1.setText("Camera IP");
 
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel9.setText("PID: ");
+
+        KpTextField.setText("Kp");
+
+        jLabel10.setText("Kp");
+
+        jLabel11.setText("Ki");
+
+        KiTextField.setText("Ki");
+
+        jLabel12.setText("Kd");
+
+        KdTextField.setText("Kd");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -236,15 +264,30 @@ public class OptionsFrame extends javax.swing.JFrame
                         .addComponent(jLabelChannelsHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(340, 346, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
-                .addGap(73, 73, 73)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldIP_Rov)
-                    .addComponent(jLabelIPHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldIP_Camera)
-                    .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(76, 76, 76)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(KpTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(KiTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(KdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldIP_Rov)
+                            .addComponent(jLabelIPHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(7, 7, 7)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldIP_Camera)
+                            .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,6 +302,17 @@ public class OptionsFrame extends javax.swing.JFrame
                         .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldIP_Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(KpTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(KiTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(KdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -287,7 +341,7 @@ public class OptionsFrame extends javax.swing.JFrame
                     .addComponent(jTextFieldChannel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldChannel7, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldChannel8, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonApply, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -313,9 +367,20 @@ public class OptionsFrame extends javax.swing.JFrame
             writer.write(jTextFieldChannel6.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel7.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel8.getText() + System.getProperty("line.separator"));
+            writer.write(KpTextField.getText() + System.getProperty("line.separator"));
+            writer.write(KiTextField.getText() + System.getProperty("line.separator"));
+            writer.write(KdTextField.getText() + System.getProperty("line.separator"));
+
+            data.setKp(KpTextField.getText());
+            data.setKi(KiTextField.getText());
+            data.setKd(KdTextField.getText());
             data.setIP_Rov(jTextFieldIP_Rov.getText());
             data.setIP_Camera(jTextFieldIP_Camera.getText());
             data.setIOLabels(jTextFieldChannel1.getText(), jTextFieldChannel2.getText(), jTextFieldChannel3.getText(), jTextFieldChannel4.getText(), jTextFieldChannel5.getText(), jTextFieldChannel6.getText(), jTextFieldChannel7.getText(), jTextFieldChannel8.getText());
+            this.client_ROV.sendCommand("cmd_pid_p:" + KpTextField.getText());
+            this.client_ROV.sendCommand("cmd_pid_i:" + KiTextField.getText());
+            this.client_ROV.sendCommand("cmd_pid_d:" + KdTextField.getText());
+            
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -347,10 +412,20 @@ public class OptionsFrame extends javax.swing.JFrame
             writer.write(jTextFieldChannel6.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel7.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldChannel8.getText() + System.getProperty("line.separator"));
+            writer.write(KpTextField.getText() + System.getProperty("line.separator"));
+            writer.write(KiTextField.getText() + System.getProperty("line.separator"));
+            writer.write(KdTextField.getText() + System.getProperty("line.separator"));
+
+            data.setKp(KpTextField.getText());
+            data.setKi(KiTextField.getText());
+            data.setKd(KdTextField.getText());
             data.setIP_Rov(jTextFieldIP_Rov.getText());
             data.setIP_Camera(jTextFieldIP_Camera.getText());
             data.setIOLabels(jTextFieldChannel1.getText(), jTextFieldChannel2.getText(), jTextFieldChannel3.getText(), jTextFieldChannel4.getText(), jTextFieldChannel5.getText(), jTextFieldChannel6.getText(), jTextFieldChannel7.getText(), jTextFieldChannel8.getText());
-
+            this.client_ROV.sendCommand("cmd_pid_p:" + KpTextField.getText());
+            this.client_ROV.sendCommand("cmd_pid_i:" + KiTextField.getText());
+            this.client_ROV.sendCommand("cmd_pid_d:" + KdTextField.getText());
+            
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -389,6 +464,12 @@ public class OptionsFrame extends javax.swing.JFrame
             jTextFieldChannel6.setText((String) channels.get(5));
             jTextFieldChannel7.setText((String) channels.get(6));
             jTextFieldChannel8.setText((String) channels.get(7));
+            data.setKp(br.readLine());
+            data.setKi(br.readLine());
+            data.setKd(br.readLine());
+            KpTextField.setText(data.getKp());
+            KiTextField.setText(data.getKi());
+            KdTextField.setText(data.getKd());
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -409,10 +490,16 @@ public class OptionsFrame extends javax.swing.JFrame
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField KdTextField;
+    private javax.swing.JTextField KiTextField;
+    private javax.swing.JTextField KpTextField;
     private javax.swing.JButton jButtonApply;
     private javax.swing.JButton jButtonCanel;
     private javax.swing.JButton jButtonOK;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -420,6 +507,7 @@ public class OptionsFrame extends javax.swing.JFrame
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelChannelsHeader;
     private javax.swing.JLabel jLabelIPHeader;
     private javax.swing.JLabel jLabelIPHeader1;
