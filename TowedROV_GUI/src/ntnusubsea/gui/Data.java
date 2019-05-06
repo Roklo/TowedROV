@@ -48,7 +48,8 @@ public final class Data extends Observable
     private byte requestCodeFromArduino;
     private boolean threadStatus = true;
     private boolean dataUpdated = false;
-    
+    private boolean controllerEnabled = false;
+
     //Dummy signals
     public double TestDepth = 0;
 
@@ -123,6 +124,7 @@ public final class Data extends Observable
     private int cameraPitchValue = 0;
     private boolean doRovCalibration = false;
     private boolean emergencyMode = false;
+    private boolean streaming = false;
 
     /**
      * Creates an object of the class Data.
@@ -143,9 +145,9 @@ public final class Data extends Observable
             labels.add(5, br.readLine());
             labels.add(6, br.readLine());
             labels.add(7, br.readLine());
-            Kp = br.readLine();
-            Ki = br.readLine();
-            Kd = br.readLine();
+            setKp(br.readLine());
+            setKi(br.readLine());
+            setKd(br.readLine());
             channelValues[0] = channel1;
             channelValues[1] = channel2;
             channelValues[2] = channel3;
@@ -202,14 +204,29 @@ public final class Data extends Observable
         return IP_Camera;
     }
 
+    public void setKp(String value)
+    {
+        this.Kp = value;
+    }
+
     public synchronized String getKp()
     {
         return Kp;
     }
 
+    public void setKi(String value)
+    {
+        this.Kp = value;
+    }
+
     public synchronized String getKi()
     {
         return Ki;
+    }
+
+    public void setKd(String value)
+    {
+        this.Kp = value;
     }
 
     public synchronized String getKd()
@@ -840,6 +857,18 @@ public final class Data extends Observable
         return this.emergencyMode;
     }
 
+    public boolean isStreaming()
+    {
+        return streaming;
+    }
+
+    public void setStreaming(boolean streaming)
+    {
+        this.streaming = streaming;
+    }
+    
+    
+
     public synchronized boolean isDataUpdated()
     {
         return dataUpdated;
@@ -848,6 +877,16 @@ public final class Data extends Observable
     public synchronized void setDataUpdated(boolean dataUpdated)
     {
         this.dataUpdated = dataUpdated;
+    }
+
+    public boolean isControllerEnabled()
+    {
+        return controllerEnabled;
+    }
+
+    public void setControllerEnabled(boolean controllerEnabled)
+    {
+        this.controllerEnabled = controllerEnabled;
     }
 
     public synchronized int getSatellites()
@@ -1091,9 +1130,5 @@ public final class Data extends Observable
     {
         this.TestDepth = TestDepth;
     }
-    
-    
-    
-    
-    
+
 }

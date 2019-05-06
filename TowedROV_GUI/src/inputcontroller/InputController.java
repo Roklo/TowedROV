@@ -8,9 +8,12 @@ package InputController;
 import com.exlumina.j360.ButtonListener;
 import com.exlumina.j360.Controller;
 import com.exlumina.j360.ValueListener;
+import java.io.IOException;
 //import guisystem.DataHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ntnusubsea.gui.Data;
+import ntnusubsea.gui.TCPClient;
 //import guisystem.UDPsender;
 
 /**
@@ -22,7 +25,6 @@ public class InputController implements Runnable
 
 //    private UDPsender udpsender;
 //    private DataHandler dh;
-
     private double btnLyGUI = 0;
     private int btnLy = 0;
     private int btnLx = 0;
@@ -48,9 +50,13 @@ public class InputController implements Runnable
 
     private String ipAddress = "";
     private int sendPort = 0;
+    private Data data;
+    private TCPClient client_ROV;
 
-    public InputController()
+    public InputController(Data data, TCPClient client_ROV)
     {
+        this.data = data;
+        this.client_ROV = client_ROV;
 //        this.ipAddress = ipAddress;
 //        this.sendPort = sendPort;
 //        this.dh = dh;
@@ -64,48 +70,54 @@ public class InputController implements Runnable
 
         ValueListener Ly = new LeftThumbYListener(this);
         //ValueListener Lx = new LeftThumbXListener(this);
-        ValueListener Ry = new RightThumbYListener(this);
+        //ValueListener Ry = new RightThumbYListener(this);
         ValueListener Rx = new RightThumbXListener(this);
-        ButtonListener L1 = new LeftShoulderListener(this);
-        ButtonListener R1 = new RightShoulderListener(this);
-        ButtonListener X = new XButtonListener(this);
-        ButtonListener Y = new YButtonListener(this);
-        ButtonListener A = new AButtonListener(this);
-        ButtonListener B = new BButtonListener(this);
+//        ButtonListener L1 = new LeftShoulderListener(this);
+//        ButtonListener R1 = new RightShoulderListener(this);
+//        ButtonListener X = new XButtonListener(this);
+//        ButtonListener Y = new YButtonListener(this);
+//        ButtonListener A = new AButtonListener(this);
+//        ButtonListener B = new BButtonListener(this);
         Controller c1 = Controller.C1;
 
         c1.leftThumbY.addValueChangedListener(Ly);
         //c1.leftThumbX.addValueChangedListener(Lx);
-        c1.rightThumbY.addValueChangedListener(Ry);
+        //c1.rightThumbY.addValueChangedListener(Ry);
         c1.rightThumbX.addValueChangedListener(Rx);
-        c1.buttonLeftShoulder.addButtonPressedListener(L1);
-        c1.buttonRightShoulder.addButtonPressedListener(R1);
-        c1.buttonX.addButtonPressedListener(X);
-        c1.buttonY.addButtonPressedListener(Y);
-        c1.buttonA.addButtonPressedListener(A);
-        c1.buttonB.addButtonPressedListener(B);
-        c1.buttonLeftShoulder.addButtonReleasedListener(L1);
-        c1.buttonRightShoulder.addButtonReleasedListener(R1);
-        c1.buttonX.addButtonReleasedListener(X);
-        c1.buttonY.addButtonReleasedListener(Y);
-        c1.buttonA.addButtonReleasedListener(A);
-        c1.buttonB.addButtonReleasedListener(B);
+//        c1.buttonLeftShoulder.addButtonPressedListener(L1);
+//        c1.buttonRightShoulder.addButtonPressedListener(R1);
+//        c1.buttonX.addButtonPressedListener(X);
+//        c1.buttonY.addButtonPressedListener(Y);
+//        c1.buttonA.addButtonPressedListener(A);
+//        c1.buttonB.addButtonPressedListener(B);
+//        c1.buttonLeftShoulder.addButtonReleasedListener(L1);
+//        c1.buttonRightShoulder.addButtonReleasedListener(R1);
+//        c1.buttonX.addButtonReleasedListener(X);
+//        c1.buttonY.addButtonReleasedListener(Y);
+//        c1.buttonA.addButtonReleasedListener(A);
+//        c1.buttonB.addButtonReleasedListener(B);
 
         for (;;)
         {
             try
             {
-                // run
-                //printDegree();
-                //printButtons();
-//                udpsender.send(ipAddress, getDataString(), sendPort);
-                // updateDatahandler();
-                //System.out.println("Sent data: " + getDataString());
+                if (data.isControllerEnabled())
+                {
+                    int ps = btnLy + btnRx;
+                    int sb = btnLy - btnRx;
+                    this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(ps));
+                    this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(sb));
+                }
                 Thread.sleep(10);
-            }
-            catch (InterruptedException ex)
+            } catch (InterruptedException ex)
             {
-                Logger.getLogger(InputController.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("InterruptedException: " + ex.getMessage());
+            } catch (IOException ex)
+            {
+                System.out.println("IOException: " + ex.getMessage());
+            } catch (Exception ex)
+            {
+                System.out.println("Exception: " + ex.getMessage());
             }
         }
     }
@@ -145,8 +157,7 @@ public class InputController implements Runnable
         {
             System.out.println("L1");
             L1pressed = true;
-        }
-        else if (!btnL1)
+        } else if (!btnL1)
         {
             L1pressed = false;
         }
@@ -154,8 +165,7 @@ public class InputController implements Runnable
         {
             System.out.println("R1");
             R1pressed = true;
-        }
-        else if (!btnR1)
+        } else if (!btnR1)
         {
             R1pressed = false;
         }
@@ -163,8 +173,7 @@ public class InputController implements Runnable
         {
             System.out.println("X");
             Xpressed = true;
-        }
-        else if (!btnX)
+        } else if (!btnX)
         {
             Xpressed = false;
         }
@@ -172,8 +181,7 @@ public class InputController implements Runnable
         {
             System.out.println("Y");
             Ypressed = true;
-        }
-        else if (!btnY)
+        } else if (!btnY)
         {
             Ypressed = false;
         }
@@ -181,8 +189,7 @@ public class InputController implements Runnable
         {
             System.out.println("A");
             Apressed = true;
-        }
-        else if (!btnA)
+        } else if (!btnA)
         {
             Apressed = false;
         }
@@ -190,8 +197,7 @@ public class InputController implements Runnable
         {
             System.out.println("B");
             Bpressed = true;
-        }
-        else if (!btnB)
+        } else if (!btnB)
         {
             Bpressed = false;
         }
@@ -213,8 +219,7 @@ public class InputController implements Runnable
         if ((x < 98 && x > -98) && (y < 98 && y > -98))
         {
             value = lastVal;
-        }
-        else if (value < 0)
+        } else if (value < 0)
         {
             value += 360f;
         }
@@ -288,7 +293,7 @@ public class InputController implements Runnable
     public void setBtnL1(boolean btnL1)
     {
         this.btnL1 = btnL1;
-       // System.out.println("L1 pressed");
+        // System.out.println("L1 pressed");
     }
 
     public boolean isBtnR1()

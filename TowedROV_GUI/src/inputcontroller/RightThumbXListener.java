@@ -24,9 +24,9 @@ class RightThumbXListener implements ValueListener
     @Override
     public void value(int newValue)
     {
-        newValue = map(newValue, -32768, 32768, -127, 127);
+        newValue = map(newValue, -32768, 32768, -126, 126);
         this.ic.setBtnRx(newValue);
-        //System.out.printf("Rx: " + "%6d\n", newValue);
+        System.out.printf("Rx: " + "%6d\n", newValue);
     }
 
     private int map(int x, int in_min, int in_max, int out_min, int out_max)

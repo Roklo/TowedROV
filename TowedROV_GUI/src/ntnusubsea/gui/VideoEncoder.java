@@ -95,23 +95,27 @@ public class VideoEncoder implements Runnable, Observer
             this.data = data;
         } catch (Exception ex)
         {
-            Logger.getLogger(VideoEncoder.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Exception while starting video encoder: " + ex.getMessage());
         }
     }
 
     @Override
     public void run()
     {
-// if (frame < list.size()) {
-        try
+        if (data.isStreaming())
         {
-// BufferedImage image = list.get(frame);
-            enc.encodeImage(videoImage);
-// frame++;
-        } catch (Exception ex)
-        {
-            System.out.println("Error encoding frame: " + ex.getMessage());;
+            // if (frame < list.size()) {
+            try
+            {
+                // BufferedImage image = list.get(frame);
+                enc.encodeImage(videoImage);
+                // frame++;
+            } catch (Exception ex)
+            {
+                System.out.println("Error encoding frame: " + ex.getMessage());;
+            }
         }
+
     }
 
     @Override
@@ -136,7 +140,7 @@ public class VideoEncoder implements Runnable, Observer
             enc.finish();
         } catch (Exception ex)
         {
-            Logger.getLogger(VideoEncoder.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Exception while finishing the video: " + ex.getMessage());
         }
     }
 }

@@ -34,7 +34,7 @@ public class DataUpdater implements Runnable
         {
             try
             {
-                client_Rov.sendCommand("fb_allData");
+                //client_Rov.sendCommand("fb_allData");
                 if (!data.comPortList.containsKey("ROVDummy") 
                         && !data.comPortList.containsValue("ROVDummy"))
                 {

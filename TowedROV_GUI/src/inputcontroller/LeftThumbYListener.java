@@ -24,13 +24,13 @@ class LeftThumbYListener implements ValueListener
     @Override
     public void value(int newValue)
     {
-        newValue = map(newValue, -32768, 32768, 0, 254);
+        newValue = map(newValue, -32768, 32768, 1, 254);
         if (newValue < 129 && newValue > 125)
         {
             newValue = 127;
         }
         this.ic.setBtnLy(newValue);
-        //System.out.printf("Ly: " + "%6d\n", newValue);
+        System.out.printf("Ly: " + "%6d\n", newValue);
     }
 
     private int map(int x, int in_min, int in_max, int out_min, int out_max)
