@@ -239,8 +239,8 @@ public class LogFileHandler implements Runnable
                     + String.valueOf(data.getOutsideTemp()) + ","
                     + String.valueOf(data.getInsideTemp()) + ","
                     + String.valueOf(data.getHumidity()) + ","
-                    + String.valueOf(data.getFb_tempElBoxFront) + ","
-                    + String.valueOf(data.getFb_tempElBoxRear) + ",";
+                    + String.valueOf(data.getFb_tempElBoxFront()) + ","
+                    + String.valueOf(data.getFb_tempElBoxRear()) + ",";
 
 //            outputWriterData.append(String.valueOf(DataPointNumb));
 //            outputWriterData.append(',');
