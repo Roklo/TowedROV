@@ -93,7 +93,7 @@ void setToByteArray()
   data[1] = String(GPS.satellites);
   data[2] = "Altitude";
   data[3] = String(GPS.altitude);
-  data[4] = "Angle";
+  data[4] = "GPSAngle";
   data[5] = String(GPS.angle);
   data[6] = "Speed";
   data[7] = String(GPS.speed);
@@ -121,32 +121,38 @@ void loop()                     // run over and over again
   }
   if (timer > millis())  timer = millis();
 
-  if (millis() - timer > 500)
+  if (millis() - timer > 100)
   {
     timer = millis(); // reset the timer
     setToByteArray();
     sendDataOverSerial(data);
   }
 
-  // take a number of analog samples and add them up
-  while (sample_count < NUM_SAMPLES) {
-    sum += analogRead(A0);    
-    sample_count++;
-    delay(10);
+  if (GPS.satellites > 0)
+  {
+    // take a number of analog samples and add them up
+    while (sample_count < NUM_SAMPLES) {
+      sum += analogRead(A0);
+      sample_count++;
+      delay(10);
+    }
+    // calculate the voltage
+    // use 5.0 for a 5.0V ADC reference voltage
+    // 5.015V is the calibrated reference voltage
+    voltage = ((float)sum / (float)NUM_SAMPLES * 4.6) / 1024.0;
+    calibratedVoltage = voltage * (11.53);
+    // send voltage for display on Serial Monitor
+    // voltage multiplied by 11 when using voltage divider that
+    // divides by 11. 11.132 is the calibrated voltage divide
+    // value
+    // Serial.print(voltage * 11.132);
+    // Serial.println (" V");
+    sample_count = 0;
+    sum = 0;
+    if (voltage < 25)
+    {
+      voltage == 0;
+    }
   }
-  // calculate the voltage
-  // use 5.0 for a 5.0V ADC reference voltage
-  // 5.015V is the calibrated reference voltage
-  voltage = ((float)sum / (float)NUM_SAMPLES * 4.6) / 1024.0;
-  calibratedVoltage = voltage * (11.53);
-  // send voltage for display on Serial Monitor
-  // voltage multiplied by 11 when using voltage divider that
-  // divides by 11. 11.132 is the calibrated voltage divide
-  // value
-  // Serial.print(voltage * 11.132);
-  // Serial.println (" V");
-  sample_count = 0;
-  sum = 0;
-
 }
 
