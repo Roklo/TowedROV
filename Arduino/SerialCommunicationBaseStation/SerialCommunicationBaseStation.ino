@@ -128,7 +128,7 @@ void loop()                     // run over and over again
     sendDataOverSerial(data);
   }
 
-  if (GPS.satellites > 0)
+  if (GPS.latitudeDegrees > 0)
   {
     // take a number of analog samples and add them up
     while (sample_count < NUM_SAMPLES) {
