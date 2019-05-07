@@ -29,7 +29,7 @@ import javax.imageio.ImageIO;
  */
 public final class Data extends Observable
 {
-    
+
     public HashMap<String, String> comPortList = new HashMap<>();
     public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
 
@@ -41,7 +41,7 @@ public final class Data extends Observable
     private static final int actuatorTolerableSpeedLoss = 10; //Percent
     private long PSActuatorMaxToMinTime;
     private long SBActuatorMaxToMinTime;
-    
+
     private int arduinoBaudRate = 115200;
     private byte[] dataFromArduino = new byte[11];
     private boolean dataFromArduinoAvailable = false;
@@ -85,7 +85,7 @@ public final class Data extends Observable
     private int fb_actuatorSBPos;
     private int fb_actuatorPScmd;
     private int fb_actuatorSBcmd;
-    
+
     private int fb_actuatorPSMinPos;
     private int fb_actuatorSBMinPos;
     private int fb_actuatorPSMaxPos;
@@ -95,11 +95,11 @@ public final class Data extends Observable
 
     // Feedback from GUI
     public boolean startLogging = true;
-    
+
     public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
     public List<String> rovDepthDataList = new ArrayList<>();
     public List<String> depthBeneathBoatDataList = new ArrayList<>();
-    
+
     private double timeBetweenBoatAndRov = 4.0;
     private double depthBeneathRov = 0;
     private double depthBeneathBoat = 0;
@@ -116,9 +116,9 @@ public final class Data extends Observable
     private String IP_Rov = "";
     private String IP_Camera = "";
     private BufferedImage videoImage;
-    private String Kp;
-    private String Ki;
-    private String Kd;
+    private String Kp = "1";
+    private String Ki = "2";
+    private String Kd = "3";
     private String offsetDepthBeneathROV = "0.00";
     private String offsetROVdepth = "0.00";
     private long timer = System.currentTimeMillis();
@@ -139,7 +139,7 @@ public final class Data extends Observable
     {
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("C:\\TowedROV\\ROV Options.txt"));
             //this.updateRovDepthDataList();
             IP_Rov = br.readLine();
             IP_Camera = br.readLine();
@@ -154,6 +154,8 @@ public final class Data extends Observable
             this.setKp(br.readLine());
             this.setKi(br.readLine());
             this.setKd(br.readLine());
+            this.setOffsetDepthBeneathROV(br.readLine());
+            this.setOffsetROVdepth(br.readLine());
             channelValues[0] = channel1;
             channelValues[1] = channel2;
             channelValues[2] = channel3;
@@ -209,52 +211,52 @@ public final class Data extends Observable
     {
         return IP_Camera;
     }
-    
+
     public void setKp(String value)
     {
         this.Kp = value;
     }
-    
+
     public synchronized String getKp()
     {
         return Kp;
     }
-    
+
     public void setKi(String value)
     {
-        this.Kp = value;
+        this.Ki = value;
     }
-    
+
     public synchronized String getKi()
     {
         return Ki;
     }
-    
+
     public void setKd(String value)
     {
-        this.Kp = value;
+        this.Kd = value;
     }
-    
+
     public synchronized String getKd()
     {
         return Kd;
     }
-    
+
     public String getOffsetDepthBeneathROV()
     {
         return offsetDepthBeneathROV;
     }
-    
+
     public void setOffsetDepthBeneathROV(String offsetDepthBeneathROV)
     {
         this.offsetDepthBeneathROV = offsetDepthBeneathROV;
     }
-    
+
     public String getOffsetROVdepth()
     {
         return offsetROVdepth;
     }
-    
+
     public void setOffsetROVdepth(String offsetROVdepth)
     {
         this.offsetROVdepth = offsetROVdepth;
@@ -498,12 +500,12 @@ public final class Data extends Observable
     {
         return depth;
     }
-    
+
     public double getTimeBetweenBoatAndRov()
     {
         return timeBetweenBoatAndRov;
     }
-    
+
     public void setTimeBetweenBoatAndRov(double timeBetweenBoatAndRov)
     {
         this.timeBetweenBoatAndRov = timeBetweenBoatAndRov;
@@ -667,32 +669,32 @@ public final class Data extends Observable
     {
         return pressure;
     }
-    
+
     public double getOutsideTemp()
     {
         return outsideTemp;
     }
-    
+
     public void setOutsideTemp(double outsideTemp)
     {
         this.outsideTemp = outsideTemp;
     }
-    
+
     public double getInsideTemp()
     {
         return insideTemp;
     }
-    
+
     public void setInsideTemp(double insideTemp)
     {
         this.insideTemp = insideTemp;
     }
-    
+
     public double getHumidity()
     {
         return humidity;
     }
-    
+
     public void setHumidity(double humidity)
     {
         this.humidity = humidity;
@@ -771,12 +773,12 @@ public final class Data extends Observable
         setChanged();
         notifyObservers();
     }
-    
+
     public double getPhotoModeDelay_FB()
     {
         return photoModeDelay_FB;
     }
-    
+
     public void setPhotoModeDelay_FB(double photoModeDelay_FB)
     {
         this.photoModeDelay_FB = photoModeDelay_FB;
@@ -835,8 +837,6 @@ public final class Data extends Observable
     {
         this.imagesCleared = imagesCleared;
     }
-    
-    
 
     /**
      * Increases the image number by one
@@ -868,7 +868,7 @@ public final class Data extends Observable
     {
         this.threadStatus = threadStatus;
     }
-    
+
     public byte[] getDataFromArduino()
     {
         return dataFromArduino;
@@ -882,126 +882,126 @@ public final class Data extends Observable
     {
         return this.dataFromArduinoAvailable;
     }
-    
+
     public void setEmergencyMode(boolean status)
     {
         this.emergencyMode = status;
         setChanged();
         notifyObservers();
     }
-    
+
     public boolean isEmergencyMode()
     {
         return this.emergencyMode;
     }
-    
+
     public boolean isStreaming()
     {
         return streaming;
     }
-    
+
     public void setStreaming(boolean streaming)
     {
         this.streaming = streaming;
     }
-    
+
     public synchronized boolean isDataUpdated()
     {
         return dataUpdated;
     }
-    
+
     public synchronized void setDataUpdated(boolean dataUpdated)
     {
         this.dataUpdated = dataUpdated;
     }
-    
+
     public boolean isControllerEnabled()
     {
         return controllerEnabled;
     }
-    
+
     public void setControllerEnabled(boolean controllerEnabled)
     {
         this.controllerEnabled = controllerEnabled;
     }
-    
+
     public synchronized int getSatellites()
     {
         return satellites;
     }
-    
+
     public synchronized void setSatellites(int satellites)
     {
         this.satellites = satellites;
         setChanged();
         notifyObservers();
     }
-    
+
     public synchronized float getAltitude()
     {
         return altitude;
     }
-    
+
     public synchronized void setAltitude(float altitude)
     {
         this.altitude = altitude;
         setChanged();
         notifyObservers();
     }
-    
+
     public synchronized double getGPSAngle()
     {
         return gpsAngle;
     }
-    
+
     public synchronized void setGPSAngle(double angle)
     {
         this.gpsAngle = angle;
         setChanged();
         notifyObservers();
     }
-    
+
     public synchronized double getRoll()
     {
         return roll;
     }
-    
+
     public synchronized void setRoll(double roll)
     {
         this.roll = roll;
         setChanged();
         notifyObservers();
     }
-    
+
     public synchronized double getPitch()
     {
         return pitch;
     }
-    
+
     public synchronized void setPitch(double pitch)
     {
         this.pitch = pitch;
         setChanged();
         notifyObservers();
     }
-    
+
     public synchronized double getVoltage()
     {
         return voltage;
     }
-    
+
     public synchronized void setVoltage(double voltage)
     {
         this.voltage = voltage;
         setChanged();
         notifyObservers();
     }
-    
+
     public boolean getStartLogging()
     {
         return startLogging;
     }
-    
+
     public void setStartLogging(boolean startLogging)
     {
         this.startLogging = startLogging;
@@ -1020,139 +1020,137 @@ public final class Data extends Observable
         setChanged();
         notifyObservers();
     }
-    
-    
-    
+
     public boolean isRovReady()
     {
         return rovReady;
     }
-    
+
     public void setRovReady(boolean rovReady)
     {
         this.rovReady = rovReady;
     }
-    
+
     public boolean isI2cError()
     {
         return i2cError;
     }
-    
+
     public void setI2cError(boolean i2cError)
     {
         this.i2cError = i2cError;
     }
-    
+
     public Double getRovDepth()
     {
         return rovDepth;
     }
-    
+
     public void setRovDepth(Double rovDepth)
     {
         this.rovDepth = rovDepth;
     }
-    
+
     public int getFb_actuatorPSPos()
     {
         return fb_actuatorPSPos;
     }
-    
+
     public void setFb_actuatorPSPos(int fb_actuatorPSPos)
     {
         this.fb_actuatorPSPos = fb_actuatorPSPos;
     }
-    
+
     public int getFb_actuatorSBPos()
     {
         return fb_actuatorSBPos;
     }
-    
+
     public void setFb_actuatorSBPos(int fb_actuatorSBPos)
     {
         this.fb_actuatorSBPos = fb_actuatorSBPos;
     }
-    
+
     public int getFb_actuatorPSMinPos()
     {
         return fb_actuatorPSMinPos;
     }
-    
+
     public void setFb_actuatorPSMinPos(int fb_actuatorPSMinPos)
     {
         this.fb_actuatorPSMinPos = fb_actuatorPSMinPos;
     }
-    
+
     public int getFb_actuatorSBMinPos()
     {
         return fb_actuatorSBMinPos;
     }
-    
+
     public void setFb_actuatorSBMinPos(int fb_actuatorSBMinPos)
     {
         this.fb_actuatorSBMinPos = fb_actuatorSBMinPos;
     }
-    
+
     public int getFb_actuatorPSMaxPos()
     {
         return fb_actuatorPSMaxPos;
     }
-    
+
     public void setFb_actuatorPSMaxPos(int fb_actuatorPSMaxPos)
     {
         this.fb_actuatorPSMaxPos = fb_actuatorPSMaxPos;
     }
-    
+
     public int getFb_actuatorSBMaxPos()
     {
         return fb_actuatorSBMaxPos;
     }
-    
+
     public void setFb_actuatorSBMaxPos(int fb_actuatorSBMaxPos)
     {
         this.fb_actuatorSBMaxPos = fb_actuatorSBMaxPos;
     }
-    
+
     public double getFb_tempElBoxFront()
     {
         return fb_tempElBoxFront;
     }
-    
+
     public void setFb_tempElBoxFront(double fb_tempElBoxFront)
     {
         this.fb_tempElBoxFront = fb_tempElBoxFront;
     }
-    
+
     public double getFb_tempElBoxRear()
     {
         return fb_tempElBoxRear;
     }
-    
+
     public void setFb_tempElBoxRear(double fb_tempElBoxRear)
     {
         this.fb_tempElBoxRear = fb_tempElBoxRear;
     }
-    
+
     public long getPSActuatorMaxToMinTime()
     {
         return PSActuatorMaxToMinTime;
     }
-    
+
     public void setPSActuatorMaxToMinTime(long PSActuatorMaxToMinTime)
     {
         this.PSActuatorMaxToMinTime = PSActuatorMaxToMinTime;
     }
-    
+
     public long getSBActuatorMaxToMinTime()
     {
         return SBActuatorMaxToMinTime;
     }
-    
+
     public void setSBActuatorMaxToMinTime(long SBActuatorMaxToMinTime)
     {
         this.SBActuatorMaxToMinTime = SBActuatorMaxToMinTime;
     }
-    
+
     public void updateRovDepthDataList(String time, String value)
     {
         if (rovDepthDataList.size() >= 260)
@@ -1161,7 +1159,7 @@ public final class Data extends Observable
         }
         this.rovDepthDataList.add(time + ":" + value);
     }
-    
+
     public void updateDepthBeneathBoatDataList(String time, String value)
     {
         if (depthBeneathBoatDataList.size() >= 300)
@@ -1170,36 +1168,36 @@ public final class Data extends Observable
         }
         this.depthBeneathBoatDataList.add(time + ":" + value);
     }
-    
+
     public int getFb_actuatorPScmd()
     {
         return fb_actuatorPScmd;
     }
-    
+
     public void setFb_actuatorPScmd(int fb_actuatorPScmd)
     {
         this.fb_actuatorPScmd = fb_actuatorPScmd;
     }
-    
+
     public int getFb_actuatorSBcmd()
     {
         return fb_actuatorSBcmd;
     }
-    
+
     public void setFb_actuatorSBcmd(int fb_actuatorSBcmd)
     {
         this.fb_actuatorSBcmd = fb_actuatorSBcmd;
     }
-    
+
     public double getTestDepth()
     {
         return TestDepth;
     }
-    
+
     public void setTestDepth(double TestDepth)
     {
         this.TestDepth = TestDepth;
         this.setRovDepth(TestDepth);
     }
-    
+
 }
