@@ -58,17 +58,6 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
         jPanel1.add(chartPanel, BorderLayout.CENTER);
         this.add(jPanel1);
         this.pack();
-
-//        initComponents();
-//        this.data = data;
-//        graph = new GraphPanel();
-//        graph.setSize(jPanel1.getWidth(), jPanel1.getHeight());
-//        graph.setBackground(Color.BLACK);
-//        graph.setForeground(Color.WHITE);
-//        graph.setVisible(true);
-//        jPanel1.add(graph);
-//        this.add(jPanel1);
-//        this.pack();
     }
 
     private JPanel createChartPanel()
@@ -141,32 +130,13 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
             String s = it2.next().toString();
             String[] data = s.split(":");
             series2.add(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+            series3.add(Double.parseDouble(data[0]), 0.01);
         }
-
-//        series1.add(0.0, 0.0);
-//        series1.add(5.0, 0.2);
-//        series1.add(9.0, 0.5);
-//        series1.add(12.0, 0.1);
-//        series1.add(16.0, -0.1);
-//        series1.add(20.0, 0.2);
-//
-//        series2.add(0.0, -1.5);
-//        series2.add(4.0, -8.0);
-//        series2.add(8.0, -13.0);
-//        series2.add(12.0, -17.0);
-//        series2.add(15.0, -19.25);
-//        series2.add(17.0, -18.55);
-//        series2.add(20.0, -15.0);
-//        series3.add(0.0, -20.0);
-//        series3.add(5.0, -18.0);
-//        series3.add(9.0, -15.0);
-//        series3.add(12.0, -19.0);
-//        series3.add(16.0, -22.0);
-//        series3.add(20.0, -17.0);
+        
         dataset.addSeries(series1);
         dataset.addSeries(series2);
-//        dataset.addSeries(series3);
-
+        dataset.addSeries(series3);
+        
         return dataset;
     }
 
@@ -338,45 +308,8 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
             {
                 Logger.getLogger(EchoSounderFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-//            }
 
         }
-
-//        showGraph();
-//        int depth = 0;
-//        int xpos = 0;
-//
-//        while (true)
-//        {
-//            for (int i = 0; i < 10; i++)
-//            {
-//                depth = depth + 1;
-//                xpos = xpos + 3;
-//                this.refreshGraph(xpos, depth);
-//                System.out.println("Refresed graph: " + String.valueOf(xpos) + ":" + String.valueOf(depth));
-//                try
-//                {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException ex)
-//                {
-//                    Logger.getLogger(EchoSounderFrame.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//            for (int o = 10; o > 0; o--)
-//            {
-//                depth = depth - 1;
-//                xpos = xpos + 3;
-//                this.refreshGraph(xpos, depth);
-//                System.out.println("Refresed graph: " + String.valueOf(xpos) + ":" + String.valueOf(depth));
-//                try
-//                {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException ex)
-//                {
-//                    Logger.getLogger(EchoSounderFrame.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        }
     }
 
 
