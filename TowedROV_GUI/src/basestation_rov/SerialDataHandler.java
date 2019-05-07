@@ -113,7 +113,7 @@ public class SerialDataHandler
                         {
                             buffer = buffer.substring(buffer.indexOf(start_char) + 1);
                             buffer = buffer.substring(0, buffer.indexOf(end_char));
-                           // buffer = buffer.replace("?", "");
+                            // buffer = buffer.replace("?", "");
                             String[] data = buffer.split(sep_char);
 
                             for (int i = 0; i < data.length; i = i + 2)
@@ -148,6 +148,16 @@ public class SerialDataHandler
                 } catch (Exception ex)
                 {
                     System.out.println("Error: " + ex);
+                    portNamesList.put(comPortKey, "Unreadable");
+                    try
+                    {
+                        serialPort.closePort();
+
+                    } catch (Exception exe)
+                    {
+                        System.out.println("Error: Failed to close port " + exe);
+                    }
+
                 }
             }
             saveUsableComPorts();
