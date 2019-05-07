@@ -39,6 +39,7 @@ public class LogFileHandler implements Runnable
     String Data = "null";
     String telementry = "null";
     String photoLocationTrack = "null";
+    String exif = "null";
 
     int shipTrackPointNumb = 1;
     int DataPointNumb = 1;
@@ -46,6 +47,7 @@ public class LogFileHandler implements Runnable
 
     String timeStampString = "";
     SimpleDateFormat timeAndDateCSV;
+    SimpleDateFormat exifDateAndTime;
 
     String logStorageLocation = "C:\\TowedROV\\Log\\";
 
@@ -53,18 +55,25 @@ public class LogFileHandler implements Runnable
     String shipPosLog = "";
     String dataLog = "";
     String telementryLog = "";
+    String exifLog = "";
     boolean setupIsDone = false;
 
     File shipPosLogFile = null;
     File dataLogFile = null;
     File telementryLogFile = null;
+    File exifLogFile = null;
 
     Date date;
     Date dateCSV;
+    Date dateExif;
 
     BufferedWriter outputWriterShipPos = null;
     BufferedWriter outputWriterData = null;
     BufferedWriter outputWriterTelementry = null;
+    BufferedWriter outputWriterExif = null;
+
+    int lastImageNumber = 0;
+    boolean exifSetup = false;
 
     public LogFileHandler(Data data)
     {
@@ -73,54 +82,88 @@ public class LogFileHandler implements Runnable
 
     public void run()
     {
-        if (!setupIsDone)
+        if (!exifSetup || data.isImagesCleared())
         {
             try
             {
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-                date = new Date(System.currentTimeMillis());
+                lastImageNumber = 0;
+                //SimpleDateFormat exifTime = new SimpleDateFormat("yyyyMMddHHmmss");
+                exifDateAndTime = new SimpleDateFormat("yyyyMMddHHmmss");
+                dateExif = new Date(System.currentTimeMillis());
+                exifLogFile = new File(logStorageLocation + "EXIF_LOG_" + exifDateAndTime.format(dateExif) + ".csv");
+                FileUtils.touch(exifLogFile);
 
-                shipPosLogFile = new File(logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv");
-                FileUtils.touch(shipPosLogFile);
+                outputWriterExif = new BufferedWriter(new FileWriter(exifLogFile));
+                outputWriterExif.append("Latitude,Longtitude,Time");
+                outputWriterExif.flush();
+                exifSetup = true;
+                data.setImagesCleared(true);
+
+            } catch (Exception e)
+            {
+            }
+
+        }
+        if (data.getImageNumber() != lastImageNumber)
+        {
+            exifDateAndTime = new SimpleDateFormat("yyyyMMddHHmmss");
+            dateExif = new Date(System.currentTimeMillis());
+            exifDateAndTime.format(dateExif);
+            lastImageNumber++;
+            logExifData();
+
+        }
+
+        if (data.startLogging)
+        {
+
+            if (!setupIsDone)
+            {
+                try
+                {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+                    date = new Date(System.currentTimeMillis());
+
+                    shipPosLogFile = new File(logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv");
+                    FileUtils.touch(shipPosLogFile);
 
 //                File photoPosLog = new File(logStorageLocation + "PhotoPos_LOG_" + formatter.format(date) + ".csv");
 //                FileUtils.touch(photoPosLog);
-                dataLogFile = new File(logStorageLocation + "Data_LOG_" + formatter.format(date) + ".csv");
-                FileUtils.touch(dataLogFile);
+                    dataLogFile = new File(logStorageLocation + "Data_LOG_" + formatter.format(date) + ".csv");
+                    FileUtils.touch(dataLogFile);
 
-                telementryLogFile = new File(logStorageLocation + "Telementry_LOG_" + formatter.format(date) + ".csv");
-                FileUtils.touch(telementryLogFile);
+                    telementryLogFile = new File(logStorageLocation + "Telementry_LOG_" + formatter.format(date) + ".csv");
+                    FileUtils.touch(telementryLogFile);
 
-                outputWriterShipPos = new BufferedWriter(new FileWriter(shipPosLogFile));
+                    outputWriterShipPos = new BufferedWriter(new FileWriter(shipPosLogFile));
 
-                outputWriterData = new BufferedWriter(new FileWriter(dataLogFile));
+                    outputWriterData = new BufferedWriter(new FileWriter(dataLogFile));
 
-                outputWriterTelementry = new BufferedWriter(new FileWriter(telementryLogFile));
+                    outputWriterTelementry = new BufferedWriter(new FileWriter(telementryLogFile));
 
-                outputWriterShipPos.append("Point,Time,Latitude,Longtitude,Speed,ROV Depth,GPSHeading");
-                outputWriterShipPos.flush();
+                    outputWriterShipPos.append("Point,Time,Latitude,Longtitude,Speed,ROV Depth,GPSHeading");
+                    outputWriterShipPos.flush();
 
-                outputWriterData.append("Point,Time,Roll,Pitch,Depth,"
-                        + "DepthToSeaFloor,ROV_Depth,ActuatorPS_feedback,"
-                        + "ActuatorSB_feedback,ActuatorPS_command,"
-                        + "ActuatorSB_command,Voltage,Emergency, outsideTemp,"
-                        + "insideTempCameraHouse, humidity, tempElBoxFromt,"
-                        + "tempElBoxRear, I2CError, LeakDetection");
-                outputWriterData.flush();
+                    outputWriterData.append("Point,Time,Roll,Pitch,Depth,"
+                            + "DepthToSeaFloor,ROV_Depth,ActuatorPS_feedback,"
+                            + "ActuatorSB_feedback,ActuatorPS_command,"
+                            + "ActuatorSB_command,Voltage,Emergency, outsideTemp,"
+                            + "insideTempCameraHouse, humidity, tempElBoxFromt,"
+                            + "tempElBoxRear, I2CError, LeakDetection");
+                    outputWriterData.flush();
 
-                outputWriterTelementry.append("Latitude,Longtitude, Elevation, Time");
+                    outputWriterTelementry.append("Latitude,Longtitude, Elevation, Time");
 //                        + "Elevation,Heading,Time");
-                outputWriterTelementry.flush();
+                    outputWriterTelementry.flush();
 
-                setupIsDone = true;
+                    setupIsDone = true;
 
-            } catch (Exception ex)
-            {
-                System.out.println("ERROR: " + ex);
+                } catch (Exception ex)
+                {
+                    System.out.println("ERROR: " + ex);
+                }
             }
-        }
-        if (data.startLogging)
-        {
+
             dateCSV = new Date(System.currentTimeMillis());
             timeStampString = String.valueOf(java.time.LocalTime.now());
             timeAndDateCSV = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -129,8 +172,10 @@ public class LogFileHandler implements Runnable
             logData();
             logTelementry();
 
+        } else
+        {
+            setupIsDone = false;
         }
-
     }
 
 //    private void logPhotoPosition(BufferedWriter bw)
@@ -190,9 +235,28 @@ public class LogFileHandler implements Runnable
         {
             outputWriterShipPos.close();
             outputWriterData.close();
+            outputWriterExif.close();
+            outputWriterTelementry.close();
         } catch (Exception e)
         {
             System.out.println("Problem closing log file");
+        }
+
+    }
+
+    private void logExifData()
+    {
+        try
+        {
+            exifLog = "";
+            exifLog = data.getLatitude() + ","
+                    + data.getLongitude();
+
+            outputWriterExif.append('\n');
+            outputWriterExif.append(telementryLog);
+            outputWriterExif.flush();
+        } catch (Exception e)
+        {
         }
 
     }

@@ -46,7 +46,7 @@ public class WorkerRunnable implements Runnable
     public void run()
     {
         boolean clientOnline = true;
-        boolean welcomeMessageIsSent = false;
+//        boolean welcomeMessageIsSent = false;
         try
         {
             BufferedReader inFromClient = new BufferedReader(
@@ -62,7 +62,7 @@ public class WorkerRunnable implements Runnable
             while (clientOnline)
             {
                 
-                welcomeMessageIsSent = true;
+//                welcomeMessageIsSent = true;
                 
                 if (inFromClient.ready())
                 {
@@ -196,6 +196,10 @@ public class WorkerRunnable implements Runnable
                             
                             case "cmd_offsetDepthBeneathROV":
                                 dh.setCmd_offsetDepthBeneathROV(Double.valueOf(value));
+                                outToClient.println("Server: OK");
+                                break;
+                                 case "cmd_offsetROVdepth":
+                                dh.setCmd_offsetROVdepth(Double.valueOf(value));
                                 outToClient.println("Server: OK");
                                 break;
 
@@ -352,8 +356,9 @@ public class WorkerRunnable implements Runnable
                             //Other  commands
                             case "ping":
                                 //output.write(("<ping:true>").getBytes());
-                                outToClient.println("<ping:true>" + welcomeMessageIsSent);
-                                welcomeMessageIsSent = true;
+                                dh.setCmd_ping(true);
+                                outToClient.println("<ping:true>");
+//                                welcomeMessageIsSent = true;
                                 break;
                             
                             case "ack":
