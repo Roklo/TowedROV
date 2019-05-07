@@ -26,14 +26,11 @@ public class NTNUSubseaGUI
 {
 
     private static Thread readSerialData;
-    //private static Thread LogFileHandler;
     private static Thread imuThread;
     private static Thread gpsThread;
     private static Thread echoSounderThread;
     private static Thread ROVDummyThread;
     private static Thread InputControllerThread;
-
-    //private static ClientManualTest clientTest;
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
     protected static String IP_ROV = "192.168.0.101";
@@ -53,66 +50,39 @@ public class NTNUSubseaGUI
         Sounder sounder = new Sounder();
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
-
-        //DataLogger logger = new DataLogger(data);
         LogFileHandler lgh = new LogFileHandler(data);
         TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
         TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
         UDPClient stream = new UDPClient(Port_cameraStream, data);
         IOControlFrame io = new IOControlFrame(data, client_ROV);
         ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream, sounder, lgh);
-//        VideoEncoder encoder = new VideoEncoder(data);
-        //NmeaReceiver nmea = new NmeaReceiver(data);
         DataUpdater dataUpdater = new DataUpdater(client_ROV, client_Camera, data);
-        BufferedImage banan;
+        
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);
         SwingUtilities.invokeLater(frame);
-        //SwingUtilities.invokeLater(sonar);
         SwingUtilities.invokeLater(io);
         sonar.setVisible(false);
         data.addObserver(sonar);
-        // data.addObserver(logger);
         data.addObserver(frame);
-//        data.addObserver(encoder);
         data.addObserver(io);
         executor.scheduleAtFixedRate(lgh,
                 0, 100, TimeUnit.MILLISECONDS);
-//        executor.scheduleAtFixedRate(encoder,
-//                5000, 40, TimeUnit.MILLISECONDS);
         InputControllerThread = new Thread(new InputController(data, client_ROV));
         InputControllerThread.start();
         InputControllerThread.setName("InputController");
 
-        //executor.scheduleAtFixedRate(nmea,
-        //      0, 1000, TimeUnit.MILLISECONDS);
-//        executor.scheduleAtFixedRate(client_ROV,
-//                0, 100, TimeUnit.MILLISECONDS);
-//        executor.scheduleAtFixedRate(client_Camera,
-//                0, 100, TimeUnit.MILLISECONDS);
-//        executor.scheduleAtFixedRate(stream,
-//                0, 20, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(cmt,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(sonar,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(dataUpdater,
                 1000, 100, TimeUnit.MILLISECONDS);
-//        Runtime.getRuntime()
-//                .addShutdownHook(new Thread(new Runnable()
-//                {
-//                    @Override
-//                    public void run()
-//                    {
-//                        executor.shutdown();
-//                        encoder.finishVideo();
-//                    }
-//                },
-//                        "Shutdown-thread"));
-
-//        LogFileHandler = new Thread(new LogFileHandler(data));
-//
-//        LogFileHandler.start();
+        
+        
+        
+        // Start searching for com ports:
+        
         long timeDifference = 0;
         long lastTime = 0;
         long timeDelay = 5000;

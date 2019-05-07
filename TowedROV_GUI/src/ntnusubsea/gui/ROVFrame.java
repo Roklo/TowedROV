@@ -230,11 +230,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         infoPanel = new javax.swing.JPanel();
         actuatorPanel1 = new javax.swing.JPanel();
         actuatorHeader1 = new javax.swing.JLabel();
-        actuatorDutyCycleBar1 = new javax.swing.JProgressBar();
+        actuatorPSPosBar = new javax.swing.JProgressBar();
         warningLabel1 = new javax.swing.JLabel();
         actuatorPanel2 = new javax.swing.JPanel();
         actuatorHeader2 = new javax.swing.JLabel();
-        actuatorDutyCycleBar2 = new javax.swing.JProgressBar();
+        actuatorSBPosBar = new javax.swing.JProgressBar();
         warningLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -1175,18 +1175,18 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorHeader1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         actuatorHeader1.setForeground(new java.awt.Color(255, 255, 255));
         actuatorHeader1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        actuatorHeader1.setText("PS Actuator Speed");
+        actuatorHeader1.setText("PS Actuator Position");
 
-        actuatorDutyCycleBar1.setBackground(new java.awt.Color(42, 48, 57));
-        actuatorDutyCycleBar1.setForeground(new java.awt.Color(26, 173, 75));
-        actuatorDutyCycleBar1.setMaximum(511);
-        actuatorDutyCycleBar1.setValue(400);
-        actuatorDutyCycleBar1.setBorder(null);
-        actuatorDutyCycleBar1.addChangeListener(new javax.swing.event.ChangeListener()
+        actuatorPSPosBar.setBackground(new java.awt.Color(42, 48, 57));
+        actuatorPSPosBar.setForeground(new java.awt.Color(26, 173, 75));
+        actuatorPSPosBar.setMaximum(254);
+        actuatorPSPosBar.setValue(127);
+        actuatorPSPosBar.setBorder(null);
+        actuatorPSPosBar.addChangeListener(new javax.swing.event.ChangeListener()
         {
             public void stateChanged(javax.swing.event.ChangeEvent evt)
             {
-                actuatorDutyCycleBar1StateChanged(evt);
+                actuatorPSPosBarStateChanged(evt);
             }
         });
 
@@ -1203,43 +1203,43 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             actuatorPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(actuatorHeader1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(warningLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(actuatorDutyCycleBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(actuatorPSPosBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         actuatorPanel1Layout.setVerticalGroup(
             actuatorPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actuatorPanel1Layout.createSequentialGroup()
-                .addComponent(actuatorHeader1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(actuatorDutyCycleBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(warningLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(actuatorHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(actuatorPSPosBar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(warningLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         actuatorPanel2.setBackground(new java.awt.Color(42, 48, 57));
         actuatorPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(45, 53, 62), 1, true));
         actuatorPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        actuatorHeader2.setBackground(new java.awt.Color(39, 44, 50));
+        actuatorHeader2.setBackground(new java.awt.Color(42, 48, 57));
         actuatorHeader2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         actuatorHeader2.setForeground(new java.awt.Color(255, 255, 255));
         actuatorHeader2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        actuatorHeader2.setText("SB Actuator Speed");
+        actuatorHeader2.setText("SB Actuator Position");
 
-        actuatorDutyCycleBar2.setBackground(new java.awt.Color(39, 44, 50));
-        actuatorDutyCycleBar2.setForeground(new java.awt.Color(26, 173, 75));
-        actuatorDutyCycleBar2.setMaximum(512);
-        actuatorDutyCycleBar2.setToolTipText("");
-        actuatorDutyCycleBar2.setValue(180);
-        actuatorDutyCycleBar2.setBorder(null);
-        actuatorDutyCycleBar2.addChangeListener(new javax.swing.event.ChangeListener()
+        actuatorSBPosBar.setBackground(new java.awt.Color(42, 48, 57));
+        actuatorSBPosBar.setForeground(new java.awt.Color(26, 173, 75));
+        actuatorSBPosBar.setMaximum(254);
+        actuatorSBPosBar.setToolTipText("");
+        actuatorSBPosBar.setValue(127);
+        actuatorSBPosBar.setBorder(null);
+        actuatorSBPosBar.addChangeListener(new javax.swing.event.ChangeListener()
         {
             public void stateChanged(javax.swing.event.ChangeEvent evt)
             {
-                actuatorDutyCycleBar2StateChanged(evt);
+                actuatorSBPosBarStateChanged(evt);
             }
         });
 
-        warningLabel2.setBackground(new java.awt.Color(39, 44, 50));
+        warningLabel2.setBackground(new java.awt.Color(42, 48, 57));
         warningLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         warningLabel2.setForeground(new java.awt.Color(255, 255, 255));
         warningLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1250,17 +1250,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorPanel2Layout.setHorizontalGroup(
             actuatorPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(actuatorHeader2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(actuatorDutyCycleBar2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(actuatorSBPosBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(warningLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         actuatorPanel2Layout.setVerticalGroup(
             actuatorPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actuatorPanel2Layout.createSequentialGroup()
-                .addComponent(actuatorHeader2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(actuatorDutyCycleBar2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(warningLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(actuatorHeader2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(actuatorSBPosBar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(warningLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel2.setBackground(new java.awt.Color(39, 44, 50));
@@ -1280,7 +1280,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         wingLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         wingLabel.setForeground(new java.awt.Color(255, 255, 255));
         wingLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        wingLabel.setText("Wing angle: 0.1");
+        wingLabel.setText("Wing Angle: 0.1");
         wingLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         wingLabel.setOpaque(true);
 
@@ -1288,7 +1288,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         pitchLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         pitchLabel.setForeground(new java.awt.Color(255, 255, 255));
         pitchLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        pitchLabel.setText("Pitch angle: 0.1");
+        pitchLabel.setText("Pitch Angle: 0.1");
         pitchLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pitchLabel.setOpaque(true);
 
@@ -1296,7 +1296,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         rollLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         rollLabel.setForeground(new java.awt.Color(255, 255, 255));
         rollLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        rollLabel.setText("Roll angle: 0.1");
+        rollLabel.setText("Roll Angle: 0.1");
         rollLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         rollLabel.setMinimumSize(new java.awt.Dimension(140, 110));
         rollLabel.setOpaque(true);
@@ -1388,7 +1388,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         rovDepthLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         rovDepthLabel.setForeground(new java.awt.Color(255, 255, 255));
         rovDepthLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        rovDepthLabel.setText("ROV depth: 0.1m");
+        rovDepthLabel.setText("ROV Depth: 0.1m");
         rovDepthLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         rovDepthLabel.setOpaque(true);
 
@@ -1396,7 +1396,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         seafloorDepthBoatLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         seafloorDepthBoatLabel.setForeground(new java.awt.Color(255, 255, 255));
         seafloorDepthBoatLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        seafloorDepthBoatLabel.setText("Beneath boat: 0.1m");
+        seafloorDepthBoatLabel.setText("Beneath Boat: 0.1m");
         seafloorDepthBoatLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         seafloorDepthBoatLabel.setOpaque(true);
 
@@ -1668,11 +1668,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(actuatorPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(actuatorPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addComponent(actuatorPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addComponent(actuatorPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout backgroundLayout = new javax.swing.GroupLayout(background);
@@ -1698,7 +1698,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                         .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(155, 155, 155))
+                .addGap(170, 170, 170))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1916,20 +1916,20 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         System.out.println(key);
     }//GEN-LAST:event_fullscreenKeyPressed
 
-    private void actuatorDutyCycleBar1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorDutyCycleBar1StateChanged
-        int actuatorTime1 = actuatorDutyCycleBar1.getValue();
-        if (actuatorTime1 <= 255)
+    private void actuatorPSPosBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorPSPosBarStateChanged
+        int actuatorTime1 = actuatorPSPosBar.getValue();
+        if (actuatorTime1 <= 254)
         {
-            actuatorDutyCycleBar1.setForeground(new Color(actuatorTime1, 255, 0));
+            actuatorPSPosBar.setForeground(new Color(actuatorTime1, 255, 0));
             warningLabel1.setText("");
-            warningLabel1.setBackground(new Color(28, 28, 28));
+            warningLabel1.setBackground(new Color(42, 48, 57));
         } else
         {
-            actuatorDutyCycleBar1.setForeground(new Color(255, 255 + (256 - actuatorTime1), 0));
+            actuatorPSPosBar.setForeground(new Color(255, 255 + (256 - actuatorTime1), 0));
             warningLabel1.setText("Warning!");
             warningLabel1.setBackground(Color.red);
         }
-    }//GEN-LAST:event_actuatorDutyCycleBar1StateChanged
+    }//GEN-LAST:event_actuatorPSPosBarStateChanged
 
     private void seafloorModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seafloorModeButtonActionPerformed
 
@@ -2208,20 +2208,20 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         //helpframe.setLocation(this.getLocation().x, this.getLocation().y);
     }//GEN-LAST:event_jMenuAboutActionPerformed
 
-    private void actuatorDutyCycleBar2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorDutyCycleBar2StateChanged
-        int actuatorTime2 = actuatorDutyCycleBar2.getValue();
-        if (actuatorTime2 <= 255)
+    private void actuatorSBPosBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorSBPosBarStateChanged
+        int actuatorTime2 = actuatorSBPosBar.getValue();
+        if (actuatorTime2 <= 254)
         {
-            actuatorDutyCycleBar2.setForeground(new Color(actuatorTime2, 255, 0));
+            actuatorSBPosBar.setForeground(new Color(actuatorTime2, 255, 0));
             warningLabel2.setText("");
-            warningLabel2.setBackground(new Color(28, 28, 28));
+            warningLabel2.setBackground(new Color(42, 48, 57));
         } else
         {
-            actuatorDutyCycleBar2.setForeground(new Color(255, 255 + (256 - actuatorTime2), 0));
+            actuatorSBPosBar.setForeground(new Color(255, 255 + (256 - actuatorTime2), 0));
             warningLabel2.setText("Warning!");
             warningLabel2.setBackground(Color.red);
         }
-    }//GEN-LAST:event_actuatorDutyCycleBar2StateChanged
+    }//GEN-LAST:event_actuatorSBPosBarStateChanged
 
     private void jMenuOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuOptionsActionPerformed
         options.setVisible(true);
@@ -2853,14 +2853,14 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JToggleButton InputControllerButton;
     private javax.swing.JSlider actuatorControlPS;
     private javax.swing.JSlider actuatorControlSB;
-    private javax.swing.JProgressBar actuatorDutyCycleBar1;
-    private javax.swing.JProgressBar actuatorDutyCycleBar2;
     private javax.swing.JLabel actuatorHeader1;
     private javax.swing.JLabel actuatorHeader2;
+    private javax.swing.JProgressBar actuatorPSPosBar;
     private javax.swing.JLabel actuatorPSPosLabel;
     private javax.swing.JPanel actuatorPanel1;
     private javax.swing.JPanel actuatorPanel2;
     private javax.swing.JLabel actuatorPosLabel;
+    private javax.swing.JProgressBar actuatorSBPosBar;
     private javax.swing.JLabel actuatorSBPosLabel;
     private javax.swing.JLabel actuatorSBPosLabel1;
     private javax.swing.JPanel background;
@@ -3022,13 +3022,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             this.sounderThread.start();
         }
 
-        rollLabel.setText("Roll angle: " + data.getRollAngle());
-        pitchLabel.setText("Pitch angle: " + data.getPitchAngle());
-        wingLabel.setText("Wing angle: " + data.getWingAngle());
+        rollLabel.setText("Roll Angle: " + data.getRollAngle());
+        pitchLabel.setText("Pitch Angle: " + data.getPitchAngle());
+        wingLabel.setText("Wing Angle: " + data.getWingAngle());
 
-        seafloorDepthBoatLabel.setText("Beneath boat: " + data.getDepthBeneathBoat() + "m");
+        seafloorDepthBoatLabel.setText("Beneath Boat: " + data.getDepthBeneathBoat() + "m");
         seafloorDepthRovLabel.setText("Beneath ROV: " + data.getDepthBeneathRov() + "m");
-        rovDepthLabel.setText("ROV depth: " + data.getDepth() + "m");
+        rovDepthLabel.setText("ROV Depth: " + data.getDepth() + "m");
 
         headingLabel.setText("Heading: " + data.getGPSAngle());
         longitudeLabel.setText("Longitude: " + data.getLongitude());
@@ -3036,6 +3036,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         actuatorPSPosLabel.setText("PS Position: " + data.getFb_actuatorPSPos());
         actuatorSBPosLabel.setText("SB Position: " + data.getFb_actuatorSBPos());
+        actuatorPSPosBar.setValue(data.getFb_actuatorPSPos());
+        actuatorSBPosBar.setValue(data.getFb_actuatorSBPos());
+
         if (data.isI2cError())
         {
             i2cErrorLabel.setText("I²C: ERROR!");
@@ -3080,7 +3083,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             }
         }
 
-        if (data.getVoltage() < 30.00 && data.getVoltage() > 25.00)
+        if (data.getVoltage() < 28.00 && data.getVoltage() > 25.00)
         {
             try
             {
