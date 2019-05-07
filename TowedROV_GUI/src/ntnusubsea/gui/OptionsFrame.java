@@ -25,7 +25,7 @@ import javax.swing.JFrame;
 public class OptionsFrame extends javax.swing.JFrame
 {
 
-    File file = new File("ROV Options.txt");
+    File file = new File("C:\\TowedROV\\ROV Options.txt");
     String IP_Rov;
     String IP_Camera;
     ArrayList channels = new ArrayList<String>();
@@ -407,6 +407,8 @@ public class OptionsFrame extends javax.swing.JFrame
             writer.write(KpTextField.getText() + System.getProperty("line.separator"));
             writer.write(KiTextField.getText() + System.getProperty("line.separator"));
             writer.write(KdTextField.getText() + System.getProperty("line.separator"));
+            writer.write(offset1TextField.getText() + System.getProperty("line.separator"));
+            writer.write(offset2TextField.getText() + System.getProperty("line.separator"));
 
             data.setKp(KpTextField.getText());
             data.setKi(KiTextField.getText());
@@ -421,7 +423,7 @@ public class OptionsFrame extends javax.swing.JFrame
             this.client_ROV.sendCommand("cmd_pid_d:" + KdTextField.getText());
             this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + KdTextField.getText());
             this.client_ROV.sendCommand("cmd_offsetROVdepth:" + KdTextField.getText());
-            
+
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -456,6 +458,8 @@ public class OptionsFrame extends javax.swing.JFrame
             writer.write(KpTextField.getText() + System.getProperty("line.separator"));
             writer.write(KiTextField.getText() + System.getProperty("line.separator"));
             writer.write(KdTextField.getText() + System.getProperty("line.separator"));
+            writer.write(offset1TextField.getText() + System.getProperty("line.separator"));
+            writer.write(offset2TextField.getText() + System.getProperty("line.separator"));
 
             data.setKp(KpTextField.getText());
             data.setKi(KiTextField.getText());
@@ -470,7 +474,7 @@ public class OptionsFrame extends javax.swing.JFrame
             this.client_ROV.sendCommand("cmd_pid_d:" + KdTextField.getText());
             this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + KdTextField.getText());
             this.client_ROV.sendCommand("cmd_offsetROVdepth:" + KdTextField.getText());
-            
+
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -491,7 +495,7 @@ public class OptionsFrame extends javax.swing.JFrame
      */
     public void getOptionsFromFile()
     {
-        try (BufferedReader br = new BufferedReader(new FileReader("ROV Options.txt")))
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\TowedROV\\ROV Options.txt")))
         {
             this.IP_Rov = br.readLine();
             jTextFieldIP_Rov.setText(this.IP_Rov);
@@ -509,14 +513,11 @@ public class OptionsFrame extends javax.swing.JFrame
             jTextFieldChannel6.setText((String) channels.get(5));
             jTextFieldChannel7.setText((String) channels.get(6));
             jTextFieldChannel8.setText((String) channels.get(7));
-            data.setKp(br.readLine());
-            data.setKi(br.readLine());
-            data.setKd(br.readLine());
-            data.setOffsetDepthBeneathROV(br.readLine());
-            data.setOffsetROVdepth(br.readLine());
-            KpTextField.setText(data.getKp());
-            KiTextField.setText(data.getKi());
-            KdTextField.setText(data.getKd());
+            KpTextField.setText(br.readLine());
+            KiTextField.setText(br.readLine());
+            KdTextField.setText(br.readLine());
+            offset1TextField.setText(br.readLine());
+            offset2TextField.setText(br.readLine());
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
