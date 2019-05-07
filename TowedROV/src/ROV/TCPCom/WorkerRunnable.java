@@ -127,7 +127,7 @@ public class WorkerRunnable implements Runnable
                                 outToClient.println("Server: OK");
                             
                             case "cmd_targetDistance":
-                                dh.setCmd_targetDistance(parseStringToDouble(value));
+                                dh.setCmd_targetDistance(Double.valueOf(value));
                                 outToClient.println("Server: OK");
                                 break;
                             
@@ -150,25 +150,25 @@ public class WorkerRunnable implements Runnable
                                 break;
                             
                             case "cmd_pid_p":
-                                dh.setCmd_pid_p(parseStringToDouble(value));
+                                dh.setCmd_pid_p(Double.valueOf(value));
 //                                System.out.println("Pid_p is: " + dh.getCmd_pid_p());
                                 outToClient.println("Server: OK");
                                 break;
                             
                             case "cmd_pid_i":
-                                dh.setCmd_pid_i(parseStringToDouble(value));
+                                dh.setCmd_pid_i(Double.valueOf(value));
 //                                System.out.println("Pid_i is: " + dh.getCmd_pid_i());
                                 outToClient.println("Server: OK");
                                 break;
                             
                             case "cmd_pid_d":
-                                dh.setCmd_pid_d(parseStringToDouble(value));
+                                dh.setCmd_pid_d(Double.valueOf(value));
 //                                System.out.println("Pid_d is: " + dh.getCmd_pid_d());
                                 outToClient.println("Server: OK");
                                 break;
                             
                             case "cmd_pid_gain":
-                                dh.setCmd_pid_gain(parseStringToDouble(value));
+                                dh.setCmd_pid_gain(Double.valueOf(value));
 //                                System.out.println("Pid_gain is: " + dh.getCmd_pid_gain());
                                 outToClient.println("Server: OK");
                                 break;
@@ -185,7 +185,7 @@ public class WorkerRunnable implements Runnable
                                 break;
                             
                             case "cmd_rovDepth":
-                                dh.setCmd_currentROVdepth(parseStringToDouble(value));
+                                dh.setCmd_currentROVdepth(Double.valueOf(value));
                                 outToClient.println("Server: OK");
                                 break;
                             
@@ -195,7 +195,7 @@ public class WorkerRunnable implements Runnable
                                 break;
                             
                             case "cmd_offsetDepthBeneathROV":
-                                dh.setCmd_offsetDepthBeneathROV(parseStringToDouble(value));
+                                dh.setCmd_offsetDepthBeneathROV(Double.valueOf(value));
                                 outToClient.println("Server: OK");
                                 break;
 
@@ -461,19 +461,19 @@ public class WorkerRunnable implements Runnable
         return result;
     }
     
-    private Double parseStringToDouble(String value)
-    {
-        Double result = 0.00;
-        try
-        {
-            result = Double.valueOf(value);
-        } catch (Exception e)
-        {
-            System.out.println("Exception while parsing to double");
-        }
-        return result;
-    }
-    
+//    private Double parseStringToDouble(String value)
+//    {
+//        Double result = 0.00;
+//        try
+//        {
+//            result = Double.valueOf(value);
+//        } catch (Exception e)
+//        {
+//            System.out.println("Exception while parsing to double");
+//        }
+//        return result;
+//    }
+//    
     private Byte parseStringToByte(String value)
     {
         Byte result = 0;

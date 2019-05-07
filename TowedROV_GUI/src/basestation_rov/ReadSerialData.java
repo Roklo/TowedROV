@@ -224,14 +224,10 @@ public class ReadSerialData implements Runnable
                     data.setLongitude(Float.parseFloat(value));
                     //setLongitude(Float.parseFloat(value));
                     break;
-                case "Depth":
+                case "D":
+                    double doubleDepth = Float.parseFloat(value) * -1;
+                    data.setDepthBeneathBoat(doubleDepth);
                     //setDepth(Float.parseFloat(value));
-                    break;
-                case "DepthBeneathBoat":
-                    data.setDepthBeneathBoat(Double.parseDouble(value));
-                    break;
-                case "DBT":
-                    data.setDepthBeneathBoat(Double.parseDouble(value));
                     break;
                 case "Temp":
                     data.setTemperature(Float.parseFloat(value));
