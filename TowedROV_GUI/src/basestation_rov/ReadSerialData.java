@@ -123,7 +123,7 @@ public class ReadSerialData implements Runnable
         {
             try
             {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (Exception ex)
             {
 
@@ -151,23 +151,26 @@ public class ReadSerialData implements Runnable
 
                 if (dataHasFormat)
                 {
-                    String dataStream = buffer;
-
-                    dataStream = dataStream.substring(dataStream.indexOf(startChar) + 1);
-                    dataStream = dataStream.substring(0, dataStream.indexOf(endChar));
-                    //dataStream = dataStream.replace("?", "");
-                    String[] data = dataStream.split(seperationChar);
-
-                    for (int i = 0; i <= data.length; i = i + 2)
+                    if (buffer.contains("<") && buffer.contains(">"))
                     {
-                        //this.data.data.put(data[i], data[i + 1]);
-                        incommingData.put(data[i], data[i + 1]);
+                        String dataStream = buffer;
 
+                        dataStream = dataStream.substring(dataStream.indexOf(startChar) + 1);
+                        dataStream = dataStream.substring(0, dataStream.indexOf(endChar));
+                        //dataStream = dataStream.replace("?", "");
+                        String[] data = dataStream.split(seperationChar);
+
+                        for (int i = 0; i <= data.length; i = i + 2)
+                        {
+                            //this.data.data.put(data[i], data[i + 1]);
+                            incommingData.put(data[i], data[i + 1]);
+
+                        }
+
+                        //recievedData = true;
+                        //this.data.handleDataFromRemote();
+                        sendIncommingDataToDataHandler();
                     }
-
-                    //recievedData = true;
-                    //this.data.handleDataFromRemote();
-                    sendIncommingDataToDataHandler();
                 }
 
 //            if (elapsedTimer != 0)
