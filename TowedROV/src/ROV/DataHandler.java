@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataHandler extends Observable
 {
 
-    //Internal variables for ROB
+    //Internal variables for ROV
     boolean ERROR_I2C = false;
     String dataToSend = "";
     boolean gatheringDataToSend = false;
@@ -65,6 +65,9 @@ public class DataHandler extends Observable
 
     double cmd_imuCalibrateRoll = 0;
     double cmd_imuCalibratePitch = 0;
+    
+    boolean cmd_ping = false;
+    boolean clientConnected = false;
 
     // Sensor values
     boolean fb_ROVReady = false;
@@ -785,6 +788,30 @@ public class DataHandler extends Observable
     {
         this.cmd_offsetROVdepth = cmd_offsetROVdepth;
     }
+
+    public boolean isCmd_ping()
+    {
+        return cmd_ping;
+    }
+
+    public void setCmd_ping(boolean cmd_ping)
+    {
+        this.cmd_ping = cmd_ping;
+    }
+
+    public boolean isClientConnected()
+    {
+        return clientConnected;
+    }
+
+    public void setClientConnected(boolean clientConnected)
+    {
+        this.clientConnected = clientConnected;
+    }
+    
+    
+    
+    
     
     
 

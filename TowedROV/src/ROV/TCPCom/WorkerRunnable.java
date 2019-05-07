@@ -356,6 +356,7 @@ public class WorkerRunnable implements Runnable
                             //Other  commands
                             case "ping":
                                 //output.write(("<ping:true>").getBytes());
+                                dh.setCmd_ping(true);
                                 outToClient.println("<ping:true>");
 //                                welcomeMessageIsSent = true;
                                 break;

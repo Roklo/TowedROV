@@ -39,6 +39,10 @@ public class Logic implements Runnable, Observer
     int old_cmd_actuatorSB_man = 0;
     int old_cmd_actuatorPS_man = 0;
 
+    double elapsedTimer = 0;
+    double elapsedTimerNano = 0;
+    long lastTime = 0;
+
     private final static int actuatorPShysteresis = 5;
     private final static int actuatorSBhysteresis = 5;
     private HashMap<String, String> newDataToSend = new HashMap<>();
@@ -80,6 +84,21 @@ public class Logic implements Runnable, Observer
                     old_cmd_actuatorSB_2 = data.getCmd_actuatorSB();
                 }
             }
+            if (data.isCmd_ping())
+            {
+//                elapsedTimer = 0;
+//                elapsedTimerNano = 0;
+//                lastTime = 0;
+                data.setClientConnected(true);
+                elapsedTimer = 0;
+                data.setCmd_ping(false);
+            }
+            elapsedTimerNano = (System.nanoTime() - lastTime);
+            elapsedTimer = elapsedTimerNano / 1000000;
+            if (elapsedTimer > 5000 && data.isClientConnected())
+            {
+                System.out.println("Lost connection go to emergency");                
+            }
 
             gatherFbData();
 
@@ -94,7 +113,8 @@ public class Logic implements Runnable, Observer
     }
 
     @Override
-    public void update(Observable o, Object arg)
+    public void update(Observable o, Object arg
+    )
     {
         //Commands
         if (data.getcmd_targetMode() != 2)
