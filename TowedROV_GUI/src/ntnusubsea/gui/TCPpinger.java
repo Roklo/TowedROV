@@ -45,8 +45,11 @@ public class TCPpinger implements Runnable
     @Override
     public void run()
     {
-        data.setRovPing(this.getPing());
-        System.out.println("Ping (ROV): " + data.getRovPing());
+        if (this.isConnected())
+        {
+            data.setRovPing(this.getPing());
+            System.out.println("Ping (ROV): " + data.getRovPing());
+        }
     }
 
     /**
@@ -95,7 +98,7 @@ public class TCPpinger implements Runnable
         String ping = "<Ping:null>";
         lastTime = System.nanoTime();
         String serverResponse = sendData("ping");
-        if (serverResponse.equals("<ping:true>"))
+        if (serverResponse != null && serverResponse.equals("<ping:true>"))
         {
             elapsedTimerNano = (System.nanoTime() - lastTime);
             elapsedTimer = elapsedTimerNano / 1000000;

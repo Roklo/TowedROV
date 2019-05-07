@@ -1653,7 +1653,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
@@ -1672,7 +1672,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(actuatorPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
                 .addComponent(actuatorPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1896,7 +1896,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuBar.add(jMenu3);
 
         jMenuPing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))); // NOI18N
-        jMenuPing.setText("Ping (ROV): 0.00 ms");
+        jMenuPing.setText("Ping (ROV): Not connected");
         jMenuBar.add(jMenuPing);
 
         setJMenuBar(jMenuBar);
@@ -2029,8 +2029,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             this.clientThreadExecutor = Executors.newScheduledThreadPool(4);
             clientThreadExecutor.scheduleAtFixedRate(client_Pinger,
                     0, 1000, TimeUnit.MILLISECONDS);
-            clientThreadExecutor.scheduleAtFixedRate(client_ROV,
-                    0, 100, TimeUnit.MILLISECONDS);
+//            clientThreadExecutor.scheduleAtFixedRate(client_ROV,
+//                    0, 100, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(client_Camera,
                     0, 100, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(udpClient,
@@ -3140,10 +3140,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             {
                 System.out.println("Error: " + ex.getMessage());
             }
-        } else
+        } else if (this.client_Pinger.isConnected())
         {
             jMenuPing.setText("Ping (ROV): " + String.valueOf(data.getRovPing()) + " ms");
-            jMenuPing.setBackground(new Color(39, 46, 54));
             try
             {
                 jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
