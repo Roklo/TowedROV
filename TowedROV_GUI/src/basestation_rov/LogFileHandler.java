@@ -97,7 +97,7 @@ public class LogFileHandler implements Runnable
 
                 outputWriterTelementry = new BufferedWriter(new FileWriter(telementryLogFile));
 
-                outputWriterShipPos.append("Point,Time,Latitude,Longtitude,Speed,ROV Depth,Heading");
+                outputWriterShipPos.append("Point,Time,Latitude,Longtitude,Speed,ROV Depth,GPSHeading");
                 outputWriterShipPos.flush();
 
                 outputWriterData.append("Point,Time,Roll,Pitch,Depth,"
@@ -105,7 +105,7 @@ public class LogFileHandler implements Runnable
                         + "ActuatorSB_feedback,ActuatorPS_command,"
                         + "ActuatorSB_command,Voltage,Emergency, outsideTemp,"
                         + "insideTempCameraHouse, humidity, tempElBoxFromt,"
-                        + "tempElBoxRear");
+                        + "tempElBoxRear, I2CError, LeakDetection");
                 outputWriterData.flush();
 
                 outputWriterTelementry.append("Latitude,Longtitude, Elevation, Time");
@@ -228,7 +228,7 @@ public class LogFileHandler implements Runnable
                     + timeStampString + ","
                     + String.valueOf(data.getRollAngle()) + ","
                     + String.valueOf(data.getPitchAngle()) + ","
-                    + String.valueOf(data.getDepth()) + ","
+                    + String.valueOf(data.getDepthBeneathBoat()) + ","
                     + String.valueOf(data.getDepthBeneathRov()) + ","
                     + String.valueOf(data.getRovDepth()) + ","
                     + String.valueOf(data.getFb_actuatorPSPos()) + ","
@@ -240,7 +240,9 @@ public class LogFileHandler implements Runnable
                     + String.valueOf(data.getInsideTemp()) + ","
                     + String.valueOf(data.getHumidity()) + ","
                     + String.valueOf(data.getFb_tempElBoxFront()) + ","
-                    + String.valueOf(data.getFb_tempElBoxRear()) + ",";
+                    + String.valueOf(data.getFb_tempElBoxRear()) + ","
+                    + String.valueOf(data.isI2cError()) + ","
+                    + String.valueOf(data.getLeakStatus()) + ",";
 
 //            outputWriterData.append(String.valueOf(DataPointNumb));
 //            outputWriterData.append(',');
@@ -286,7 +288,7 @@ public class LogFileHandler implements Runnable
             shipTrack = "";
             shipTrack = shipTrackPointNumb + "," + timeStampString + ","
                     + data.getLatitude() + "," + data.getLongitude() + ","
-                    + data.getSpeed() + "," + data.getRovDepth() + "," + data.getHeading();
+                    + data.getSpeed() + "," + data.getRovDepth() + "," + data.getGPSAngle();
             outputWriterShipPos.append('\n');
             outputWriterShipPos.append(shipTrack);
             outputWriterShipPos.flush();
