@@ -158,8 +158,9 @@ public class Logic implements Runnable, Observer
         newDataToSend.put("Fb_actuatorSBPos", String.valueOf(data.getFb_actuatorSBPos()));
         newDataToSend.put("Fb_rollAngle", String.valueOf(data.getFb_rollAngle()));
         newDataToSend.put("Fb_pitchAngle", String.valueOf(data.getFb_pitchAngle()));
-        newDataToSend.put("Fb_ROVdepth", String.valueOf(data.getCmd_currentROVdepth()));
-
+        newDataToSend.put("Fb_depthBeneathROV", String.valueOf(data.getCmd_currentROVdepth()));
+        newDataToSend.put("Fb_tempElBoxFront", String.valueOf(data.getFb_tempMainElBoxFront()));
+        newDataToSend.put("Fb_tempElBoxRear", String.valueOf(data.getFb_tempMainElBoxRear()));
         newDataToSend.put("Fb_ROVReady", String.valueOf(data.getFb_ROVReady()));
         newDataToSend.put("ERROR_I2C", String.valueOf(data.ERROR_I2C));
 

@@ -46,6 +46,8 @@ public class DataHandler extends Observable
     int cmd_targetMode = 0; // Mode 0 = depth, 1 = seafloor, 2 = manual
     double cmd_targetDistance = 0;
 
+    double cmd_offsetDepthBeneathROV = 0;
+
     //int cmd_depth = 0;
     int cmd_cameraPitch = 0;
     int cmd_cameraRoll = 0;
@@ -587,7 +589,7 @@ public class DataHandler extends Observable
 
     public void setCmd_currentROVdepth(double cmd_currentROVdepth)
     {
-        this.cmd_currentROVdepth = cmd_currentROVdepth;
+        this.cmd_currentROVdepth = cmd_currentROVdepth + cmd_offsetDepthBeneathROV;
         setChanged();
         notifyObservers();
 
@@ -761,6 +763,16 @@ public class DataHandler extends Observable
     public void setCmd_disableMotors(boolean cmd_disableMotors)
     {
         this.cmd_disableMotors = cmd_disableMotors;
+    }
+
+    public double getCmd_offsetDepthBeneathROV()
+    {
+        return cmd_offsetDepthBeneathROV;
+    }
+
+    public void setCmd_offsetDepthBeneathROV(double cmd_offsetDepthBeneathROV)
+    {
+        this.cmd_offsetDepthBeneathROV = cmd_offsetDepthBeneathROV;
     }
 
     public void handleDataFromI2C()

@@ -103,7 +103,9 @@ public class LogFileHandler implements Runnable
                 outputWriterData.append("Point,Time,Roll,Pitch,Depth,"
                         + "DepthToSeaFloor,ROV_Depth,ActuatorPS_feedback,"
                         + "ActuatorSB_feedback,ActuatorPS_command,"
-                        + "ActuatorSB_command,Voltage,Emergency");
+                        + "ActuatorSB_command,Voltage,Emergency, outsideTemp,"
+                        + "insideTempCameraHouse, humidity, tempElBoxFromt,"
+                        + "tempElBoxRear");
                 outputWriterData.flush();
 
                 outputWriterTelementry.append("Latitude,Longtitude, Elevation, Time");
@@ -233,7 +235,12 @@ public class LogFileHandler implements Runnable
                     + String.valueOf(data.getFb_actuatorSBPos()) + ","
                     + String.valueOf(data.getFb_actuatorPScmd()) + ","
                     + String.valueOf(data.getFb_actuatorSBcmd()) + ","
-                    + String.valueOf(data.getVoltage());
+                    + String.valueOf(data.getVoltage()) + ","
+                    + String.valueOf(data.getOutsideTemp()) + ","
+                    + String.valueOf(data.getInsideTemp()) + ","
+                    + String.valueOf(data.getHumidity()) + ","
+                    + String.valueOf(data.getFb_tempElBoxFront) + ","
+                    + String.valueOf(data.getFb_tempElBoxRear) + ",";
 
 //            outputWriterData.append(String.valueOf(DataPointNumb));
 //            outputWriterData.append(',');
