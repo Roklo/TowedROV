@@ -27,6 +27,8 @@ public class InputController implements Runnable
 
     private static int lastAngle = 0;
     private static float lastVal = 0;
+    private int oldPS = 0;
+    private int oldSB = 0;
 
     private String ipAddress = "";
     private int sendPort = 0;
@@ -57,12 +59,34 @@ public class InputController implements Runnable
         {
             try
             {
-                if (data.isControllerEnabled())
+                if (data.isControllerEnabled() && data.isManualMode())
                 {
-                    int ps = btnLy + btnRx;
-                    int sb = btnLy - btnRx;
-                    this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(ps));
-                    this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(sb));
+//                    int ps = 0;
+//                    int sb = 0;
+//                    if (btnLy <= 127)
+//                    {
+//                        ps = btnLy + btnRx;
+//                        sb = btnLy - btnRx;
+//                    }
+//                    if (btnLy > 127)
+//                    {
+//                        ps = btnLy - (btnRx);
+//                        sb = btnLy;
+//                    }
+
+                    int ps = btnLy;
+                    int sb = btnLy;
+                    if (ps != oldPS)
+                    {
+                        this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(ps));
+                        oldPS = ps;
+                    }
+                    if (sb != oldSB)
+                    {
+                        this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(sb));
+                        oldSB = sb;
+                    }
+
                 }
                 Thread.sleep(10);
             } catch (InterruptedException ex)
@@ -116,7 +140,7 @@ public class InputController implements Runnable
     {
         this.btnLy = btnLy;
         this.btnLyGUI = (double) (this.btnLy / 100.0);
-        System.out.println("L_Y: " + btnLy);
+        //System.out.println("L_Y: " + btnLy);
     }
 
     public int getBtnLx()
@@ -146,7 +170,7 @@ public class InputController implements Runnable
 
     public void setBtnRx(int btnRx)
     {
-        System.out.println("R_X: " + btnRx);
+        //System.out.println("R_X: " + btnRx);
         this.btnRx = btnRx;
     }
 
