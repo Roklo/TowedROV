@@ -47,6 +47,7 @@ public class DataHandler extends Observable
     double cmd_targetDistance = 0;
 
     double cmd_offsetDepthBeneathROV = 0;
+    double cmd_offsetROVdepth = 0;
 
     //int cmd_depth = 0;
     int cmd_cameraPitch = 0;
@@ -774,6 +775,18 @@ public class DataHandler extends Observable
     {
         this.cmd_offsetDepthBeneathROV = cmd_offsetDepthBeneathROV;
     }
+
+    public double getCmd_offsetROVdepth()
+    {
+        return cmd_offsetROVdepth;
+    }
+
+    public void setCmd_offsetROVdepth(double cmd_offsetROVdepth)
+    {
+        this.cmd_offsetROVdepth = cmd_offsetROVdepth;
+    }
+    
+    
 
     public void handleDataFromI2C()
     {

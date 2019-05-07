@@ -198,6 +198,10 @@ public class WorkerRunnable implements Runnable
                                 dh.setCmd_offsetDepthBeneathROV(Double.valueOf(value));
                                 outToClient.println("Server: OK");
                                 break;
+                                 case "cmd_offsetROVdepth":
+                                dh.setCmd_offsetROVdepth(Double.valueOf(value));
+                                outToClient.println("Server: OK");
+                                break;
 
                             //Feedback commands
                             case "fb_allData":

@@ -82,10 +82,11 @@ public class LogFileHandler implements Runnable
 
     public void run()
     {
-        if (!exifSetup)
+        if (!exifSetup || data.isImagesCleared())
         {
             try
             {
+                lastImageNumber = 0;
                 //SimpleDateFormat exifTime = new SimpleDateFormat("yyyyMMddHHmmss");
                 exifDateAndTime = new SimpleDateFormat("yyyyMMddHHmmss");
                 dateExif = new Date(System.currentTimeMillis());
@@ -96,6 +97,7 @@ public class LogFileHandler implements Runnable
                 outputWriterExif.append("Latitude,Longtitude,Time");
                 outputWriterExif.flush();
                 exifSetup = true;
+                data.setImagesCleared(true);
 
             } catch (Exception e)
             {
@@ -107,6 +109,7 @@ public class LogFileHandler implements Runnable
             exifDateAndTime = new SimpleDateFormat("yyyyMMddHHmmss");
             dateExif = new Date(System.currentTimeMillis());
             exifDateAndTime.format(dateExif);
+            lastImageNumber++;
             logExifData();
 
         }
