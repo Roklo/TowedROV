@@ -84,6 +84,8 @@ public class ROVMain
         
         PID pid = new PID (dh);
         dh.addObserver(logic);
+        
+        
 
         SerialDataHandler sdh = new SerialDataHandler(dh);
 
@@ -91,6 +93,9 @@ public class ROVMain
                 20, 40, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(logic,
+                20, 10, TimeUnit.MILLISECONDS);
+        
+        executor.scheduleAtFixedRate(pid,
                 20, 10, TimeUnit.MILLISECONDS);
        
 
@@ -173,7 +178,7 @@ public class ROVMain
         {
             try
             {
-                System.out.println("Current depth: " + dh.getCmd_currentROVdepth());
+//                System.out.println("Current depth: " + dh.getCmd_currentROVdepth());
                 //Thread.sleep(500);
 //                System.out.println("------------------------------------");
 //                System.out.println("FeedbackPS: " + dh.getFb_actuatorPSPos());

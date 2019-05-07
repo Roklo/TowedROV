@@ -30,7 +30,8 @@ public class PID implements Runnable, Observer
     public PID(DataHandler data)
     {
         this.data = data;
-        miniPID = new MiniPID(0.20, 0.01, 0.4);
+//        miniPID = new MiniPID(p, i, d);
+        miniPID = new MiniPID(data.getCmd_pid_p(), data.getCmd_pid_i(), data.getCmd_pid_d());
         miniPID.setOutputLimits(0, 254);
 
     }
@@ -39,7 +40,7 @@ public class PID implements Runnable, Observer
     public void run()
     {
 
-        if (data.getcmd_targetMode() != 3)
+        if (data.getcmd_targetMode() != 2)
         {
             if (data.getcmd_targetMode() == 0)
             {
@@ -56,9 +57,9 @@ public class PID implements Runnable, Observer
 
             miniPID.setSetpoint(target);
             output = miniPID.getOutput(actual, target);
+            
             data.setCmd_bothActuators(output.intValue());
         }
-
     }
 
     @Override

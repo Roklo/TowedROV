@@ -190,7 +190,7 @@ public class ReadSerialData implements Runnable
 //            }
             } catch (Exception ex)
             {
-                System.out.println("Lost connection to " + myName);
+               // System.out.println("Lost connection to " + myName);
             }
 
         }

@@ -56,7 +56,7 @@ public final class Data extends Observable
     // Feedback from GPS
     public int satellites = 0;
     public float altitude = 0;
-    public float angle = 0;
+    public double angle = 0;
     public float speed = 0;
     public float latitude = (float) 0;
     public float longitude = (float) 0;
@@ -935,12 +935,12 @@ public final class Data extends Observable
         notifyObservers();
     }
 
-    public synchronized float getAngle()
+    public synchronized double getAngle()
     {
         return angle;
     }
 
-    public synchronized void setAngle(float angle)
+    public synchronized void setAngle(double angle)
     {
         this.angle = angle;
         setChanged();

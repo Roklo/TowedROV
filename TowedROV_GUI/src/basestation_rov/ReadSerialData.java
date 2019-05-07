@@ -206,7 +206,7 @@ public class ReadSerialData implements Runnable
                     //setAltitude(Float.parseFloat(value));
                     break;
                 case "Angle":
-                    data.setAngle(Float.parseFloat(value));
+                    data.setAngle(Double.parseDouble(value));
                     //setAngle(Float.parseFloat(value));
                     break;
                 case "Speed":

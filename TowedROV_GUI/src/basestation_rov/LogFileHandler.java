@@ -58,8 +58,9 @@ public class LogFileHandler implements Runnable
     File shipPosLogFile = null;
     File dataLogFile = null;
     File telementryLogFile = null;
-    
+
     Date date;
+    Date dateCSV;
 
     BufferedWriter outputWriterShipPos = null;
     BufferedWriter outputWriterData = null;
@@ -77,7 +78,7 @@ public class LogFileHandler implements Runnable
             try
             {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-                 date = new Date(System.currentTimeMillis());
+                date = new Date(System.currentTimeMillis());
 
                 shipPosLogFile = new File(logStorageLocation + "ShipPos_LOG_" + formatter.format(date) + ".csv");
                 FileUtils.touch(shipPosLogFile);
@@ -89,7 +90,7 @@ public class LogFileHandler implements Runnable
 
                 telementryLogFile = new File(logStorageLocation + "Telementry_LOG_" + formatter.format(date) + ".csv");
                 FileUtils.touch(telementryLogFile);
-                  
+
                 outputWriterShipPos = new BufferedWriter(new FileWriter(shipPosLogFile));
 
                 outputWriterData = new BufferedWriter(new FileWriter(dataLogFile));
@@ -102,10 +103,12 @@ public class LogFileHandler implements Runnable
                 outputWriterData.append("Point,Time,Roll,Pitch,Depth,"
                         + "DepthToSeaFloor,ROV_Depth,ActuatorPS_feedback,"
                         + "ActuatorSB_feedback,ActuatorPS_command,"
-                        + "ActuatorSB_command,Voltage,Emergency");
+                        + "ActuatorSB_command,Voltage,Emergency, outsideTemp,"
+                        + "insideTempCameraHouse, humidity, tempElBoxFromt,"
+                        + "tempElBoxRear");
                 outputWriterData.flush();
 
-                outputWriterTelementry.append("Latitude,Longtitude");
+                outputWriterTelementry.append("Latitude,Longtitude, Elevation, Time");
 //                        + "Elevation,Heading,Time");
                 outputWriterTelementry.flush();
 
@@ -118,10 +121,9 @@ public class LogFileHandler implements Runnable
         }
         if (data.startLogging)
         {
-
+            dateCSV = new Date(System.currentTimeMillis());
             timeStampString = String.valueOf(java.time.LocalTime.now());
             timeAndDateCSV = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-            
 
             logShipPosition();
             logData();
@@ -200,16 +202,15 @@ public class LogFileHandler implements Runnable
         try
         {
             telementryLog = "";
-            telementryLog = data.getLongitude() + ","
-                    + data.getLatitude() ;
-//                    + ","
-//                    + data.getDepth() + ","
-//                    + timeAndDateCSV.format(date);
+            telementryLog = data.getLatitude() + ","
+                    + data.getLongitude() + ","
+                    + data.getDepth() + ","
+                    + timeAndDateCSV.format(dateCSV);
 
             outputWriterTelementry.append('\n');
             outputWriterTelementry.append(telementryLog);
             outputWriterTelementry.flush();
-            
+
         } catch (Exception e)
         {
             System.out.println("Error writing telementry...");
@@ -234,7 +235,12 @@ public class LogFileHandler implements Runnable
                     + String.valueOf(data.getFb_actuatorSBPos()) + ","
                     + String.valueOf(data.getFb_actuatorPScmd()) + ","
                     + String.valueOf(data.getFb_actuatorSBcmd()) + ","
-                    + String.valueOf(data.getVoltage());
+                    + String.valueOf(data.getVoltage()) + ","
+                    + String.valueOf(data.getOutsideTemp()) + ","
+                    + String.valueOf(data.getInsideTemp()) + ","
+                    + String.valueOf(data.getHumidity()) + ","
+                    + String.valueOf(data.getFb_tempElBoxFront) + ","
+                    + String.valueOf(data.getFb_tempElBoxRear) + ",";
 
 //            outputWriterData.append(String.valueOf(DataPointNumb));
 //            outputWriterData.append(',');

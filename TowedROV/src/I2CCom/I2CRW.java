@@ -29,7 +29,7 @@ public class I2CRW implements Runnable
 
     //User settings
     //SB and PS 180 target equals 0 degrees wing pos
-    private final static int PS_ACTUATOR_SPEED = 125;
+    private final static int PS_ACTUATOR_SPEED = 50;
     private final static int SB_ACTUATOR_SPEED = 50;
 
     //Polulu JRK drive commands 
