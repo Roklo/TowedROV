@@ -51,13 +51,14 @@ public class NTNUSubseaGUI
         SerialDataHandler sdh = new SerialDataHandler(data);
         EchoSounderFrame sonar = new EchoSounderFrame(data);
         LogFileHandler lgh = new LogFileHandler(data);
+        TCPpinger client_Pinger = new TCPpinger(IP_ROV, Port_ROV, data);
         TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
         TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
         UDPClient stream = new UDPClient(Port_cameraStream, data);
         IOControlFrame io = new IOControlFrame(data, client_ROV);
-        ROVFrame frame = new ROVFrame(sonar, data, io, client_ROV, client_Camera, stream, sounder, lgh);
+        ROVFrame frame = new ROVFrame(sonar, data, io, client_Pinger, client_ROV, client_Camera, stream, sounder, lgh);
         DataUpdater dataUpdater = new DataUpdater(client_ROV, client_Camera, data);
-        
+
         ScheduledExecutorService executor
                 = Executors.newScheduledThreadPool(8);
         SwingUtilities.invokeLater(frame);
@@ -68,21 +69,18 @@ public class NTNUSubseaGUI
         data.addObserver(io);
         executor.scheduleAtFixedRate(lgh,
                 0, 100, TimeUnit.MILLISECONDS);
-        InputControllerThread = new Thread(new InputController(data, client_ROV));
-        InputControllerThread.start();
-        InputControllerThread.setName("InputController");
-
         executor.scheduleAtFixedRate(cmt,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(sonar,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(dataUpdater,
                 1000, 100, TimeUnit.MILLISECONDS);
-        
-        
-        
+
+        InputControllerThread = new Thread(new InputController(data, client_ROV));
+        InputControllerThread.start();
+        InputControllerThread.setName("InputController");
+
         // Start searching for com ports:
-        
         long timeDifference = 0;
         long lastTime = 0;
         long timeDelay = 5000;

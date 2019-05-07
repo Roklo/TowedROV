@@ -50,6 +50,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private EchoSounderFrame echoSounder;
     private OptionsFrame options;
     private Thread sounderThread;
+    private TCPpinger client_Pinger;
     private TCPClient client_ROV;
     private TCPClient client_Camera;
     private UDPClient udpClient;
@@ -75,13 +76,14 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
      * @param client TCP client to send commands and receive data
      * @param io I/O frame to control inputs and outputs
      */
-    public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPClient client_ROV, TCPClient client_Camera, UDPClient udpClient, Sounder sounder, LogFileHandler lgh)
+    public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPpinger client_Pinger, TCPClient client_ROV, TCPClient client_Camera, UDPClient udpClient, Sounder sounder, LogFileHandler lgh)
     {
         this.clientThreadExecutor = null;
         this.encoderThreadExecutor = null;
         initComponents();
         this.data = data;
         this.echoSounder = echoSounder;
+        this.client_Pinger = client_Pinger;
         this.client_ROV = client_ROV;
         this.client_Camera = client_Camera;
         this.udpClient = udpClient;
@@ -291,6 +293,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuItemStopLogging = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMenuVoltage = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuPing = new javax.swing.JMenu();
 
         fullscreen.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         fullscreen.setBackground(new java.awt.Color(39, 44, 50));
@@ -1877,12 +1881,23 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenu1.setFocusable(false);
         jMenuBar.add(jMenu1);
 
-        jMenuVoltage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))); // NOI18N
+        jMenuVoltage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))); // NOI18N
         jMenuVoltage.setText("Voltage: 0.0 V");
         jMenuVoltage.setBorderPainted(false);
         jMenuVoltage.setContentAreaFilled(false);
         jMenuVoltage.setFocusable(false);
         jMenuBar.add(jMenuVoltage);
+
+        jMenu3.setBorderPainted(false);
+        jMenu3.setContentAreaFilled(false);
+        jMenu3.setEnabled(false);
+        jMenu3.setFocusable(false);
+        jMenu3.setPreferredSize(new java.awt.Dimension(20, 5));
+        jMenuBar.add(jMenu3);
+
+        jMenuPing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))); // NOI18N
+        jMenuPing.setText("Ping (ROV): 0.00 ms");
+        jMenuBar.add(jMenuPing);
 
         setJMenuBar(jMenuBar);
 
@@ -1990,16 +2005,16 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         {
             data.setEmergencyMode(true);
         }
-        setpointLabel.setText("EMERGENCY STOP: " + String.valueOf(setpoint) + "m");
+        targetDistanceTextField.setText("0.00");
+        setpointLabel.setText("EMERGENCY STOP: " + targetDistanceTextField.getText() + "m");
         setpointLabel.setBackground(new Color(255, 0, 0));
-        depthModeButton.doClick();
-        targetDistanceTextField.setText("0");
-        this.targetMode = 0;
+        manualControlButton.doClick();
         try
         {
             this.client_ROV.sendCommand("cmd_emergencySurface:true");
-            this.client_ROV.sendCommand("cmd_mode:0");
-            //sendButton.doClick();
+            this.client_ROV.sendCommand("cmd_targetMode:2");
+            this.client_ROV.sendCommand("cmd_actuatorPS:254");
+            this.client_ROV.sendCommand("cmd_actuatorSB:254");
         } catch (IOException ex)
         {
             System.out.println("IOException in emergencyStopButtonActionPerformed: " + ex.getMessage());
@@ -2011,7 +2026,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         try
         {
 
-            this.clientThreadExecutor = Executors.newScheduledThreadPool(3);
+            this.clientThreadExecutor = Executors.newScheduledThreadPool(4);
+            clientThreadExecutor.scheduleAtFixedRate(client_Pinger,
+                    0, 1000, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(client_ROV,
                     0, 100, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(client_Camera,
@@ -2140,6 +2157,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         try
         {
+            client_Pinger.disconnect();
             client_ROV.disconnect();
             client_Camera.disconnect();
 
@@ -2668,9 +2686,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     "Successfully cleared " + String.valueOf(tempNum) + " of " + String.valueOf(tempNum) + " images on the RPi.",
                     "Cleared Images",
                     JOptionPane.PLAIN_MESSAGE);
-        } catch (IOException ex)
+            data.setImagesCleared(true);
+        } catch (IOException ioex)
         {
-            Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("IOException: " + ioex.getMessage());
+        } catch (Exception ex)
+        {
+            System.out.println("Exception: " + ex.getMessage());
         }
     }//GEN-LAST:event_clearImagesButtonActionPerformed
 
@@ -2916,6 +2938,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuItem jMenuAbout;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuCalibrate;
@@ -2930,6 +2953,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JMenuItem jMenuItemStopLogging;
     private javax.swing.JMenu jMenuLogger;
     private javax.swing.JMenuItem jMenuOptions;
+    private javax.swing.JMenu jMenuPing;
     private javax.swing.JMenu jMenuRovReady;
     private javax.swing.JMenu jMenuTools;
     private javax.swing.JMenu jMenuVoltage;
@@ -3093,9 +3117,42 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 System.out.println("Error: " + ex.getMessage());
             }
             data.setEmergencyMode(true);
+        } else if (data.getVoltage() > 28.00)
+        {
+            jMenuVoltage.setText("Voltage: " + data.getVoltage() + " V");
+            try
+            {
+                jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+            } catch (IOException ex)
+            {
+                System.out.println("Error: " + ex.getMessage());
+            }
         }
 
-        jMenuVoltage.setText("Voltage: " + data.getVoltage() + " V");
+        if (this.client_Pinger.isConnected() && (data.getRovPing() == 0.00))
+        {
+            data.setEmergencyMode(true);
+            jMenuPing.setText("Ping (ROV): Lost connection...");
+            try
+            {
+                jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+            } catch (IOException ex)
+            {
+                System.out.println("Error: " + ex.getMessage());
+            }
+        } else
+        {
+            jMenuPing.setText("Ping (ROV): " + String.valueOf(data.getRovPing()) + " ms");
+            jMenuPing.setBackground(new Color(39, 46, 54));
+            try
+            {
+                jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+            } catch (IOException ex)
+            {
+                System.out.println("Error: " + ex.getMessage());
+            }
+        }
+
         photoModeDelay_FB_Label.setText(String.valueOf(df2.format(data.getPhotoModeDelay_FB())) + " s");
         imageNumberLabel.setText(data.getImageNumber() + " / 1000");
 

@@ -78,6 +78,7 @@ public final class Data extends Observable
     private double humidity = 0.00;
 
     // Feedback from ROV
+    private Double rovPing = 0.00;
     private boolean rovReady = false;
     private boolean i2cError;
     private int fb_actuatorPSPos;
@@ -125,6 +126,7 @@ public final class Data extends Observable
     private double photoModeDelay = 1.00;
     private double photoModeDelay_FB = 1.00;
     private int imageNumber = 0;
+    private boolean imagesCleared = false;
     private int cameraPitchValue = 0;
     private boolean doRovCalibration = false;
     private boolean emergencyMode = false;
@@ -149,9 +151,9 @@ public final class Data extends Observable
             labels.add(5, br.readLine());
             labels.add(6, br.readLine());
             labels.add(7, br.readLine());
-            setKp(br.readLine());
-            setKi(br.readLine());
-            setKd(br.readLine());
+            this.setKp(br.readLine());
+            this.setKi(br.readLine());
+            this.setKd(br.readLine());
             channelValues[0] = channel1;
             channelValues[1] = channel2;
             channelValues[2] = channel3;
@@ -824,6 +826,18 @@ public final class Data extends Observable
         notifyObservers();
     }
 
+    public boolean isImagesCleared()
+    {
+        return imagesCleared;
+    }
+
+    public void setImagesCleared(boolean imagesCleared)
+    {
+        this.imagesCleared = imagesCleared;
+    }
+    
+    
+
     /**
      * Increases the image number by one
      */
@@ -994,6 +1008,20 @@ public final class Data extends Observable
         setChanged();
         notifyObservers();
     }
+
+    public Double getRovPing()
+    {
+        return rovPing;
+    }
+
+    public void setRovPing(Double rovPing)
+    {
+        this.rovPing = rovPing;
+        setChanged();
+        notifyObservers();
+    }
+    
+    
     
     public boolean isRovReady()
     {
