@@ -25,7 +25,7 @@ class LeftThumbYListener implements ValueListener
     public void value(int newValue)
     {
         newValue = map(newValue, -32768, 32768, 1, 254);
-        if (newValue < 129 && newValue > 125)
+        if (newValue < 131 && newValue > 123)
         {
             newValue = 127;
         }
