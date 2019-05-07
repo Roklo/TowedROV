@@ -3080,7 +3080,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             }
         }
 
-        if (data.getVoltage() < 30.00)
+        if (data.getVoltage() < 30.00 && data.getVoltage() > 25.00)
         {
             try
             {
