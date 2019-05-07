@@ -46,7 +46,7 @@ public class WorkerRunnable implements Runnable
     public void run()
     {
         boolean clientOnline = true;
-        boolean welcomeMessageIsSent = false;
+//        boolean welcomeMessageIsSent = false;
         try
         {
             BufferedReader inFromClient = new BufferedReader(
@@ -62,7 +62,7 @@ public class WorkerRunnable implements Runnable
             while (clientOnline)
             {
                 
-                welcomeMessageIsSent = true;
+//                welcomeMessageIsSent = true;
                 
                 if (inFromClient.ready())
                 {
@@ -352,8 +352,8 @@ public class WorkerRunnable implements Runnable
                             //Other  commands
                             case "ping":
                                 //output.write(("<ping:true>").getBytes());
-                                outToClient.println("<ping:true>" + welcomeMessageIsSent);
-                                welcomeMessageIsSent = true;
+                                outToClient.println("<ping:true>");
+//                                welcomeMessageIsSent = true;
                                 break;
                             
                             case "ack":
