@@ -65,17 +65,17 @@ public final class Data extends Observable
     public double voltage = (double) 36.01;
 
     // Feedback from IMU
-    public double roll = 0;
-    public double pitch = 0;
+    public double roll = 0.00;
+    public double pitch = 0.00;
     public float heading = 100;
 
     // Feedback from the Camera RPi
     private boolean leakStatus = false;
-    private double rovDepth;
-    private double pressure = 0.0;
-    private double outsideTemp = 0.0;
-    private double insideTemp = 0.0;
-    private double humidity = 0.0;
+    private double rovDepth = 0.00;
+    private double pressure = 0.00;
+    private double outsideTemp = 0.00;
+    private double insideTemp = 0.00;
+    private double humidity = 0.00;
 
     // Feedback from ROV
     private boolean rovReady = false;
@@ -89,6 +89,8 @@ public final class Data extends Observable
     private int fb_actuatorSBMinPos;
     private int fb_actuatorPSMaxPos;
     private int fb_actuatorSBMaxPos;
+    private double fb_tempElBoxFront;
+    private double fb_tempElBoxRear;
 
     // Feedback from GUI
     public boolean startLogging = true;
@@ -116,6 +118,8 @@ public final class Data extends Observable
     private String Kp;
     private String Ki;
     private String Kd;
+    private String offsetDepthBeneathROV = "0.00";
+    private String offsetROVdepth = "0.00";
     private long timer = System.currentTimeMillis();
     private boolean photoMode = false;
     private double photoModeDelay = 1.00;
@@ -232,6 +236,26 @@ public final class Data extends Observable
     public synchronized String getKd()
     {
         return Kd;
+    }
+
+    public String getOffsetDepthBeneathROV()
+    {
+        return offsetDepthBeneathROV;
+    }
+
+    public void setOffsetDepthBeneathROV(String offsetDepthBeneathROV)
+    {
+        this.offsetDepthBeneathROV = offsetDepthBeneathROV;
+    }
+
+    public String getOffsetROVdepth()
+    {
+        return offsetROVdepth;
+    }
+
+    public void setOffsetROVdepth(String offsetROVdepth)
+    {
+        this.offsetROVdepth = offsetROVdepth;
     }
 
     /**
@@ -866,8 +890,6 @@ public final class Data extends Observable
     {
         this.streaming = streaming;
     }
-    
-    
 
     public synchronized boolean isDataUpdated()
     {
@@ -1061,6 +1083,26 @@ public final class Data extends Observable
     public void setFb_actuatorSBMaxPos(int fb_actuatorSBMaxPos)
     {
         this.fb_actuatorSBMaxPos = fb_actuatorSBMaxPos;
+    }
+
+    public double getFb_tempElBoxFront()
+    {
+        return fb_tempElBoxFront;
+    }
+
+    public void setFb_tempElBoxFront(double fb_tempElBoxFront)
+    {
+        this.fb_tempElBoxFront = fb_tempElBoxFront;
+    }
+
+    public double getFb_tempElBoxRear()
+    {
+        return fb_tempElBoxRear;
+    }
+
+    public void setFb_tempElBoxRear(double fb_tempElBoxRear)
+    {
+        this.fb_tempElBoxRear = fb_tempElBoxRear;
     }
 
     public long getPSActuatorMaxToMinTime()

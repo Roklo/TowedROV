@@ -762,9 +762,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightSwitch_lbl.setMinimumSize(new java.awt.Dimension(63, 100));
 
         lightSlider.setBackground(new java.awt.Color(39, 44, 50));
-        lightSlider.setMaximum(40);
+        lightSlider.setMaximum(24);
         lightSlider.setMinimum(19);
         lightSlider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lightSlider.setEnabled(false);
         lightSlider.addMouseListener(new java.awt.event.MouseAdapter()
         {
             public void mouseReleased(java.awt.event.MouseEvent evt)
@@ -2047,6 +2048,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 this.client_ROV.sendCommand("cmd_pid_i:" + data.getKi());
                 Thread.sleep(10);
                 this.client_ROV.sendCommand("cmd_pid_d:" + data.getKd());
+                Thread.sleep(10);
+                this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + data.getOffsetDepthBeneathROV());
+                Thread.sleep(10);
+                this.client_ROV.sendCommand("cmd_offsetROVdepth:" + data.getOffsetROVdepth());
                 jMenuConnect.setText("Connected 2/2");
                 jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
                 jMenuItemDisconnect.setEnabled(true);
@@ -2073,6 +2078,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 this.client_ROV.sendCommand("cmd_pid_i:" + data.getKi());
                 Thread.sleep(10);
                 this.client_ROV.sendCommand("cmd_pid_d:" + data.getKd());
+                Thread.sleep(10);
+                this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + data.getOffsetDepthBeneathROV());
+                Thread.sleep(10);
+                this.client_ROV.sendCommand("cmd_offsetROVdepth:" + data.getOffsetROVdepth());
                 jMenuConnect.setText("Connected 1/2");
                 jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
                 jMenuItemDisconnect.setEnabled(true);

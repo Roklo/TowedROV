@@ -331,6 +331,15 @@ public class TCPClient implements Runnable
                 case "Fb_depthBelowTransduser":
                     data.setDepthBeneathRov(Double.parseDouble(value));
                     break;
+                case "Fb_depthBeneathROV":
+                    data.setDepthBeneathRov(Double.parseDouble(value));
+                    break;
+                case "Fb_tempElBoxFront":
+                    data.setFb_tempElBoxFront(Double.parseDouble(value));
+                    break;
+                case "Fb_tempElBoxRear":
+                    data.setFb_tempElBoxRear(Double.parseDouble(value));
+                    break;
                 case "Fb_ROVReady":
                     data.setRovReady(Boolean.parseBoolean(value));
                     break;

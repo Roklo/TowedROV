@@ -94,6 +94,11 @@ public class OptionsFrame extends javax.swing.JFrame
         KiTextField = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         KdTextField = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        offset1TextField = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        offset2TextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Options");
@@ -143,7 +148,7 @@ public class OptionsFrame extends javax.swing.JFrame
         jLabelChannelsHeader.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabelChannelsHeader.setText("Custom I/O");
 
-        jLabel1.setText("<html>Channel 1<br/>Intput");
+        jLabel1.setText("<html>Channel 1<br/>Input");
 
         jLabel2.setText("<html>Channel 2<br/>Input");
 
@@ -211,6 +216,18 @@ public class OptionsFrame extends javax.swing.JFrame
         jLabel12.setText("Kd");
 
         KdTextField.setText("Kd");
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel13.setText("Offset:");
+
+        jLabel14.setText("Depth beneath ROV");
+
+        offset1TextField.setText("0.00");
+
+        jLabel15.setText("ROV Depth");
+
+        offset2TextField.setText("0.00");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -287,7 +304,20 @@ public class OptionsFrame extends javax.swing.JFrame
                         .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldIP_Camera)
-                            .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(jLabelIPHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(offset1TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(offset2TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,16 +333,23 @@ public class OptionsFrame extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldIP_Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(KpTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(KdTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(KiTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(KiTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(KdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(KpTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel14)
+                        .addComponent(offset1TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(offset2TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -346,7 +383,7 @@ public class OptionsFrame extends javax.swing.JFrame
                     .addComponent(jButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonApply, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonCanel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -374,12 +411,16 @@ public class OptionsFrame extends javax.swing.JFrame
             data.setKp(KpTextField.getText());
             data.setKi(KiTextField.getText());
             data.setKd(KdTextField.getText());
+            data.setOffsetDepthBeneathROV(offset1TextField.getText());
+            data.setOffsetROVdepth(offset2TextField.getText());
             data.setIP_Rov(jTextFieldIP_Rov.getText());
             data.setIP_Camera(jTextFieldIP_Camera.getText());
             data.setIOLabels(jTextFieldChannel1.getText(), jTextFieldChannel2.getText(), jTextFieldChannel3.getText(), jTextFieldChannel4.getText(), jTextFieldChannel5.getText(), jTextFieldChannel6.getText(), jTextFieldChannel7.getText(), jTextFieldChannel8.getText());
             this.client_ROV.sendCommand("cmd_pid_p:" + KpTextField.getText());
             this.client_ROV.sendCommand("cmd_pid_i:" + KiTextField.getText());
             this.client_ROV.sendCommand("cmd_pid_d:" + KdTextField.getText());
+            this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + KdTextField.getText());
+            this.client_ROV.sendCommand("cmd_offsetROVdepth:" + KdTextField.getText());
             
         } catch (Exception e)
         {
@@ -419,12 +460,16 @@ public class OptionsFrame extends javax.swing.JFrame
             data.setKp(KpTextField.getText());
             data.setKi(KiTextField.getText());
             data.setKd(KdTextField.getText());
+            data.setOffsetDepthBeneathROV(offset1TextField.getText());
+            data.setOffsetROVdepth(offset2TextField.getText());
             data.setIP_Rov(jTextFieldIP_Rov.getText());
             data.setIP_Camera(jTextFieldIP_Camera.getText());
             data.setIOLabels(jTextFieldChannel1.getText(), jTextFieldChannel2.getText(), jTextFieldChannel3.getText(), jTextFieldChannel4.getText(), jTextFieldChannel5.getText(), jTextFieldChannel6.getText(), jTextFieldChannel7.getText(), jTextFieldChannel8.getText());
             this.client_ROV.sendCommand("cmd_pid_p:" + KpTextField.getText());
             this.client_ROV.sendCommand("cmd_pid_i:" + KiTextField.getText());
             this.client_ROV.sendCommand("cmd_pid_d:" + KdTextField.getText());
+            this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + KdTextField.getText());
+            this.client_ROV.sendCommand("cmd_offsetROVdepth:" + KdTextField.getText());
             
         } catch (Exception e)
         {
@@ -467,6 +512,8 @@ public class OptionsFrame extends javax.swing.JFrame
             data.setKp(br.readLine());
             data.setKi(br.readLine());
             data.setKd(br.readLine());
+            data.setOffsetDepthBeneathROV(br.readLine());
+            data.setOffsetROVdepth(br.readLine());
             KpTextField.setText(data.getKp());
             KiTextField.setText(data.getKi());
             KdTextField.setText(data.getKd());
@@ -500,6 +547,9 @@ public class OptionsFrame extends javax.swing.JFrame
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -522,5 +572,7 @@ public class OptionsFrame extends javax.swing.JFrame
     private javax.swing.JTextField jTextFieldChannel8;
     private javax.swing.JTextField jTextFieldIP_Camera;
     private javax.swing.JTextField jTextFieldIP_Rov;
+    private javax.swing.JTextField offset1TextField;
+    private javax.swing.JTextField offset2TextField;
     // End of variables declaration//GEN-END:variables
 }
