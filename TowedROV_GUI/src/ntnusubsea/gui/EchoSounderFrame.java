@@ -297,41 +297,41 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
                 Thread.sleep(100);
                 time = time + 0.1;
                 time2 = time + data.getTimeBetweenBoatAndRov();
-//                rovDepthValue = String.valueOf(df.format(data.getRovDepth()));
-//                depthBeneathBoatValue = String.valueOf(df.format(data.getDepthBeneathBoat()));
+                
+                rovDepthValue = String.valueOf(df.format(data.getRovDepth()));
+                depthBeneathBoatValue = String.valueOf(df.format(data.getDepthBeneathBoat()));
 
-                //-------------------------------------------------------------------------
-                // COMMENT OUT THIS SECTION AND UNCOMMENT THE TWO LINES ABOVE TO GET REAL DATA FROM THE ROV
-                counter = (counter + amount) * 1.05;
-                counter2 = counter2 + amount2;
-                rovDepthValue = String.valueOf(df.format(counter));
-                depthBeneathBoatValue = String.valueOf(df.format(counter2));
-
-                if (counter <= -22.0)
-                {
-                    counter = -20.0;
-                }
-                if (counter <= -20.0)
-                {
-                    amount = +1.0;
-                } else if (counter >= 0.0)
-                {
-                    amount = -1.0;
-                }
-
-                if (counter2 <= -27.0)
-                {
-                    counter2 = -25.0;
-                }
-                if (counter2 <= -26.0)
-                {
-                    amount2 = 0.1;
-                } else if (counter2 >= -24.0)
-                {
-                    amount2 = -0.1;
-                }
-                // -----------------------------------------------------------------------
-
+//                //-------------------------------------------------------------------------
+//                // COMMENT OUT THIS SECTION AND UNCOMMENT THE TWO LINES ABOVE TO GET REAL DATA FROM THE ROV
+//                counter = (counter + amount) * 1.05;
+//                counter2 = counter2 + amount2;
+//                rovDepthValue = String.valueOf(df.format(counter));
+//                depthBeneathBoatValue = String.valueOf(df.format(counter2));
+//
+//                if (counter <= -22.0)
+//                {
+//                    counter = -20.0;
+//                }
+//                if (counter <= -20.0)
+//                {
+//                    amount = +1.0;
+//                } else if (counter >= 0.0)
+//                {
+//                    amount = -1.0;
+//                }
+//
+//                if (counter2 <= -27.0)
+//                {
+//                    counter2 = -25.0;
+//                }
+//                if (counter2 <= -26.0)
+//                {
+//                    amount2 = 0.1;
+//                } else if (counter2 >= -24.0)
+//                {
+//                    amount2 = -0.1;
+//                }
+//                // -----------------------------------------------------------------------
                 this.plot.setDataset(createDataset_2());
 
             } catch (InterruptedException ex)

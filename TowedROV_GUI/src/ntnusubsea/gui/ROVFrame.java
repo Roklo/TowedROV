@@ -3030,7 +3030,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         seafloorDepthRovLabel.setText("Beneath ROV: " + data.getDepthBeneathRov() + "m");
         rovDepthLabel.setText("ROV depth: " + data.getDepth() + "m");
 
-        headingLabel.setText("Heading: " + data.getHeading());
+        headingLabel.setText("Heading: " + data.getGPSAngle());
         longitudeLabel.setText("Longitude: " + data.getLongitude());
         latitudeLabel.setText("Latitude: " + data.getLatitude());
 

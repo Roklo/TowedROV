@@ -56,13 +56,13 @@ public final class Data extends Observable
     // Feedback from GPS
     public int satellites = 0;
     public float altitude = 0;
-    public double angle = 0;
+    public double gpsAngle = 0;
     public float speed = 0;
     public float latitude = (float) 0;
     public float longitude = (float) 0;
     public float depth = (float) 0.01;
     public float temperature = (float) 0.01;
-    public double voltage = (double) 36.01;
+    public double voltage = 36.01;
 
     // Feedback from IMU
     public double roll = 0.00;
@@ -935,14 +935,14 @@ public final class Data extends Observable
         notifyObservers();
     }
 
-    public synchronized double getAngle()
+    public synchronized double getGPSAngle()
     {
-        return angle;
+        return gpsAngle;
     }
 
-    public synchronized void setAngle(double angle)
+    public synchronized void setGPSAngle(double angle)
     {
-        this.angle = angle;
+        this.gpsAngle = angle;
         setChanged();
         notifyObservers();
     }
