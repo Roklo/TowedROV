@@ -13,7 +13,12 @@
 // Connect Vin (5V) and Gnd
 // GPS TX --> Digital 11
 // GPS RX --> Digital 10
-SoftwareSerial nmeaSerial(2, 3); // 5 RX pin, 6 TX pin, if
+
+//-------------------
+//Briefcase uno  5 RX pin, 6 TX pin
+//ROV nano 2 RX pin, 3 TX pin
+//-------------------
+SoftwareSerial nmeaSerial(5, 6); // 5 RX pin, 6 TX pin, if
 // is unreadable try switching.
 NMEA nmeaDecoder(ALL);
 // Set true if debugging

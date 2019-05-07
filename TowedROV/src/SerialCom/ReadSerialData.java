@@ -190,7 +190,7 @@ public class ReadSerialData implements Runnable
 //            }
             } catch (Exception ex)
             {
-               // System.out.println("Lost connection to " + myName);
+                // System.out.println("Lost connection to " + myName);
             }
 
         }
@@ -207,7 +207,8 @@ public class ReadSerialData implements Runnable
             {
 
                 case "D":
-                    data.setFb_depthBeneathROV(Double.parseDouble(value));
+                    double doubleValue = Double.parseDouble(value) * -1;
+                    data.setFb_depthBeneathROV(doubleValue);
                     break;
 //                case "DBT":
 //                    data.setFb_depthBelowTransduser(Double.parseDouble(value));
