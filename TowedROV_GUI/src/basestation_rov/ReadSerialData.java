@@ -158,7 +158,7 @@ public class ReadSerialData implements Runnable
                     //dataStream = dataStream.replace("?", "");
                     String[] data = dataStream.split(seperationChar);
 
-                    for (int i = 0; i <= data.length; i = i + 2)
+                    for (int i = 0; i < data.length; i = i + 2)
                     {
                         //this.data.data.put(data[i], data[i + 1]);
                         incommingData.put(data[i], data[i + 1]);
