@@ -97,7 +97,7 @@ public class LogFileHandler implements Runnable
                 outputWriterExif.append("Latitude,Longtitude,Time");
                 outputWriterExif.flush();
                 exifSetup = true;
-                data.setImagesCleared(true);
+                data.setImagesCleared(false);
 
             } catch (Exception e)
             {
@@ -114,7 +114,7 @@ public class LogFileHandler implements Runnable
 
         }
 
-        if (data.startLogging)
+        if (data.getStartLogging())
         {
 
             if (!setupIsDone)

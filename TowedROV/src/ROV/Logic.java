@@ -43,8 +43,8 @@ public class Logic implements Runnable, Observer
     double elapsedTimerNano = 0;
     long lastTime = 0;
 
-    private final static int actuatorPShysteresis = 5;
-    private final static int actuatorSBhysteresis = 5;
+    private final static int actuatorPShysteresis = 8;
+    private final static int actuatorSBhysteresis = 8;
     private HashMap<String, String> newDataToSend = new HashMap<>();
 
     final GpioController gpio = GpioFactory.getInstance();
@@ -97,7 +97,7 @@ public class Logic implements Runnable, Observer
             elapsedTimer = elapsedTimerNano / 1000000;
             if (elapsedTimer > 5000 && data.isClientConnected())
             {
-                System.out.println("Lost connection go to emergency");                
+                //System.out.println("Lost connection go to emergency");                
             }
 
             gatherFbData();

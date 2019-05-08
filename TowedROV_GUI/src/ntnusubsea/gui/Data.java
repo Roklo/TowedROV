@@ -94,7 +94,7 @@ public final class Data extends Observable
     private double fb_tempElBoxRear;
 
     // Feedback from GUI
-    public boolean startLogging = true;
+    public boolean startLogging = false;
 
     public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
     public List<String> rovDepthDataList = new ArrayList<>();

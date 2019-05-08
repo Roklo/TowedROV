@@ -26,7 +26,7 @@ public class DataHandler extends Observable
     // Calibration values
     int pressureSensorOffset = 0;
     private final static int PS_ACTUATOR_ANGLEADJUST = 0;
-    private final static int SB_ACTUATOR_ANGLEADJUST = -30;
+    private final static int SB_ACTUATOR_ANGLEADJUST = 0;
 
     // Command values
     int cmd_lightMode = 0;

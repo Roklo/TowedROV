@@ -93,7 +93,7 @@ public class ROVMain
                 20, 40, TimeUnit.MILLISECONDS);
 
         executor.scheduleAtFixedRate(logic,
-                20, 10, TimeUnit.MILLISECONDS);
+                10, 5, TimeUnit.MILLISECONDS);
         
         executor.scheduleAtFixedRate(pid,
                 20, 10, TimeUnit.MILLISECONDS);

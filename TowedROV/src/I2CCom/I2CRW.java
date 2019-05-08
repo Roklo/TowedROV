@@ -320,7 +320,7 @@ public class I2CRW implements Runnable
                         //actuatorSB.write((byte) ACTUATOR_STOP);
                         try
                         {
-                            Thread.sleep(25);
+                            Thread.sleep(10);
                         } catch (Exception e)
                         {
                         }
@@ -330,7 +330,7 @@ public class I2CRW implements Runnable
                     case "ActuatorPS_stopMotor":
                         try
                         {
-                            Thread.sleep(25);
+                            Thread.sleep(10);
                         } catch (Exception e)
                         {
                         }

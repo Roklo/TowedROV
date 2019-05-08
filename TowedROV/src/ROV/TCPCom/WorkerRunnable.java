@@ -210,7 +210,7 @@ public class WorkerRunnable implements Runnable
                                 break;
                             
                             case "fb_depthToSeabedEcho":
-                                outToClient.println("<fb_depthToSeabedEcho:" + dh.getFb_depthBeneathROV() + ">");
+                                outToClient.println("<Fb_depthBeneathROV:" + dh.getFb_depthBeneathROV() + ">");
                                 break;
                             
                             case "fb_speedThroughWather":
