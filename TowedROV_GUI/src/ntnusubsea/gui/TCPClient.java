@@ -118,7 +118,13 @@ public class TCPClient implements Runnable
 
                 String commandString = "<" + cmd + ">";
                 outToServer.println(commandString);
-                System.out.println("Cmd sent: " + commandString);
+//                System.out.println("Cmd sent: " + commandString);
+
+                if (cmd.contains("actuator"))
+                {
+                    System.out.println("Actuator Cmd sent: " + commandString);
+                }
+
                 outToServer.flush();
 
                 String serverResponse = inFromServer.readLine();
@@ -127,7 +133,7 @@ public class TCPClient implements Runnable
                     System.out.println("Server not ready!");
                 } else
                 {
-                    System.out.println("Server response: " + serverResponse);
+                    //System.out.println("Server response: " + serverResponse);
                     if (cmd.equals("fb_allData") || cmd.equals("getData"))
                     {
                         HashMap<String, String> newDataList = new HashMap<>();
@@ -235,7 +241,7 @@ public class TCPClient implements Runnable
         try
         {
             outToServer.println(sentence);
-            System.out.println("Data is sent...");
+            //System.out.println("Data is sent...");
             outToServer.flush();
             serverResponse = inFromServer.readLine();
 

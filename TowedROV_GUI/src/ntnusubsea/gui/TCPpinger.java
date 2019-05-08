@@ -12,6 +12,8 @@ import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Client class that handles the connection to the server, retrieves the video
@@ -40,13 +42,23 @@ public class TCPpinger implements Runnable
         this.data = data;
         this.port = port;
         this.IP = IP;
+        try
+        {
+            this.connect(this.IP, this.port);
+        } catch (IOException ex)
+        {
+            System.out.println("IOException: " + ex.getMessage());
+        }
     }
 
     @Override
     public void run()
     {
-        data.setRovPing(this.getPing());
-        System.out.println("Ping (ROV): " + data.getRovPing());
+        if (this.isConnected())
+        {
+            data.setRovPing(this.getPing());
+            //System.out.println("Ping (ROV): " + data.getRovPing());
+        }
     }
 
     /**
@@ -95,12 +107,12 @@ public class TCPpinger implements Runnable
         String ping = "<Ping:null>";
         lastTime = System.nanoTime();
         String serverResponse = sendData("ping");
-        if (serverResponse.equals("<ping:true>"))
+        if (serverResponse != null && serverResponse.equals("<ping:true>"))
         {
             elapsedTimerNano = (System.nanoTime() - lastTime);
             elapsedTimer = elapsedTimerNano / 1000000;
             pingValue = elapsedTimer;
-            System.out.println("<Ping: " + elapsedTimer + ">");
+            //System.out.println("<Ping: " + elapsedTimer + ">");
 
             elapsedTimer = 0;
         } else
@@ -116,7 +128,7 @@ public class TCPpinger implements Runnable
         try
         {
             outToServer.println(sentence);
-            System.out.println("Data is sent...");
+            //System.out.println("Data is sent...");
             outToServer.flush();
             serverResponse = inFromServer.readLine();
 

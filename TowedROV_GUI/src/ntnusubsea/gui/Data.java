@@ -78,7 +78,7 @@ public final class Data extends Observable
     private double humidity = 0.00;
 
     // Feedback from ROV
-    private Double rovPing = 0.00;
+    private Double rovPing = 999.99;
     private boolean rovReady = false;
     private boolean i2cError;
     private int fb_actuatorPSPos;
@@ -131,6 +131,7 @@ public final class Data extends Observable
     private boolean doRovCalibration = false;
     private boolean emergencyMode = false;
     private boolean streaming = false;
+    private boolean manualMode = false;
 
     /**
      * Creates an object of the class Data.
@@ -886,8 +887,8 @@ public final class Data extends Observable
     public void setEmergencyMode(boolean status)
     {
         this.emergencyMode = status;
-        setChanged();
-        notifyObservers();
+//        setChanged();
+//        notifyObservers();
     }
 
     public boolean isEmergencyMode()
@@ -903,6 +904,16 @@ public final class Data extends Observable
     public void setStreaming(boolean streaming)
     {
         this.streaming = streaming;
+    }
+
+    public boolean isManualMode()
+    {
+        return manualMode;
+    }
+
+    public void setManualMode(boolean manualMode)
+    {
+        this.manualMode = manualMode;
     }
 
     public synchronized boolean isDataUpdated()

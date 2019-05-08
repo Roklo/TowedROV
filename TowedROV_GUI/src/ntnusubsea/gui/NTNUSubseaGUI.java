@@ -187,8 +187,8 @@ public class NTNUSubseaGUI
                 lastTime = System.currentTimeMillis();
             }
 
-            System.out.println("Pitch: : " + data.getPitchAngle()
-                    + "    TestDepth: " + data.getTestDepth());
+//            System.out.println("Pitch: : " + data.getPitchAngle()
+//                    + "    TestDepth: " + data.getTestDepth());
         }
     }
 }
