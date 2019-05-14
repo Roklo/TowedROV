@@ -37,9 +37,6 @@ char* t7;
 char* t8;
 char* t9;
 
-float test_depth;
-float test_temp;
-
 
 void setup() {
   // Serial setup
@@ -75,8 +72,7 @@ void loop() {
       decodeNmeaSentence();
       // Paring the NMEA sentence, extracting the desiered data
       parseNmeaSentence();
-      // Sending updated information to the RBPi.
-      //sendSerialNMEAData();
+      //Convert used NMEA sentence data to String.
       convertDataToString();
     }
   }
@@ -132,7 +128,7 @@ void parseNmeaSentence() {
   }
   //if t0 is Mean temp1erature of Water
   if (strcmp(t0, "YXMTW") == 0) {
-    temp1 = atof(t1); //Extracts field #1 which is mean temp1erature.
+    temp1 = atof(t1); //Extracts field #1 which is mean temperature.
     if (debug) {
       Serial.print("temp1erature in celcius: ");
       Serial.println(temp1);
@@ -140,6 +136,7 @@ void parseNmeaSentence() {
   }
 }
 
+// Converting NMEA data to string 
 void convertDataToString()
 {
 
@@ -147,18 +144,19 @@ void convertDataToString()
 
   char str_temp[6];
 
-
+  // for loop to convert the value to a string
   for (int i = 0; i < 6; i++)
   {
     dtostrf(depth, 4, 2, str_depth);
 
   }
-
+  // for loop to convert the value to a string
   for (int i = 0; i < 6; i++)
   {
     dtostrf(temp1, 4, 2, str_temp);
   }
 
+  //Star char separations char and ending char, this way the string will be <key:value:key:value>
   char* a = "<Depth:";
   char* b = ":Temp:";
   char* c = ">";
@@ -175,62 +173,7 @@ void convertDataToString()
   //Serial.write(bigstring);
   // Wire.write(bigstring);
 
-
+  // For reading values directly from serial monitor.
   //Serial.println(final_depth);
   //Serial.println(final_temp);
-}
-
-
-
-void sendDataOverSerial(String data[4])
-{
-  String dataString = "";
-  dataString = String("<");
-
-  for (byte i = 0; i < 4; i++)
-  {
-    dataString = String(dataString + data[i]);
-    if (i < 4 - 1)
-    {
-      dataString = String(dataString + ":");
-    }
-  }
-  dataString = String(dataString + ">");
-  Serial.print(dataString);
-  delay(1000);
-}
-//---------------------------------------------------------------------------------
-// Sends data to the GUI over serial line.
-void sendSerialNMEAData() {
-  //  Create byte array of sensor values
-  byte data[6] = {(depthBelowTd), (depth), (offsetFromTd),
-                  (speedKnots), (speedKm), (temp1)
-                 };
-  byte newData[2] = {(depth), (temp1)};
-
-  //  Write array "data" with 6 byte.
-  //Serial.write(data, sizeof(data));
-
-
-
-  if (debug) {
-    Serial.println("Sending information");
-  }
-}
-
-//---------------------------------------------------------------------------------
-// Sends data to RBPi via Wire.Write();
-void sendNMEAData() {
-  //Create byte array of sensor values
-  byte data[6] = {(depthBelowTd), (depth), (offsetFromTd),
-                  (speedKnots), (speedKm), (temp1)
-                 };
-  //Write array "data" with 6 byte.
-  Wire.write(data, sizeof(data));
-}
-//---------------------------------------------------------------------------------
-//Recives data from computer
-void receiveData(int b) {
-  //recieves connection from Pi
-  Serial.println("Event Recived");
 }
