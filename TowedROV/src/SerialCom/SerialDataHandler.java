@@ -5,16 +5,15 @@
  */
 package SerialCom;
 
-import ROV.DataHandler;
-
+import ROV.Data;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import jssc.SerialPort;
 import jssc.SerialPortList;
 
 /**
- *
- * @author <Robin S. Thorholm>
+ * This class is resposible for handling the search for com ports and store
+ * a list over them. 
  */
 public class SerialDataHandler
 {
@@ -23,26 +22,23 @@ public class SerialDataHandler
 
     String comPort = "";
     SerialPort serialPort;
-    DataHandler dh;
+    Data data;
 
     String start_char = "<";
     String end_char = ">";
     String sep_char = ":";
 
-    public SerialDataHandler(DataHandler dh)
+    /**
+     * The constructor for the SerialDataHandler class
+     * @param data the shared recource data class
+     */
+    public SerialDataHandler(Data data)
     {
-        this.dh = dh;
+        this.data = data;
     }
 
-    public SerialDataHandler(SerialDataHandler sdh)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
-    public void initiateComPorts()
-    {
-
-    }
+   
 
     private void saveUsableComPorts()
     {
@@ -53,7 +49,7 @@ public class SerialDataHandler
             String comPortValue = (String) e.getValue();
             if (!comPortValue.contains("Unknown"))
             {
-                dh.comPortList.put(comPortKey, comPortValue);
+                data.comPortList.put(comPortKey, comPortValue);
 //                comCheck++;
             }
         }
@@ -66,6 +62,11 @@ public class SerialDataHandler
 
     }
 
+    /**
+     * This method is responsible or finding the desired com ports.
+     * Since the com ports may change we have to search and store which com
+     * port is connected to which device
+     */
     public void findComPorts()
     {
         int baudrate = 0;
@@ -190,11 +191,6 @@ public class SerialDataHandler
                 e.printStackTrace();
             }
         }
-
-//        for (int i = 0; i < portNames.length; i++)
-//        {
-//            System.out.println(portNames[i]);
-//        }
         return portNames;
     }
 }

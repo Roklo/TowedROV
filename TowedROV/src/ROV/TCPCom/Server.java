@@ -7,10 +7,12 @@ import java.net.Socket;
 import java.io.IOException;
 
 /**
- * Code taken from
+ * Code inspired from
  * http://tutorials.jenkov.com/java-multithreaded-servers/multithreaded-server.html
  *
- * @author <Robin S. Thorholm>
+ * This class is responsible for reciving connection and handle them in a new
+ * seperat threads
+ *
  */
 public class Server implements Runnable
 {
@@ -19,16 +21,25 @@ public class Server implements Runnable
     protected ServerSocket serverSocket = null;
     protected boolean isStopped = false;
     protected Thread runningThread = null;
-    DataHandler dh = null;
+    Data dh = null;
     AlarmHandler alarmHandler = null;
 
-    public Server(int port, DataHandler dh)
+    /**
+     * Constructor for server class
+     *
+     * @param port the port the server is running on
+     * @param dh the shared recource data class
+     */
+    public Server(int port, Data dh)
     {
         this.serverPort = port;
         this.dh = dh;
-        this.alarmHandler = alarmHandler;
     }
 
+    /**
+     * Responsible for reciving connection and handle them in a new seperat
+     * threads
+     */
     public void run()
     {
         synchronized (this)
@@ -53,7 +64,7 @@ public class Server implements Runnable
                         "Error accepting client connection", e);
             }
             new Thread(
-                    new WorkerRunnable(clientSocket, "Multithreaded Server", dh)
+                    new WorkerRunnable(clientSocket, dh)
             ).start();
         }
         System.out.println("Server Stopped.");
@@ -64,6 +75,9 @@ public class Server implements Runnable
         return this.isStopped;
     }
 
+    /**
+     * Responsible for shutting down the server
+     */
     public synchronized void stop()
     {
         this.isStopped = true;

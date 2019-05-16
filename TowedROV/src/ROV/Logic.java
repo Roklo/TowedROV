@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+//test
 package ROV;
 
 import I2CCom.*;
@@ -19,13 +20,13 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- *
- * @author <Robin S. Thorholm>
+ * This class handels the actuator logic of the ROV and any other tasks that has
+ * a crucial update rate
  */
 public class Logic implements Runnable, Observer
 {
 
-    DataHandler data = null;
+    Data data = null;
     I2CRW i2cRw = null;
     int old_cmd_actuatorPS = 0;
     int old_cmd_actuatorSB = 0;
@@ -43,6 +44,10 @@ public class Logic implements Runnable, Observer
     double elapsedTimerNano = 0;
     long lastTime = 0;
 
+    double elapsedTimer_sendData = 0;
+    double elapsedTimerNano_sendData = 0;
+    long lastTime_sendData = 0;
+
     private final static int actuatorPShysteresis = 8;
     private final static int actuatorSBhysteresis = 8;
     private HashMap<String, String> newDataToSend = new HashMap<>();
@@ -51,13 +56,29 @@ public class Logic implements Runnable, Observer
 
     final GpioPinDigitalOutput BlueLED_PIN = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "BlueLED", PinState.LOW);
 
-    public Logic(DataHandler data, I2CRW i2cRw)
+    /**
+     *
+     * @param data the shared recource data class
+     * @param i2cRw the I2C class for handeling I2C commands
+     */
+    public Logic(Data data, I2CRW i2cRw)
     {
         this.data = data;
         this.i2cRw = i2cRw;
 
     }
 
+    /**
+     * Crucial tasks is runned in this method:
+     *
+     * The run method checks if the current actuator position against the given
+     * command value. If they are equal an stop command wil bes sendt.
+     *
+     * It also checks if the communication to the GUI has been lost for more
+     * than five seconds
+     *
+     * Updates the gatherFbData list so it is ready to be sent to the GUI
+     */
     @Override
     public void run()
     {
@@ -65,8 +86,7 @@ public class Logic implements Runnable, Observer
         {
             if (old_cmd_actuatorPS_2 != data.getCmd_actuatorPS())
             {
-
-                System.out.println("Distance to target(PS): " + (data.getFb_actuatorPSPos() - data.getCmd_actuatorPS()));
+                System.out.println("Actuator PS FB : " + data.fb_actuatorPSPos);
                 if (data.fb_actuatorPSPos >= data.getCmd_actuatorPS() - actuatorPShysteresis
                         && data.fb_actuatorPSPos <= data.getCmd_actuatorPS() + actuatorPShysteresis)
                 {
@@ -76,7 +96,8 @@ public class Logic implements Runnable, Observer
             }
             if (old_cmd_actuatorSB_2 != data.getCmd_actuatorSB())
             {
-                System.out.println("Distance to target(SB): " + (data.getFb_actuatorSBPos() - data.getCmd_actuatorSB()));
+                System.out.println("Actuator SB FB : : " + data.fb_actuatorSBPos);
+//                System.out.println("Distance to target(SB): " + (data.getFb_actuatorSBPos() - data.getCmd_actuatorSB()));
                 if (data.fb_actuatorSBPos >= data.getCmd_actuatorSB() - actuatorSBhysteresis
                         && data.fb_actuatorSBPos <= data.getCmd_actuatorSB() + actuatorSBhysteresis)
                 {
@@ -86,9 +107,6 @@ public class Logic implements Runnable, Observer
             }
             if (data.isCmd_ping())
             {
-//                elapsedTimer = 0;
-//                elapsedTimerNano = 0;
-//                lastTime = 0;
                 data.setClientConnected(true);
                 elapsedTimer = 0;
                 data.setCmd_ping(false);
@@ -100,21 +118,29 @@ public class Logic implements Runnable, Observer
                 //System.out.println("Lost connection go to emergency");                
             }
 
-            gatherFbData();
+            elapsedTimerNano_sendData = (System.nanoTime() - lastTime_sendData);
+            elapsedTimer_sendData = elapsedTimerNano_sendData / 1000000;
+            if (elapsedTimerNano_sendData > 50)
+            {
+                gatherFbData();
+                lastTime_sendData = 0;
+            }
 
-//            Thread.sleep(1000);
-//            i2cRw.readI2CData("ActuatorPS_Feedback");
-//            Thread.sleep(1000);
-//            i2cRw.readI2CData("ActuatorSB_Feedback");
         } catch (Exception e)
         {
         }
 
     }
 
+    /**
+     * The update method is used for updating variables only when the GUI is
+     * sending data to the ROV
+     *
+     * @param o the observer
+     * @param arg the observer arguments
+     */
     @Override
-    public void update(Observable o, Object arg
-    )
+    public void update(Observable o, Object arg)
     {
         //Commands
         if (data.getcmd_targetMode() != 2)
@@ -137,12 +163,6 @@ public class Logic implements Runnable, Observer
             {
                 try
                 {
-//                    System.out.println("Distance to target(SB): " + (data.getFb_actuatorSBPos() - data.getCmd_actuatorSB()));
-//                    System.out.println("Distance to target(PS): " + (data.getFb_actuatorPSPos() - data.getCmd_actuatorPS()));
-
-//                    if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB()
-//                            || old_cmd_actuatorPS_man != data.getCmd_actuatorPS())
-//                    {
                     if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB())
                     {
                         i2cRw.sendI2CData("ActuatorSB_setTarget", data.getCmd_actuatorSB());
@@ -153,7 +173,6 @@ public class Logic implements Runnable, Observer
                     {
                         i2cRw.sendI2CData("ActuatorPS_setTarget", data.getCmd_actuatorPS());
                     }
-//                    }
                     old_cmd_actuatorSB_man = data.getCmd_actuatorSB();
                     old_cmd_actuatorPS_man = data.getCmd_actuatorPS();
                 } catch (Exception e)
@@ -168,9 +187,12 @@ public class Logic implements Runnable, Observer
             BlueLED_PIN.toggle();
             old_cmd_BlueLED = data.getCmd_BlueLED();
         }
-//         gatherFbData();
     }
 
+    /**
+     * This method is responsible to update the newDataToSend list so the data
+     * is ready to be sendt to the GUI
+     */
     public void gatherFbData()
     {
 

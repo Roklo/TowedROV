@@ -71,7 +71,7 @@ public final class Data extends Observable
 
     // Feedback from the Camera RPi
     private boolean leakStatus = false;
-    private double rovDepth = -0.00;
+    private double rovDepth = 0.00;
     private double pressure = 0.00;
     private double outsideTemp = 0.00;
     private double insideTemp = 0.00;

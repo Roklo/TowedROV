@@ -1934,19 +1934,19 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     }//GEN-LAST:event_fullscreenKeyPressed
 
     private void actuatorPSPosBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorPSPosBarStateChanged
-        int actuatorTime1 = actuatorPSPosBar.getValue();
-        if (actuatorTime1 <= 254)
-        {
-//            actuatorPSPosBar.setForeground(new Color(actuatorTime1, 255, 0));
-            actuatorPSPosBar.setForeground(new Color(77, 192, 99));
-            warningLabel1.setText("");
-            warningLabel1.setBackground(new Color(42, 48, 57));
-        } else
-        {
-            actuatorPSPosBar.setForeground(new Color(255, 255 + (256 - actuatorTime1), 0));
-            warningLabel1.setText("Warning!");
-            warningLabel1.setBackground(Color.red);
-        }
+//        int actuatorTime1 = actuatorPSPosBar.getValue();
+//        if (actuatorTime1 <= 254)
+//        {
+////            actuatorPSPosBar.setForeground(new Color(actuatorTime1, 255, 0));
+//            actuatorPSPosBar.setForeground(new Color(77, 192, 99));
+//            warningLabel1.setText("");
+//            warningLabel1.setBackground(new Color(42, 48, 57));
+//        } else
+//        {
+//            actuatorPSPosBar.setForeground(new Color(255, 255 + (256 - actuatorTime1), 0));
+//            warningLabel1.setText("Warning!");
+//            warningLabel1.setBackground(Color.red);
+//        }
     }//GEN-LAST:event_actuatorPSPosBarStateChanged
 
     private void seafloorModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seafloorModeButtonActionPerformed
@@ -3079,8 +3079,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         actuatorPSPosLabel.setText("PS Position: " + data.getFb_actuatorPSPos());
         actuatorSBPosLabel.setText("SB Position: " + data.getFb_actuatorSBPos());
-        actuatorPSPosBar.setValue(data.getFb_actuatorPSPos());
-        actuatorSBPosBar.setValue(data.getFb_actuatorSBPos());
+//        actuatorPSPosBar.setValue(data.getFb_actuatorPSPos());
+//        actuatorSBPosBar.setValue(data.getFb_actuatorSBPos());
+        actuatorPSPosBar.setValue(127);
+        actuatorSBPosBar.setValue(127);
 
         if (data.isI2cError())
         {
@@ -3094,9 +3096,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         if (data.getLeakStatus())
         {
-            leakLabel.setText("LEAK DETECTED!");
-            leakLabel.setBackground(Color.red);
-            data.setEmergencyMode(true);
+//            leakLabel.setText("LEAK DETECTED!");
+//            leakLabel.setBackground(Color.red);
+            //data.setEmergencyMode(true);
         } else
         {
             leakLabel.setText("No leak detected");
