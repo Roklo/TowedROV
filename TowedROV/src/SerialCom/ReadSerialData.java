@@ -11,13 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import jssc.SerialPort;
 import jssc.SerialPortList;
 import jssc.SerialPortException;
-import ROV.DataHandler;
+import ROV.Data;
 
 /**
- * Respnsible for reading serial data from the GPS, Sonar and IMU values on the
- * base station
+ * This class is eespnsible for reading serial data from the IMU, echo sounder
+ * and the Arduino I/O
  *
- * @author <Bjørnar M. Tennfjord>
+ *
  */
 public class ReadSerialData implements Runnable
 {
@@ -35,14 +35,24 @@ public class ReadSerialData implements Runnable
     String comPort = "";
     String myName = "";
     int baudRate = 0;
-    DataHandler data = null;
+    Data data = null;
 
+    /**
+     * The complete list of alla incomming data and its values
+     */
     public HashMap<String, String> incommingData = new HashMap<>();
 
     private static volatile double depth;
     private static volatile double tempC;
 
-    public ReadSerialData(DataHandler data, String comPort, int baudRate, String myName)
+    /**
+     *
+     * @param data the shared recource data class
+     * @param comPort the com port it should use
+     * @param baudRate the baud rate of the com port
+     * @param myName the name of the com device it should connect to
+     */
+    public ReadSerialData(Data data, String comPort, int baudRate, String myName)
     {
         this.comPort = comPort;
         this.myName = myName;
@@ -50,6 +60,9 @@ public class ReadSerialData implements Runnable
         this.data = data;
     }
 
+    /**
+     * Run command loops through the readData
+     */
     @Override
     public void run()
     {
@@ -66,46 +79,15 @@ public class ReadSerialData implements Runnable
         }
     }
 
-    public String[] getAvailableComPorts()
-    {
-        String[] portNames = SerialPortList.getPortNames();
-
-        if (portNames.length == 0)
-        {
-            // System.out.println("There are no serial-ports available!");
-            // System.out.println("Press enter to exit...");
-
-            try
-            {
-                System.in.read();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        for (int i = 0; i < portNames.length; i++)
-        {
-            //System.out.println(portNames[i]);
-        }
-        return portNames;
-    }
-
-    public void sendDepth()
-    {
-        // data.setDepth((float) depth);
-    }
-
-    public void sendTempC()
-    {
-        //data.setTemperature((float) tempC);
-    }
-
+    /**
+     * readData is responsible for gathering data from the serial devices
+     *
+     * @param comPort the com port it should connect to
+     * @param baudRate the boud rate of the com port
+     */
     public void readData(String comPort, int baudRate)
     {
 
-        // long lastTime = System.nanoTime();
-//        ConcurrentHashMap<String, String> SerialDataList = new ConcurrentHashMap<>();
         boolean recievedData = false;
         //Declare special symbol used in serial data stream from Arduino
         String startChar = "<";
@@ -120,7 +102,6 @@ public class ReadSerialData implements Runnable
             {
                 serialPort.openPort();
                 portIsOpen = true;
-                // System.out.println(comPort + " is open");
             } catch (SerialPortException ex)
             {
                 System.out.println(ex);
@@ -173,8 +154,6 @@ public class ReadSerialData implements Runnable
 
                     }
 
-                    //recievedData = true;
-                    //this.data.handleDataFromRemote();
                     sendIncommingDataToDataHandler();
                 }
 
@@ -309,56 +288,7 @@ public class ReadSerialData implements Runnable
                 case "tmp2":
                     data.setFb_tempMainElBoxRear(Double.parseDouble(value));
                     break;
-
-
-                /*
-                case "Satellites":
-                    data.setSatellites(Integer.parseInt(value));
-                    // setSatellites(Integer.parseInt(value));
-                    break;
-                case "Altitude":
-                    data.setAltitude(Float.parseFloat(value));
-                    //setAltitude(Float.parseFloat(value));
-                    break;
-                case "Angle":
-                    data.setAngle(Float.parseFloat(value));
-                    //setAngle(Float.parseFloat(value));
-                    break;
-                case "Speed":
-                    data.setSpeed(Float.parseFloat(value));
-                    //setSpeed(Float.parseFloat(value));
-                    break;
-                case "Latitude":
-                    data.setLatitude(Float.parseFloat(value));
-                    //setLatitude(Float.parseFloat(value));
-                    break;
-                case "Longitude":
-                    data.setLongitude(Float.parseFloat(value));
-                    //setLongitude(Float.parseFloat(value));
-                    break;
-                case "Depth":
-                    data.setDepth(Float.parseFloat(value));
-                    //setDepth(Float.parseFloat(value));
-                    break;
-                case "Temp":
-                    data.setTemperature(Float.parseFloat(value));
-                    //setTemperature(Float.parseFloat(value));
-                    break;
-                case "Roll":
-                    data.setRoll(Integer.parseInt(value));
-                    //setRoll(Integer.parseInt(value));
-                    break;
-                case "Pitch":
-                    data.setPitch(Integer.parseInt(value));
-                    //setPitch(Integer.parseInt(value));
-                    break;
-                case "Heading":
-                    data.setHeading(Integer.parseInt(value));
-                    //setHeading(Integer.parseInt(value));
-                    break;
-                 */
             }
         }
-
     }
 }

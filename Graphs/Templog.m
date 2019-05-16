@@ -1,4 +1,5 @@
-A=readtable('ExportedData.csv')
+%A=readtable('ExportedData.csv')
+A=insideTempCameraHouse;
 figure;
 x= A{:,2};
 y=A{:,3};

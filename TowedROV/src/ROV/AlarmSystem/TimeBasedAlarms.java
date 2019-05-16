@@ -6,8 +6,9 @@
 package ROV.AlarmSystem;
 
 /**
- *
- * @author <Robin S. Thorholm>
+ * The timed based alarms of the rov
+ * 
+ * Not yet implemented
  */
 public class TimeBasedAlarms implements Runnable
 {

@@ -2,12 +2,9 @@
 #include <Adafruit_GPS.h> // Adafruit GPS library
 #include <SoftwareSerial.h> // Software serial library
 
-
-
 SoftwareSerial mySerial(3, 2); // GPS connection
 
 //HardwareSerial mySerial = Serial1;
-
 
 Adafruit_GPS GPS(&mySerial);
 
@@ -40,7 +37,7 @@ void setup()
 
   useInterrupt(true);
 
-  delay(1000);
+  delay(1000); 
   mySerial.println(PMTK_Q_RELEASE);
 }
 
@@ -66,7 +63,7 @@ void useInterrupt(boolean v) {
   }
 }
 
-
+// Collects all data to one string.
 void sendDataOverSerial(String data[14])
 {
   String dataString = "";
@@ -87,6 +84,8 @@ void sendDataOverSerial(String data[14])
   delay(1000);
 }
 
+
+// places data value to correct key. 
 void setToByteArray()
 {
   data[0] = "Satellites";
@@ -124,8 +123,8 @@ void loop()                     // run over and over again
   if (millis() - timer > 100)
   {
     timer = millis(); // reset the timer
-    setToByteArray();
-    sendDataOverSerial(data);
+    setToByteArray(); // Set data to key
+    sendDataOverSerial(data); // Send data over serial.
   }
 
   if (GPS.latitudeDegrees > 0)
@@ -155,4 +154,3 @@ void loop()                     // run over and over again
     }
   }
 }
-

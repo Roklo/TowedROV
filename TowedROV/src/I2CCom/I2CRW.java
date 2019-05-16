@@ -5,23 +5,18 @@
  */
 package I2CCom;
 
-import ROV.DataHandler;
+import ROV.Data;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- *
- * @author <Robin S. Thorholm>
+ * This class is responsible for sending and reciving data from and to 
+ * I2C devices.
  */
 public class I2CRW implements Runnable
 {
-
-    protected static I2CHandler I2CH;
-    protected static DataHandler data;
+    protected static Data data;
 
     I2CDevice arduinoIO;
     I2CDevice actuatorSB;
@@ -49,11 +44,13 @@ public class I2CRW implements Runnable
     String end_char = ">";
     String sep_char = ":";
 
-    public I2CRW(DataHandler data)
+    /**
+     * Constructor of the i2CRW class
+     * Initiates the bus and adds slaves
+     * @param data the shared recource data class
+     */
+    public I2CRW(Data data)
     {
-
-        this.I2CH = I2CH;
-
         this.data = data;
 
         try
@@ -72,22 +69,10 @@ public class I2CRW implements Runnable
 
     }
 
-    private void initiateI2Cbus()
-    {
-        try
-        {
-            //System.out.println("Creatingbus");
-            I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_3);
-            //System.out.println("Creatingdevices");
-            arduinoIO = bus.getDevice(ARDUINO_IO_ADDRESS);
-            actuatorSB = bus.getDevice(SB_ACTUATOR_ADDRESS);
-            actuatorPS = bus.getDevice(PS_ACTUATOR_ADDRESS);
-        } catch (Exception e)
-        {
-        }
 
-    }
-
+    /**
+     * The run method does nothing in this class
+     */
     @Override
     public void run()
     {
@@ -97,137 +82,13 @@ public class I2CRW implements Runnable
         }
     }
 
-//    @Override
-//    public void run()
-//    {
-//        //Instanciating I2C bus and add all slaves
-//        try
-//        {
-//            //System.out.println("Creatingbus");
-//            I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
-//            //System.out.println("Creatingdevices");
-//            arduinoIO = bus.getDevice(ARDUINO_IO_ADDRESS);
-//            actuatorSB = bus.getDevice(SB_ACTUATOR_ADDRESS);
-//            actuatorPS = bus.getDevice(PS_ACTUATOR_ADDRESS);
-//
-//        } catch (Exception e)
-//        {
-//            System.out.println("ERROR: Failed to start I2C bus : " + e);
-//
-//        }
-//        while (true)
-//        {
-//            try
-//            {
-//                if (I2CH.getI2cSendRequest())
-//                {
-//                    byte[] dataByteArray = I2CH.getCurrentDataByteArray();
-//                    String command = I2CH.getCommand();
-//                    int value = I2CH.getValue();
-//                    String key = command;
-//                    int magnitude = 0;
-//                    int target = 1;
-//
-//                    switch (key)
-//                    {
-//                        case "ActuatorSB_setTarget":
-//
-//                            actuatorSB.write(SB_ACTUATOR_ADDRESS, command2);
-//                            actuatorSB.write(setTarget, (byte) value);
-//                            break;
-//                        case "ActuatorSB_stopMotor":
-//                            actuatorSB.write(motorOff, (byte) 0x00);
-//                            break;
-//                    }
-//
-////                    for (byte x : dataByteArray)
-////                    {
-////                        arduinoDummy.write((byte) x);
-////                        //Thread.sleep(1);
-////                    }
-////                    device.write((byte) 0x03);
-////                    Thread.sleep(200);
-////                    //Thread.sleep(2000);
-////                    System.out.println("Signal is sent");
-////                    int r = device.read(inputData);
-////                    System.out.println("Data recieved is: " + r);
-////
-////                    Thread.sleep(5000);
-////                    device.write((byte) 0x00);
-////                    System.out.println("Reset signal is sent");
-////                    Thread.sleep(5000);
-//                    I2CH.setI2cSendRequest(false);
-//                }
-//            } catch (Exception e)
-//            {
-//                System.out.println(e + " : Unable to create I2C Bus");
-//            }
-//
-//            try
-//            {
-//                if (I2CH.getDataRequest())
-//                {
-//                    byte[] inputDataRaw = new byte[32];
-//                    String key = I2CH.getDataRequestDevice();
-//                    String dataRecieved = "";
-//                    switch (key)
-//                    {
-//                        case "ActuatorSB_Feedback":
-//                            break;
-//                        case "ActuatorPS_Feedback":
-//                            break;
-//
-//                        case "ArduinoIO":
-//                            arduinoIO.read(inputDataRaw, 0, 32);
-//                            int sizeOfRecievedData = 0;
-//
-//                            for (byte b : inputDataRaw)
-//                            {
-//                                if (b != -1)
-//                                {
-//                                    sizeOfRecievedData++;
-//                                }
-//                            }
-//
-//                            byte[] inputData = new byte[sizeOfRecievedData];
-//                            System.arraycopy(inputDataRaw, 0, inputData, 0, sizeOfRecievedData);
-//
-//                            dataRecieved = new String(inputData);
-//
-//                            break;
-//
-//                    }
-//                    dataRecieved = dataRecieved.substring(dataRecieved.indexOf(start_char) + 1);
-//                    dataRecieved = dataRecieved.substring(0, dataRecieved.indexOf(end_char));
-//                    String[] data = dataRecieved.split(sep_char);
-//                    String[] valueNames = new String[7];
-//                    valueNames[0] = "fb_depthToSeabed";
-//                    valueNames[1] = "fb_speedThroughWather";
-//                    valueNames[2] = "AuxIn1";
-//                    valueNames[3] = "AuxIn2";
-//                    valueNames[4] = "AuxIn3";
-//                    valueNames[5] = "AuxIn4";
-//                    valueNames[6] = "AuxIn5";
-//
-//                    for (int i = 0; i < data.length; i++)
-//                    {
-//
-//                        dh.data.put(valueNames[i], data[i]);
-//                        //SerialDataList.put(data[i], data[i + 1]);
-//                        //System.out.println("Key: " + data[i] + "     Value:" + data[i + 1]);                   
-//                    }
-//
-//                    dh.handleDataFromI2C();
-//                    I2CH.setDataRequest(false);
-//
-//                }
-//            } catch (IOException | InterruptedException e)
-//            {
-//                System.out.println("Exception" + e);
-//            }
-//
-//        }
-//    }
+
+    /**
+     * This method is responsible for sending data to an I2C device
+     * 
+     * @param device the device the data should be sent to
+     * @param commandValue the command value that should be sent
+     */
     public void sendI2CData(String device, int commandValue)
     {
         if (!data.getCmd_disableMotors())
@@ -244,15 +105,6 @@ public class I2CRW implements Runnable
                         {
                             actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
                         }
-//                    if (commandValue >= 127 && commandValue <= 254)
-//                    {
-//                        if (commandValue == 127)
-//                        {
-//                            // commandValue = commandValue - 1;
-//                        }
-////                        commandValue = (byte) (commandValue);
-//                        actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
-//                    }
 
                         if (commandValue < data.getFb_actuatorPSPos()
                                 && commandValue > 0
@@ -260,16 +112,6 @@ public class I2CRW implements Runnable
                         {
                             actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
                         }
-
-//                    if (commandValue > 0 && commandValue < 127)
-//                    {
-//                        if (commandValue == 1)
-//                        {
-//                            commandValue = (commandValue + 1);
-//                        }
-////                        commandValue = (byte) (commandValue); // - 127
-//                        actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
-//                    }
                         if (commandValue == 0)
                         {
                             actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
@@ -291,26 +133,7 @@ public class I2CRW implements Runnable
                             actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
                         }
 
-//                    //Wing up
-//                    if (commandValue >= 127 && commandValue < 255)
-//                    {
-//                        if (commandValue == 127)
-//                        {
-//                            commandValue = (commandValue + 1);
-//                        }
-//                        //commandValue =  (commandValue - 127);
-//                        actuatorSB.write(JRK_setTargetLowResFwd, (byte) SB_ACTUATOR_SPEED);
-//                    }
-//                    //Wing down
-//                    if (commandValue > 0 && commandValue < 127)
-//                    {
-//                        if (commandValue == 1)
-//                        {
-//                            commandValue = (commandValue - 1);
-//                        }
-////                        commandValue = (byte) (127 - commandValue);
-//                        actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
-//                    }
+
                         if (commandValue == 0)
                         {
                             actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
@@ -320,7 +143,7 @@ public class I2CRW implements Runnable
                         //actuatorSB.write((byte) ACTUATOR_STOP);
                         try
                         {
-                            Thread.sleep(25);
+                            Thread.sleep(10);
                         } catch (Exception e)
                         {
                         }
@@ -330,7 +153,7 @@ public class I2CRW implements Runnable
                     case "ActuatorPS_stopMotor":
                         try
                         {
-                            Thread.sleep(25);
+                            Thread.sleep(10);
                         } catch (Exception e)
                         {
                         }
@@ -349,6 +172,13 @@ public class I2CRW implements Runnable
         }
     }
 
+    /**
+     * Reads I2C data from an device
+     * 
+     * Not used!
+     * 
+     * @param device the device it should gather data from
+     */
     public void readI2CData(String device)
     {
         byte[] inputDataRaw = new byte[32];

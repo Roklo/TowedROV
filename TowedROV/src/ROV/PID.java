@@ -11,13 +11,14 @@ import com.stormbots.MiniPID;
 import java.util.concurrent.atomic.*;
 
 /**
- *
- * @author <Robin S. Thorholm>
+ * This class is responisble for the PID controller and its output to the
+ * actuators
+ * 
  */
 public class PID implements Runnable, Observer
 {
 
-    DataHandler data = null;
+    Data data = null;
     MiniPID miniPID;
 
     AtomicInteger atomicTarget = new AtomicInteger(0);
@@ -27,15 +28,21 @@ public class PID implements Runnable, Observer
     double actual = 0;
     Double output = new Double(0);
 
-    public PID(DataHandler data)
+    /**
+     * The constructor of the PID class. Creates a miniPID instance.
+     * @param data the shared recource data class
+     */
+    public PID(Data data)
     {
         this.data = data;
-//        miniPID = new MiniPID(p, i, d);
         miniPID = new MiniPID(data.getCmd_pid_p(), data.getCmd_pid_i(), data.getCmd_pid_d());
         miniPID.setOutputLimits(0, 254);
 
     }
 
+    /**
+     * Run methods gathers the input data and calculates an output value
+     */
     @Override
     public void run()
     {
@@ -62,6 +69,11 @@ public class PID implements Runnable, Observer
         }
     }
 
+    /**
+     *
+     * @param o the observer
+     * @param arg the arguments for the observer
+     */
     @Override
     public void update(Observable o, Object arg)
 
