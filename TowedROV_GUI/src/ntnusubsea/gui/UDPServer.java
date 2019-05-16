@@ -2,14 +2,14 @@
  * This code is for the bachelor thesis named "Towed-ROV".
  * The purpose is to build a ROV which will be towed behind a surface vessel
  * and act as a multi-sensor platform, were it shall be easy to place new 
- * sesnors. There will also be a video stream from the ROV.
+ * sensors. There will also be a video stream from the ROV.
  * 
- * The system consists of a Raspberry Pi on the ROV that is connected to several
- * Arduino microcontrollers that are connected to sensors and and programed with
- * the control system.
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
  * The external computer which is on the surface vessel is connected to a GPS,
- * echo sounder and the RBPi. It will present and save data in addition to
- * handle user commands.
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.net.InetAddress;
@@ -30,8 +28,7 @@ import java.net.InetAddress;
  * image on a DatagramSocket and returns it as a BufferedImage.
  *
  */
-public class UDPClient implements Runnable
-{
+public class UDPServer implements Runnable {
 
     static BufferedImage videoImage;
     //static Socket videoSocket;
@@ -52,74 +49,75 @@ public class UDPClient implements Runnable
     private double endTime;
     private double startTime;
 
-    public UDPClient(int port, Data data)
-    {
-        try
-        {
+    /**
+     * The constructor of the UDPServer class. Sets up a DatagramSocket at the
+     * given port.
+     *
+     * @param port the given port
+     * @param data the shared resource class Data
+     */
+    public UDPServer(int port, Data data) {
+        try {
             this.data = data;
             this.port = port;
             //this.IP = IP;
             videoSocket = new DatagramSocket(this.port);
             photoDirectory = new File("C://TowedROV/ROV_Photos/");
-        } catch (Exception e)
-        {
-            System.out.println("Error connecting to the UDP Server: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error setting up UDP server: " + e.getMessage());
         }
     }
 
-    public void sendDelayCommand()
-    {
-        try
-        {
+    /**
+     * Sends the photo mode delay value to the UDP client
+     */
+    public void sendDelayCommand() {
+        try {
             String message = "photoDelay:" + String.valueOf(data.getPhotoModeDelay());
             byte arr[] = message.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, this.returnIP, this.returnPort);
             videoSocket.send(sendPacket);
             System.out.println("Delay command sent to Camera RPi!");
 
-        } catch (SocketException ex)
-        {
-            System.out.println("SocketException in UDPClient: " + ex.getMessage());
+        } catch (SocketException ex) {
+            System.out.println("SocketException in UDPServer: " + ex.getMessage());
 
-        } catch (IOException ex)
-        {
-            System.out.println("IOException in UDPClient: " + ex.getMessage());
-        } catch (Exception ex)
-        {
-            System.out.println("Exception in UDPClient: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("IOException in UDPServer: " + ex.getMessage());
+        } catch (Exception ex) {
+            System.out.println("Exception in UDPServer: " + ex.getMessage());
         }
     }
 
-    public void sendResetIMGcommand()
-    {
-        try
-        {
+    /**
+     * Sends the reset image number command to the UDP client
+     */
+    public void sendResetIMGcommand() {
+        try {
             String message = "resetImgNumber";
             byte arr[] = message.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, this.returnIP, this.returnPort);
             videoSocket.send(sendPacket);
             System.out.println("resetImgNumber command sent to Camera RPi!");
 
-        } catch (SocketException ex)
-        {
-            System.out.println("SocketException in UDPClient: " + ex.getMessage());
+        } catch (SocketException ex) {
+            System.out.println("SocketException in UDPServer: " + ex.getMessage());
 
-        } catch (IOException ex)
-        {
-            System.out.println("IOException in UDPClient: " + ex.getMessage());
-        } catch (Exception ex)
-        {
-            System.out.println("Exception in UDPClient: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("IOException in UDPServer: " + ex.getMessage());
+        } catch (Exception ex) {
+            System.out.println("Exception in UDPServer: " + ex.getMessage());
         }
     }
 
+    /**
+     * Runs the UDPServer thread. Receives the image frames from the video
+     * stream.
+     */
     @Override
-    public void run()
-    {
-        try
-        {
-            if (System.currentTimeMillis() - timer > 60000)
-            {
+    public void run() {
+        try {
+            if (System.currentTimeMillis() - timer > 60000) {
                 videoSocket.close();
                 videoSocket = new DatagramSocket(this.port);
                 timer = System.currentTimeMillis();
@@ -128,15 +126,14 @@ public class UDPClient implements Runnable
                 this.data.setStreaming(true);
             }
 
-            //Createss new DatagramSocket for reciving DatagramPackets
+            //Creates new DatagramSocket for reciving DatagramPackets
             //Creating new DatagramPacket form the packet recived on the videoSocket
             byte[] receivedData = new byte[60000];
             receivePacket = new DatagramPacket(receivedData,
                     receivedData.length);
             this.connected = true;
             this.data.setStreaming(true);
-            if (receivePacket.getLength() > 0)
-            {
+            if (receivePacket.getLength() > 0) {
                 startTime = System.currentTimeMillis();
                 //Updates the videoImage from the received DatagramPacket
                 videoSocket.receive(receivePacket);
@@ -144,8 +141,7 @@ public class UDPClient implements Runnable
                 this.returnPort = receivePacket.getPort();
                 endTime = System.currentTimeMillis();
                 data.setPhotoModeDelay_FB((endTime - startTime) / 1000);
-                if (debug)
-                {
+                if (debug) {
                     System.out.println("Videopackage received");
                 }
                 //Reads incomming byte array into a BufferedImage
@@ -153,8 +149,7 @@ public class UDPClient implements Runnable
                 videoImage = ImageIO.read(bais);
                 data.setVideoImage(videoImage);
 
-                if (lastPhotoMode && (endTime - startTime) > 500)
-                {
+                if (lastPhotoMode && (endTime - startTime) > 500) {
                     data.increaseImageNumberByOne();
                 }
 
@@ -180,8 +175,7 @@ public class UDPClient implements Runnable
 //                    System.out.println("Image were saved to disk succesfully at C://TowedROV/ROV_Photos");
 //                }
                 // Sends the command to the ROV
-                if (data.isPhotoMode() != lastPhotoMode)
-                {
+                if (data.isPhotoMode() != lastPhotoMode) {
                     String message = "photoMode:" + String.valueOf(data.isPhotoMode());
                     byte arr[] = message.getBytes();
                     DatagramPacket sendPacket = new DatagramPacket(arr, arr.length, this.returnIP, this.returnPort);
@@ -195,19 +189,16 @@ public class UDPClient implements Runnable
                 //System.out.println(endTime - startTime);
             }
 
-        } catch (SocketException sex)
-        {
+        } catch (SocketException sex) {
             System.out.println("SocketException: " + sex.getMessage());
             this.connected = false;
             this.data.setStreaming(false);
 
-        } catch (IOException ioex)
-        {
+        } catch (IOException ioex) {
             System.out.println("IOException: " + ioex.getMessage());
             this.connected = false;
             this.data.setStreaming(false);
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
             this.connected = false;
             this.data.setStreaming(false);

@@ -1,27 +1,31 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package basestation_rov;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import static java.lang.Math.PI;
-import static java.lang.Math.sin;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import ntnusubsea.gui.Data;
 import org.apache.commons.io.FileUtils;
 
 /**
- *
- * @author <Robin S. Thorholm>
+ * This class is responsible for logging the data, ship position, exif and
+ * telementry to seperate .csv files.
  */
-public class LogFileHandler implements Runnable
-{
+public class LogFileHandler implements Runnable {
 
     //User settings
     int pointFreqMillis = 5000;
@@ -75,17 +79,21 @@ public class LogFileHandler implements Runnable
     int lastImageNumber = 0;
     boolean exifSetup = false;
 
-    public LogFileHandler(Data data)
-    {
+    /**
+     * The constructor of the LogFileHandler class
+     *
+     * @param data the shared resource Data class
+     */
+    public LogFileHandler(Data data) {
         this.data = data;
     }
 
-    public void run()
-    {
-        if (!exifSetup || data.isImagesCleared())
-        {
-            try
-            {
+    /**
+     * Runs the LogFileHandler thread.
+     */
+    public void run() {
+        if (!exifSetup || data.isImagesCleared()) {
+            try {
                 lastImageNumber = 0;
                 //SimpleDateFormat exifTime = new SimpleDateFormat("yyyyMMddHHmmss");
                 exifDateAndTime = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -99,13 +107,11 @@ public class LogFileHandler implements Runnable
                 exifSetup = true;
                 data.setImagesCleared(true);
 
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
             }
 
         }
-        if (data.getImageNumber() != lastImageNumber)
-        {
+        if (data.getImageNumber() != lastImageNumber) {
             exifDateAndTime = new SimpleDateFormat("yyyyMMddHHmmss");
             dateExif = new Date(System.currentTimeMillis());
             exifDateAndTime.format(dateExif);
@@ -114,13 +120,10 @@ public class LogFileHandler implements Runnable
 
         }
 
-        if (data.startLogging)
-        {
+        if (data.startLogging) {
 
-            if (!setupIsDone)
-            {
-                try
-                {
+            if (!setupIsDone) {
+                try {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
                     date = new Date(System.currentTimeMillis());
 
@@ -158,8 +161,7 @@ public class LogFileHandler implements Runnable
 
                     setupIsDone = true;
 
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     System.out.println("ERROR: " + ex);
                 }
             }
@@ -172,8 +174,7 @@ public class LogFileHandler implements Runnable
             logData();
             logTelementry();
 
-        } else
-        {
+        } else {
             setupIsDone = false;
         }
     }
@@ -229,25 +230,26 @@ public class LogFileHandler implements Runnable
 //        }
 //
 //    }
-    public void closeLog()
-    {
-        try
-        {
+    /**
+     * Closes the BufferedWriter for each log file.
+     */
+    public void closeLog() {
+        try {
             outputWriterShipPos.close();
             outputWriterData.close();
             outputWriterExif.close();
             outputWriterTelementry.close();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Problem closing log file");
         }
 
     }
 
-    private void logExifData()
-    {
-        try
-        {
+    /**
+     * Logs the exif data to file
+     */
+    private void logExifData() {
+        try {
             exifLog = "";
             exifLog = data.getLatitude() + ","
                     + data.getLongitude();
@@ -255,16 +257,16 @@ public class LogFileHandler implements Runnable
             outputWriterExif.append('\n');
             outputWriterExif.append(telementryLog);
             outputWriterExif.flush();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
     }
 
-    private void logTelementry()
-    {
-        try
-        {
+    /**
+     * Logs the telementry data to file
+     */
+    private void logTelementry() {
+        try {
             telementryLog = "";
             telementryLog = data.getLatitude() + ","
                     + data.getLongitude() + ","
@@ -275,17 +277,17 @@ public class LogFileHandler implements Runnable
             outputWriterTelementry.append(telementryLog);
             outputWriterTelementry.flush();
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Error writing telementry...");
         }
 
     }
 
-    private void logData()
-    {
-        try
-        {
+    /**
+     * Logs the data to file
+     */
+    private void logData() {
+        try {
             dataLog = "";
 
             dataLog = DataPointNumb + ","
@@ -335,20 +337,22 @@ public class LogFileHandler implements Runnable
             outputWriterData.append(dataLog);
             outputWriterData.flush();
             DataPointNumb++;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
     }
 
-    private void logErrorMessages()
-    {
+    /**
+     * Logs the error data to file. Not finished
+     */
+    private void logErrorMessages() {
 
     }
 
-    private void logShipPosition()
-    {
-        try
-        {
+    /**
+     * Logs the ship position data to file
+     */
+    private void logShipPosition() {
+        try {
             shipTrack = "";
             shipTrack = shipTrackPointNumb + "," + timeStampString + ","
                     + data.getLatitude() + "," + data.getLongitude() + ","
@@ -358,8 +362,7 @@ public class LogFileHandler implements Runnable
             outputWriterShipPos.flush();
             shipTrackPointNumb++;
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Error: " + e);
         }
     }

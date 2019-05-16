@@ -191,7 +191,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;This code is for the bachelor thesis named &quot;Towed-ROV&quot;. The purpose is to build a ROV which will be towed behind a surface vessel and act as a multi-sensor platform, were it shall be easy to place new sensors. There is also a video stream from the ROV.  &lt;br/&gt;&lt;br/&gt;The system consists of a Raspberry Pi on the ROV that is connected to several Arduino microcontrollers that are connected to sensors and programmed with the control system. The external computer which is on the surface vessel is connected to a GPS, echo sounder and the ROV. It will present and save data in addition to handle user commands.&lt;br/&gt;&lt;br/&gt; Created by H&#xe5;kon Longva Haram, Robin Stamnes Thorholm and Bj&#xf8;rnar Magnus Tennfjord.&lt;html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;This code is for the bachelor thesis named &quot;Towed-ROV&quot;. The purpose is to build a ROV which will be towed behind a surface vessel and act as a multi-sensor platform, were it shall be easy to place new sensors. There is also a video stream from the ROV.  &lt;br/&gt;&lt;br/&gt;The system consists of two Raspberry Pis in the ROV that is connected to several Arduino micro controllers. These micro controllers asre connected to feedback from the actuator, the echo sounder and extra optional I/O. The external computer which is on the surface vessel is connected to a GPS and echo sounder over USB, and the ROV over Ethernet. It will present and log data in addition to handle user commands for controlling the ROV.&lt;br/&gt;&lt;br/&gt; Created by H&#xe5;kon Longva Haram, Robin Stamnes Thorholm and Bj&#xf8;rnar Magnus Tennfjord.&lt;html&gt;"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
@@ -1824,7 +1824,7 @@
                           <Color blue="72" green="b8" red="61" type="rgb"/>
                         </Property>
                         <Property name="maximum" type="int" value="254"/>
-                        <Property name="value" type="int" value="127"/>
+                        <Property name="value" type="int" value="85"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="null"/>
                         </Property>
@@ -1914,7 +1914,7 @@
                         </Property>
                         <Property name="maximum" type="int" value="254"/>
                         <Property name="toolTipText" type="java.lang.String" value=""/>
-                        <Property name="value" type="int" value="127"/>
+                        <Property name="value" type="int" value="85"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="null"/>
                         </Property>

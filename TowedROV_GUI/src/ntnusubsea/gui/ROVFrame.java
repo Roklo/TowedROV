@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
@@ -38,8 +46,7 @@ import javax.swing.KeyStroke;
  * observe sensor values, control the lights, open all the extra tools etc.
  *
  */
-public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
-{
+public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
 
     ImagePanel videoSheet;
     ImagePanel fullscreenVideoSheet;
@@ -53,7 +60,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private TCPpinger client_Pinger;
     private TCPClient client_ROV;
     private TCPClient client_Camera;
-    private UDPClient udpClient;
+    private UDPServer udpServer;
     private Sounder sounder;
     private LogFileHandler lgh;
     private VideoEncoder encoder;
@@ -73,11 +80,15 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
      *
      * @param echoSounder Echo sounder frame to show graphs
      * @param data Data containing shared variables
-     * @param client TCP client to send commands and receive data
+     * @param client_Pinger the ping TCP client
      * @param io I/O frame to control inputs and outputs
+     * @param client_ROV the ROV TCP client
+     * @param client_Camera the camera TCP client
+     * @param sounder the alarm sounder
+     * @param udpServer the camera UDP server
+     * @param lgh the log file handler
      */
-    public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPpinger client_Pinger, TCPClient client_ROV, TCPClient client_Camera, UDPClient udpClient, Sounder sounder, LogFileHandler lgh)
-    {
+    public ROVFrame(EchoSounderFrame echoSounder, Data data, IOControlFrame io, TCPpinger client_Pinger, TCPClient client_ROV, TCPClient client_Camera, UDPServer udpServer, Sounder sounder, LogFileHandler lgh) {
         this.clientThreadExecutor = null;
         this.encoderThreadExecutor = null;
         initComponents();
@@ -86,7 +97,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         this.client_Pinger = client_Pinger;
         this.client_ROV = client_ROV;
         this.client_Camera = client_Camera;
-        this.udpClient = udpClient;
+        this.udpServer = udpServer;
         this.options = new OptionsFrame(this.data, this.client_ROV);
         this.io = io;
         this.sounder = sounder;
@@ -106,16 +117,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 //        depthInputTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "sendInput");
         exitFullscreenButton.getActionMap().put("exitFullscreen", exitFullscreenAction);
 //        depthInputTextField.getActionMap().put("sendInput", sendInputAction);
-        try
-        {
+        try {
             this.client_Camera.sendCommand("setPitch:57");
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("IOException setPitch in ROVFrame constructor: " + ex.getMessage());
         }
 
-        if (this.debugMode)
-        {
+        if (this.debugMode) {
             // ROV RPi:
             emergencyStopButton.setEnabled(true);
             lightSwitchBlueLED.setEnabled(true);
@@ -137,6 +145,48 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             cameraPitchSlider.setEnabled(true);
             cameraPitchTextField.setEnabled(true);
             delayTextField.setEnabled(true);
+
+            // Setup for report:
+//            manualControlButton.setSelected(true);
+//            InputControllerButton.setSelected(true);
+//            lightSwitchBlueLED.setSelected(true);
+//            photoModeDelay_FB_Label.setText("0.02 s");
+//            jMenuConnect.setText("Connected 2/2");
+//            jMenuCalibrate.setText("Calibrated!");
+//            jMenuRovReady.setText("ROV Ready!");
+//            jMenuLogger.setText("Logging!");
+//            jMenuVoltage.setText("Voltage: 38.65 V");
+//            jMenuPing.setText("Ping (ROV): 3.24 ms");
+//            actuatorPosLabel.setText("<html>PS: 85<br/><br/>SB: 85");
+//            actuatorSBPosBar.setValue(85);
+//            actuatorPSPosBar.setValue(85);
+//            rollLabel.setText("Roll Angle: 2");
+//            pitchLabel.setText("Pitch Angle: -26");
+//            wingLabel.setText("Wing Angle: -40");
+//            actuatorPSPosLabel.setText("PS Actuator Pos: 86");
+//            actuatorSBPosLabel.setText("SB Actuator Pos: 87");
+//            i2cErrorLabel.setText("I2C: OK");
+//            outsideTempLabel.setText("Outside Temp: 8.25 C");
+//            insideTempLabel.setText("Inside Temp: 18.48 C");
+//            humidityLabel.setText("Humidity: 55.45");
+//            pressureLabel.setText("Pressure: 150 mBar");
+//            leakLabel.setText("No leak detected");
+//            headingLabel.setText("Heading: 19.0500");
+//            latitudeLabel.setText("Latitude: 62.5274");
+//            longitudeLabel.setText("Longitude: 6.2086");
+//            seafloorDepthBoatLabel.setText("Beneath Boat: 9.71 m");
+//            seafloorDepthRovLabel.setText("Beneath ROV: 7.84 m");
+//            rovDepthLabel.setText("ROV Depth: 1.57 m");
+//
+//            try {
+//                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+//                jMenuCalibrate.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+//                jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+//                jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+//                jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+//                jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+//            } catch (IOException e) {
+//            }
         }
     }
 
@@ -145,14 +195,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
      *
      * @param image The image to be displayed on the GUI
      */
-    public void showImage(BufferedImage image)
-    {
-        if (fullscreen.isVisible())
-        {
+    public void showImage(BufferedImage image) {
+        if (fullscreen.isVisible()) {
             fullscreenVideoSheet.setSize(cameraPanel1.getSize());
             fullscreenVideoSheet.paintSheet(ImageUtils.resize(image, fullscreenVideoSheet.getParent().getWidth(), fullscreenVideoSheet.getParent().getHeight()));
-        } else
-        {
+        } else {
             videoSheet.paintSheet(ImageUtils.resize(image, videoSheet.getParent().getWidth(), videoSheet.getParent().getHeight()));
             videoSheet.setSize(cameraPanel.getSize());
         }
@@ -165,8 +212,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
         fullscreen = new javax.swing.JFrame();
@@ -303,10 +349,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         fullscreen.setForeground(new java.awt.Color(39, 44, 50));
         fullscreen.setLocationByPlatform(true);
         fullscreen.setUndecorated(true);
-        fullscreen.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+        fullscreen.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 fullscreenKeyPressed(evt);
             }
         });
@@ -322,10 +366,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         exitFullscreenButton.setBorder(null);
         exitFullscreenButton.setContentAreaFilled(false);
         exitFullscreenButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        exitFullscreenButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        exitFullscreenButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitFullscreenButtonActionPerformed(evt);
             }
         });
@@ -372,16 +414,14 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         helpFrameOKbutton.setForeground(new java.awt.Color(255, 255, 255));
         helpFrameOKbutton.setText("Close");
         helpFrameOKbutton.setFocusPainted(false);
-        helpFrameOKbutton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        helpFrameOKbutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 helpFrameOKbuttonActionPerformed(evt);
             }
         });
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("<html>This code is for the bachelor thesis named \"Towed-ROV\". The purpose is to build a ROV which will be towed behind a surface vessel and act as a multi-sensor platform, were it shall be easy to place new sensors. There is also a video stream from the ROV.  <br/><br/>The system consists of a Raspberry Pi on the ROV that is connected to several Arduino microcontrollers that are connected to sensors and programmed with the control system. The external computer which is on the surface vessel is connected to a GPS, echo sounder and the ROV. It will present and save data in addition to handle user commands.<br/><br/> Created by Håkon Longva Haram, Robin Stamnes Thorholm and Bjørnar Magnus Tennfjord.<html>");
+        jLabel1.setText("<html>This code is for the bachelor thesis named \"Towed-ROV\". The purpose is to build a ROV which will be towed behind a surface vessel and act as a multi-sensor platform, were it shall be easy to place new sensors. There is also a video stream from the ROV.  <br/><br/>The system consists of two Raspberry Pis in the ROV that is connected to several Arduino micro controllers. These micro controllers asre connected to feedback from the actuator, the echo sounder and extra optional I/O. The external computer which is on the surface vessel is connected to a GPS and echo sounder over USB, and the ROV over Ethernet. It will present and log data in addition to handle user commands for controlling the ROV.<br/><br/> Created by Håkon Longva Haram, Robin Stamnes Thorholm and Bjørnar Magnus Tennfjord.<html>");
         jLabel1.setToolTipText("");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -461,10 +501,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         fullscreenButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         fullscreenButton.setHideActionText(true);
         fullscreenButton.setName(""); // NOI18N
-        fullscreenButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        fullscreenButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fullscreenButtonActionPerformed(evt);
             }
         });
@@ -494,10 +532,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         targetDistanceTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         targetDistanceTextField.setToolTipText("Depth (m)");
-        targetDistanceTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        targetDistanceTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 targetDistanceTextFieldActionPerformed(evt);
             }
         });
@@ -517,10 +553,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         depthModeButton.setText("Depth");
         depthModeButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         depthModeButton.setFocusPainted(false);
-        depthModeButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        depthModeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 depthModeButtonActionPerformed(evt);
             }
         });
@@ -531,10 +565,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         seafloorModeButton.setText("Distance from seafloor");
         seafloorModeButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         seafloorModeButton.setFocusPainted(false);
-        seafloorModeButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        seafloorModeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seafloorModeButtonActionPerformed(evt);
             }
         });
@@ -558,10 +590,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         manualControlButton.setFocusPainted(false);
         manualControlButton.setFocusable(false);
         manualControlButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
-        manualControlButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        manualControlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 manualControlButtonActionPerformed(evt);
             }
         });
@@ -577,10 +607,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         resetManualControlButton.setText("RESET");
         resetManualControlButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         resetManualControlButton.setFocusPainted(false);
-        resetManualControlButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        resetManualControlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetManualControlButtonActionPerformed(evt);
             }
         });
@@ -592,10 +620,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorControlPS.setValue(127);
         actuatorControlPS.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         actuatorControlPS.setEnabled(false);
-        actuatorControlPS.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseReleased(java.awt.event.MouseEvent evt)
-            {
+        actuatorControlPS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
                 actuatorControlPSMouseReleased(evt);
             }
         });
@@ -607,10 +633,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorControlSB.setValue(127);
         actuatorControlSB.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         actuatorControlSB.setEnabled(false);
-        actuatorControlSB.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseReleased(java.awt.event.MouseEvent evt)
-            {
+        actuatorControlSB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
                 actuatorControlSBMouseReleased(evt);
             }
         });
@@ -627,10 +651,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lockButton.setFocusPainted(false);
         lockButton.setMaximumSize(new java.awt.Dimension(63, 30));
         lockButton.setMinimumSize(new java.awt.Dimension(63, 30));
-        lockButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        lockButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lockButtonActionPerformed(evt);
             }
         });
@@ -643,10 +665,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         InputControllerButton.setFocusPainted(false);
         InputControllerButton.setMaximumSize(new java.awt.Dimension(63, 30));
         InputControllerButton.setMinimumSize(new java.awt.Dimension(63, 30));
-        InputControllerButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        InputControllerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 InputControllerButtonActionPerformed(evt);
             }
         });
@@ -748,10 +768,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightSwitch.setFocusPainted(false);
         lightSwitch.setFocusable(false);
         lightSwitch.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
-        lightSwitch.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        lightSwitch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lightSwitchActionPerformed(evt);
             }
         });
@@ -771,10 +789,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightSlider.setMinimum(19);
         lightSlider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lightSlider.setEnabled(false);
-        lightSlider.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseReleased(java.awt.event.MouseEvent evt)
-            {
+        lightSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
                 lightSliderMouseReleased(evt);
             }
         });
@@ -789,10 +805,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         lightSwitchBlueLED.setFocusPainted(false);
         lightSwitchBlueLED.setFocusable(false);
         lightSwitchBlueLED.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
-        lightSwitchBlueLED.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        lightSwitchBlueLED.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lightSwitchBlueLEDActionPerformed(evt);
             }
         });
@@ -866,10 +880,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         emergencyStopButton.setBorder(null);
         emergencyStopButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         emergencyStopButton.setEnabled(false);
-        emergencyStopButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        emergencyStopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 emergencyStopButtonActionPerformed(evt);
             }
         });
@@ -916,10 +928,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         delayTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         delayTextField.setToolTipText("Time between each frame (0-99). - Press enter to send command.");
         delayTextField.setEnabled(false);
-        delayTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        delayTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 delayTextFieldActionPerformed(evt);
             }
         });
@@ -944,10 +954,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         photoModeButton.setFocusPainted(false);
         photoModeButton.setFocusable(false);
         photoModeButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/ntnusubsea/gui/Images/switch-on.gif"))); // NOI18N
-        photoModeButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        photoModeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 photoModeButtonActionPerformed(evt);
             }
         });
@@ -966,10 +974,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         cameraPitchSlider.setValue(57);
         cameraPitchSlider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cameraPitchSlider.setEnabled(false);
-        cameraPitchSlider.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseReleased(java.awt.event.MouseEvent evt)
-            {
+        cameraPitchSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
                 cameraPitchSliderMouseReleased(evt);
             }
         });
@@ -981,10 +987,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         cameraPitchTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         cameraPitchTextField.setToolTipText("Camera Pitch (50-75). - Press enter to send command.");
         cameraPitchTextField.setEnabled(false);
-        cameraPitchTextField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        cameraPitchTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cameraPitchTextFieldActionPerformed(evt);
             }
         });
@@ -1004,10 +1008,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         getPhotosButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         getPhotosButton.setEnabled(false);
         getPhotosButton.setFocusPainted(false);
-        getPhotosButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        getPhotosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 getPhotosButtonActionPerformed(evt);
             }
         });
@@ -1023,10 +1025,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         clearImagesButton.setEnabled(false);
         clearImagesButton.setFocusPainted(false);
         clearImagesButton.setLabel("CLR IMGs");
-        clearImagesButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        clearImagesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearImagesButtonActionPerformed(evt);
             }
         });
@@ -1185,12 +1185,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorPSPosBar.setBackground(new java.awt.Color(42, 48, 57));
         actuatorPSPosBar.setForeground(new java.awt.Color(97, 184, 114));
         actuatorPSPosBar.setMaximum(254);
-        actuatorPSPosBar.setValue(127);
+        actuatorPSPosBar.setValue(85);
         actuatorPSPosBar.setBorder(null);
-        actuatorPSPosBar.addChangeListener(new javax.swing.event.ChangeListener()
-        {
-            public void stateChanged(javax.swing.event.ChangeEvent evt)
-            {
+        actuatorPSPosBar.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 actuatorPSPosBarStateChanged(evt);
             }
         });
@@ -1234,12 +1232,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorSBPosBar.setForeground(new java.awt.Color(97, 184, 114));
         actuatorSBPosBar.setMaximum(254);
         actuatorSBPosBar.setToolTipText("");
-        actuatorSBPosBar.setValue(127);
+        actuatorSBPosBar.setValue(85);
         actuatorSBPosBar.setBorder(null);
-        actuatorSBPosBar.addChangeListener(new javax.swing.event.ChangeListener()
-        {
-            public void stateChanged(javax.swing.event.ChangeEvent evt)
-            {
+        actuatorSBPosBar.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 actuatorSBPosBarStateChanged(evt);
             }
         });
@@ -1728,40 +1724,32 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuTools.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jMenuEchosounder.setText("Echo sounder");
-        jMenuEchosounder.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuEchosounder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuEchosounderActionPerformed(evt);
             }
         });
         jMenuTools.add(jMenuEchosounder);
 
         jMenuIOController.setText("I/O Controller");
-        jMenuIOController.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuIOController.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuIOControllerActionPerformed(evt);
             }
         });
         jMenuTools.add(jMenuIOController);
 
         jMenuOptions.setText("Options");
-        jMenuOptions.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuOptionsActionPerformed(evt);
             }
         });
         jMenuTools.add(jMenuOptions);
 
         jMenuItemExit.setText("Exit");
-        jMenuItemExit.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemExitActionPerformed(evt);
             }
         });
@@ -1774,10 +1762,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuHelp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jMenuAbout.setText("About");
-        jMenuAbout.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuAboutActionPerformed(evt);
             }
         });
@@ -1791,10 +1777,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuConnect.setFocusPainted(true);
 
         jMenuItemConnect.setText("Connect");
-        jMenuItemConnect.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemConnectActionPerformed(evt);
             }
         });
@@ -1802,10 +1786,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
         jMenuItemDisconnect.setText("Disconnect");
         jMenuItemDisconnect.setEnabled(false);
-        jMenuItemDisconnect.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemDisconnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemDisconnectActionPerformed(evt);
             }
         });
@@ -1819,10 +1801,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuCalibrate.setDisabledIcon(null);
 
         calibrateMenuItem.setText("Calibrate");
-        calibrateMenuItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        calibrateMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 calibrateMenuItemActionPerformed(evt);
             }
         });
@@ -1842,20 +1822,16 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuLogger.setText("Not logging");
         jMenuLogger.setActionCommand("jMenuLogger");
         jMenuLogger.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jMenuLogger.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuLogger.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuLoggerActionPerformed(evt);
             }
         });
 
         jMenuItemStartLogging.setText("Start logging");
         jMenuItemStartLogging.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jMenuItemStartLogging.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemStartLogging.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemStartLoggingActionPerformed(evt);
             }
         });
@@ -1864,10 +1840,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuItemStopLogging.setText("Stop logging");
         jMenuItemStopLogging.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jMenuItemStopLogging.setEnabled(false);
-        jMenuItemStopLogging.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jMenuItemStopLogging.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemStopLoggingActionPerformed(evt);
             }
         });
@@ -1926,8 +1900,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void fullscreenKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fullscreenKeyPressed
         int key = evt.getKeyCode();
-        if (key == KeyEvent.VK_ESCAPE)
-        {
+        if (key == KeyEvent.VK_ESCAPE) {
             fullscreen.dispose();
         }
         System.out.println(key);
@@ -1935,14 +1908,12 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void actuatorPSPosBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorPSPosBarStateChanged
         int actuatorTime1 = actuatorPSPosBar.getValue();
-        if (actuatorTime1 <= 254)
-        {
+        if (actuatorTime1 <= 254) {
 //            actuatorPSPosBar.setForeground(new Color(actuatorTime1, 255, 0));
             actuatorPSPosBar.setForeground(new Color(77, 192, 99));
             warningLabel1.setText("");
             warningLabel1.setBackground(new Color(42, 48, 57));
-        } else
-        {
+        } else {
             actuatorPSPosBar.setForeground(new Color(255, 255 + (256 - actuatorTime1), 0));
             warningLabel1.setText("Warning!");
             warningLabel1.setBackground(Color.red);
@@ -1958,45 +1929,35 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
         actuatorControlPS.setEnabled(false);
         actuatorControlSB.setEnabled(false);
-        if (this.targetMode != 1)
-        {
+        if (this.targetMode != 1) {
             this.targetMode = 1;
             System.out.println("Mode 1 - Distance from seafloor");
             data.setManualMode(false);
-            try
-            {
+            try {
                 this.client_ROV.sendCommand("cmd_targetMode:" + String.valueOf(this.targetMode));
                 this.client_ROV.sendCommand("cmd_targetDistance:" + String.valueOf(d));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("IOException: " + ex.getMessage());
             }
-        } else
-        {
+        } else {
             System.out.println("Already in seafloor mode.");
         }
     }//GEN-LAST:event_seafloorModeButtonActionPerformed
 
     private void lightSwitchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lightSwitchActionPerformed
-        if (lightSwitch.isSelected())
-        {
-            try
-            {
+        if (lightSwitch.isSelected()) {
+            try {
                 int value = lightSlider.getValue();
                 client_Camera.sendCommand("setLed:" + String.valueOf(value));
                 //lightSlider.setValue(40);
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 client_Camera.sendCommand("setLed:0");
                 //lightSlider.setValue(19);
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -2005,30 +1966,26 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private void emergencyStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emergencyStopButtonActionPerformed
 //        previousSetpoint = setpoint;
 //        setpoint = 0.000; 
-        if (!data.isEmergencyMode())
-        {
+        if (!data.isEmergencyMode()) {
             data.setEmergencyMode(true);
         }
         targetDistanceTextField.setText("0.00");
         setpointLabel.setText("EMERGENCY STOP: " + targetDistanceTextField.getText() + "m");
         setpointLabel.setBackground(new Color(255, 0, 0));
         manualControlButton.doClick();
-        try
-        {
+        try {
             this.client_ROV.sendCommand("cmd_emergencySurface:true");
             this.client_ROV.sendCommand("cmd_targetMode:2");
             this.client_ROV.sendCommand("cmd_actuatorPS:254");
             this.client_ROV.sendCommand("cmd_actuatorSB:254");
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("IOException in emergencyStopButtonActionPerformed: " + ex.getMessage());
         }
     }//GEN-LAST:event_emergencyStopButtonActionPerformed
 
     private void jMenuItemConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConnectActionPerformed
 //        String ip = (String) JOptionPane.showInputDialog(this, "Enter IP", "Connection", JOptionPane.PLAIN_MESSAGE, null, null, data.getIP_Rov());
-        try
-        {
+        try {
 
             this.clientThreadExecutor = Executors.newScheduledThreadPool(4);
             clientThreadExecutor.scheduleAtFixedRate(client_Pinger,
@@ -2037,12 +1994,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     0, 100, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(client_Camera,
                     0, 100, TimeUnit.MILLISECONDS);
-            clientThreadExecutor.scheduleAtFixedRate(udpClient,
+            clientThreadExecutor.scheduleAtFixedRate(udpServer,
                     0, 20, TimeUnit.MILLISECONDS);
             Thread.sleep(500);
 
-            if (client_ROV.isConnected() && client_Camera.isConnected())
-            {
+            if (client_ROV.isConnected() && client_Camera.isConnected()) {
                 // ROV RPi:
                 lightSwitch_lbl.setEnabled(true);
                 emergencyStopButton.setEnabled(true);
@@ -2082,8 +2038,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                         "Successfully connected to the ROV RPi and the camera RPi.",
                         "Connected",
                         JOptionPane.PLAIN_MESSAGE);
-            } else if (client_ROV.isConnected() && !client_Camera.isConnected())
-            {
+            } else if (client_ROV.isConnected() && !client_Camera.isConnected()) {
                 // ROV RPi:
                 emergencyStopButton.setEnabled(true);
                 lightSwitchBlueLED.setEnabled(true);
@@ -2113,8 +2068,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                         "Could only connect to the ROV RPi, but not the camera RPi...",
                         "Connected 1/2",
                         JOptionPane.PLAIN_MESSAGE);
-            } else if (!client_ROV.isConnected() && client_Camera.isConnected())
-            {
+            } else if (!client_ROV.isConnected() && client_Camera.isConnected()) {
                 // Camera RPi:
                 lightSwitch_lbl.setEnabled(true);
                 lightSwitch.setEnabled(true);
@@ -2134,8 +2088,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                         "Could only connect to the camera RPi, but not the ROV RPi...",
                         "Connected 1/2",
                         JOptionPane.PLAIN_MESSAGE);
-            } else
-            {
+            } else {
                 JOptionPane.showMessageDialog(this,
                         "Error: Could not connect to either the ROV RPi nor the camera RPi.",
                         "Error: Could not connect",
@@ -2144,21 +2097,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 client_ROV.disconnect();
                 client_Camera.disconnect();
 
-                if (clientThreadExecutor != null)
-                {
+                if (clientThreadExecutor != null) {
                     clientThreadExecutor.shutdown();
                     clientThreadExecutor = null;
                 }
             }
 
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             jMenuConnect.setText("Connect");
-            try
-            {
+            try {
                 jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
-            } catch (IOException ex1)
-            {
+            } catch (IOException ex1) {
                 System.out.println("IOException: " + ex.getMessage());
             }
             JOptionPane.showMessageDialog(this,
@@ -2170,15 +2119,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void jMenuItemDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDisconnectActionPerformed
 
-        try
-        {
+        try {
             client_Pinger.disconnect();
             client_ROV.disconnect();
             client_Camera.disconnect();
             jMenuPing.setText("Ping (ROV): Not connected");
 
-            if (clientThreadExecutor != null)
-            {
+            if (clientThreadExecutor != null) {
                 clientThreadExecutor.shutdown();
             }
             // ROV RPi:
@@ -2213,8 +2160,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     JOptionPane.PLAIN_MESSAGE);
             videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
             data.setVideoImage(videoImage);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             JOptionPane.showMessageDialog(this,
                     "Failed to disconnect.",
                     "Disconnect error",
@@ -2245,13 +2191,11 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void actuatorSBPosBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_actuatorSBPosBarStateChanged
         int actuatorTime2 = actuatorSBPosBar.getValue();
-        if (actuatorTime2 <= 254)
-        {
+        if (actuatorTime2 <= 254) {
             actuatorSBPosBar.setForeground(new Color(77, 192, 99));
             warningLabel2.setText("");
             warningLabel2.setBackground(new Color(42, 48, 57));
-        } else
-        {
+        } else {
             actuatorSBPosBar.setForeground(new Color(255, 255 + (256 - actuatorTime2), 0));
             warningLabel2.setText("Warning!");
             warningLabel2.setBackground(Color.red);
@@ -2270,21 +2214,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
         actuatorControlPS.setEnabled(false);
         actuatorControlSB.setEnabled(false);
-        if (this.targetMode != 0)
-        {
+        if (this.targetMode != 0) {
             this.targetMode = 0;
             data.setManualMode(false);
             System.out.println("Mode 0 - Depth");
-            try
-            {
+            try {
                 this.client_ROV.sendCommand("cmd_targetMode:" + String.valueOf(this.targetMode));
                 this.client_ROV.sendCommand("cmd_targetDistance:" + String.valueOf(d));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("IOException: " + ex.getMessage());
             }
-        } else
-        {
+        } else {
             System.out.println("Already in depth mode.");
         }
     }//GEN-LAST:event_depthModeButtonActionPerformed
@@ -2296,25 +2236,20 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private void cameraPitchTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cameraPitchTextFieldActionPerformed
     {//GEN-HEADEREND:event_cameraPitchTextFieldActionPerformed
 
-        try
-        {
+        try {
             cameraPitchTextField.commitEdit();
-            if (cameraPitchTextField.getText() != null && isInteger(cameraPitchTextField.getText()))
-            {
+            if (cameraPitchTextField.getText() != null && isInteger(cameraPitchTextField.getText())) {
                 this.cameraPitchValue = Integer.parseInt(cameraPitchTextField.getText());
             }
-            if (this.cameraPitchValue > 100)
-            {
+            if (this.cameraPitchValue > 100) {
                 this.cameraPitchValue = 100;
                 System.out.println("Camera Pitch input too high! Set to max (100)");
-            } else if (this.cameraPitchValue < 0)
-            {
+            } else if (this.cameraPitchValue < 0) {
                 this.cameraPitchValue = 0;
                 System.out.println("Camera Pitch input too low! Set to min (0)");
             }
 
-            if (this.cameraPitchValue <= 75 && this.cameraPitchValue >= 50)
-            {
+            if (this.cameraPitchValue <= 75 && this.cameraPitchValue >= 50) {
                 cameraPitchLabel.setBackground(new Color(28, 28, 28));
                 cameraPitchSlider.setValue(this.cameraPitchValue);
                 cameraPitchLabel.setText(String.valueOf(this.cameraPitchValue));
@@ -2323,8 +2258,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 //this.client_Camera.sendCommand("setPitch:" + String.valueOf(this.cameraPitchValue));
                 // Send this to the python TcpController program running on the Camera RPi
 
-            } else
-            {
+            } else {
                 cameraPitchTextField.setValue(null);
                 JOptionPane.showMessageDialog(this,
                         "Input is invalid. Valid integer values are 50-75.",
@@ -2332,20 +2266,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                         JOptionPane.ERROR_MESSAGE);
             }
 
-        } catch (ParseException ex)
-        {
+        } catch (ParseException ex) {
             System.out.println(ex.getMessage());
 
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage());
         }
     }//GEN-LAST:event_cameraPitchTextFieldActionPerformed
 
     private void cameraPitchSliderMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_cameraPitchSliderMouseReleased
     {//GEN-HEADEREND:event_cameraPitchSliderMouseReleased
-        try
-        {
+        try {
             this.cameraPitchValue = cameraPitchSlider.getValue();
             cameraPitchLabel.setText(Integer.toString(this.cameraPitchValue));
             cameraPitchTextField.setText(Integer.toString(this.cameraPitchValue));
@@ -2353,25 +2284,20 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
             System.out.println("Camera Pitch set to " + cameraPitchSlider.getValue());
             this.client_Camera.sendCommand("setPitch:" + String.valueOf(this.cameraPitchValue));
             // Send this to the java program running on the Camera RPi
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_cameraPitchSliderMouseReleased
 
     private void delayTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_delayTextFieldActionPerformed
     {//GEN-HEADEREND:event_delayTextFieldActionPerformed
-        try
-        {
-            if (delayTextField.getText() != null && isNumeric(delayTextField.getText()))
-            {
+        try {
+            if (delayTextField.getText() != null && isNumeric(delayTextField.getText())) {
                 this.photoModeDelay = Double.parseDouble(delayTextField.getText());
-                if (this.photoModeDelay > 99)
-                {
+                if (this.photoModeDelay > 99) {
                     this.photoModeDelay = 99;
                     System.out.println("Photo Mode Delay input too high! Set to max (99)");
-                } else if (this.photoModeDelay < 0)
-                {
+                } else if (this.photoModeDelay < 0) {
                     this.photoModeDelay = 0;
                     System.out.println("Photo Mode Delay input too low! Set to min (0)");
                 }
@@ -2379,35 +2305,27 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 data.setPhotoModeDelay(this.photoModeDelay);
                 System.out.println("Photo Mode Delay set to " + String.valueOf(this.photoModeDelay));
 
-                this.udpClient.sendDelayCommand();
-            } else
-            {
+                this.udpServer.sendDelayCommand();
+            } else {
                 System.out.println("Invalid delay entered.");
             }
-        } catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_delayTextFieldActionPerformed
 
     private void photoModeButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_photoModeButtonActionPerformed
     {//GEN-HEADEREND:event_photoModeButtonActionPerformed
-        if (photoModeButton.isSelected())
-        {
-            try
-            {
+        if (photoModeButton.isSelected()) {
+            try {
                 data.setPhotoMode(true);
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 data.setPhotoMode(false);
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -2418,10 +2336,10 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 //        GetImagesFrame imgframe = new GetImagesFrame();
 //        imgframe.setVisible(true);
 //        imgframe.setLocation(this.getLocation().x, this.getLocation().y);
-        Object[] options =
-        {
-            "OK", "Cancel"
-        };
+        Object[] options
+                = {
+                    "OK", "Cancel"
+                };
         int choice = JOptionPane.showOptionDialog(this,
                 "Warning! This might take a few minutes and will freeze the GUI.\nPress OK to continue, or Cancel to abort.",
                 "Warning!",
@@ -2430,22 +2348,17 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 null, //Icon icon,
                 options, //Object[] options,
                 options[0]);//Object initialValue 
-        if (choice == 0)
-        {
+        if (choice == 0) {
             FtpClient ftp = null;
             File dir = null;
-            try
-            {
-                try
-                {
+            try {
+                try {
                     dir = new File("C:\\TowedROV\\ROV_Photos\\");
-                    if (!dir.exists() || !dir.isDirectory())
-                    {
+                    if (!dir.exists() || !dir.isDirectory()) {
                         System.out.println("No directory found, creating a new one at C://TowedROV/ROV_Photos/");
                         dir.mkdir();
                     }
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     System.out.println("No directory found, creating a new one at C://TowedROV/ROV_Photos/");
                     dir.mkdir();
                 }
@@ -2457,69 +2370,56 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 ftp.open();
                 //int count = 1;
                 Collection<String> list = ftp.getFileList("ftp/images");
-                for (String s : list)
-                {
+                for (String s : list) {
                     ftp.downloadFile("ftp/images/" + s, dir.getPath() + "\\" + s, dir.getPath());
                     //imgframe.progressLabel.setText(String.valueOf(count) + " / " + String.valueOf(list.size()));
                     System.out.println(s);
                     //count++;
                 }
 
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 System.out.println(ex.getMessage());
-            } finally
-            {
-                if (ftp != null)
-                {
+            } finally {
+                if (ftp != null) {
                     ftp.disconnect();
                 }
             }
-        } else if (choice == 0)
-        {
+        } else if (choice == 0) {
             System.out.println("Cancelled getting the images.");
-        } else
-        {
+        } else {
             System.out.println("No option chosen: Cancelled getting the images.");
         }
     }//GEN-LAST:event_getPhotosButtonActionPerformed
 
     private void lightSliderMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_lightSliderMouseReleased
     {//GEN-HEADEREND:event_lightSliderMouseReleased
-        try
-        {
-            if (lightSwitch.isSelected())
-            {
+        try {
+            if (lightSwitch.isSelected()) {
                 //data.setCameraPitchValue(cameraPitchValue);
                 int value = lightSlider.getValue();
                 System.out.println("ROV Lights set to " + value);
                 this.client_Camera.sendCommand("setLed:" + String.valueOf(value));
                 // Send this to the python TcpController program running on the Camera RPi
             }
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(ROVFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lightSliderMouseReleased
 
     private void manualControlButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_manualControlButtonActionPerformed
     {//GEN-HEADEREND:event_manualControlButtonActionPerformed
-        if (this.targetMode != 2)
-        {
+        if (this.targetMode != 2) {
             actuatorControlPS.setEnabled(true);
             actuatorControlSB.setEnabled(true);
             data.setManualMode(true);
             this.targetMode = 2;
             System.out.println("Mode 2 - Manual wing control");
-            try
-            {
+            try {
                 this.client_ROV.sendCommand("cmd_targetMode:" + String.valueOf(this.targetMode));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("IOException: " + ex.getMessage());
             }
-        } else
-        {
+        } else {
             depthModeButton.doClick();
         }
     }//GEN-LAST:event_manualControlButtonActionPerformed
@@ -2529,52 +2429,40 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorControlPS.setValue(127);
         actuatorControlSB.setValue(127);
         actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-        if (manualControlButton.isSelected())
-        {
-            try
-            {
+        if (manualControlButton.isSelected()) {
+            try {
                 this.client_ROV.sendCommand("cmd_actuatorPS:127");
                 this.client_ROV.sendCommand("cmd_actuatorSB:127");
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("IOException: " + ex.getMessage());
             }
-        } else
-        {
+        } else {
             //System.out.println("Not in manual control mode.");
         }
     }//GEN-LAST:event_resetManualControlButtonActionPerformed
 
     private void actuatorControlPSMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_actuatorControlPSMouseReleased
     {//GEN-HEADEREND:event_actuatorControlPSMouseReleased
-        if (manualControlButton.isSelected())
-        {
-            if (lockButton.isSelected())
-            {
+        if (manualControlButton.isSelected()) {
+            if (lockButton.isSelected()) {
                 actuatorControlSB.setValue(actuatorControlPS.getValue());
                 actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-                try
-                {
+                try {
                     this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
                     this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
-                } catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     System.out.println("IOException: " + ex.getMessage());
                 }
-            } else
-            {
+            } else {
                 actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-                try
-                {
+                try {
                     this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
-                } catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     System.out.println("IOException: " + ex.getMessage());
                 }
             }
 
-        } else
-        {
+        } else {
             //System.out.println("Not in manual control mode.");
         }
 
@@ -2582,34 +2470,26 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void actuatorControlSBMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_actuatorControlSBMouseReleased
     {//GEN-HEADEREND:event_actuatorControlSBMouseReleased
-        if (manualControlButton.isSelected())
-        {
-            if (lockButton.isSelected())
-            {
+        if (manualControlButton.isSelected()) {
+            if (lockButton.isSelected()) {
                 actuatorControlPS.setValue(actuatorControlSB.getValue());
                 actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-                try
-                {
+                try {
                     this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
                     this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
-                } catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     System.out.println("IOException: " + ex.getMessage());
                 }
-            } else
-            {
+            } else {
 
                 actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-                try
-                {
+                try {
                     this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
-                } catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     System.out.println("IOException: " + ex.getMessage());
                 }
             }
-        } else
-        {
+        } else {
             //System.out.println("Not in manual control mode.");
         }
     }//GEN-LAST:event_actuatorControlSBMouseReleased
@@ -2617,23 +2497,18 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private void targetDistanceTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_targetDistanceTextFieldActionPerformed
     {//GEN-HEADEREND:event_targetDistanceTextFieldActionPerformed
         data.setEmergencyMode(false);
-        try
-        {
+        try {
             targetDistanceTextField.commitEdit();
-            if (targetDistanceTextField.getText() != null && isNumeric(targetDistanceTextField.getText()))
-            {
+            if (targetDistanceTextField.getText() != null && isNumeric(targetDistanceTextField.getText())) {
                 double newSetpoint;
-                try
-                {
+                try {
                     newSetpoint = Double.parseDouble(targetDistanceTextField.getText());
-                } catch (ClassCastException ex)
-                {
+                } catch (ClassCastException ex) {
                     Long newSetpointLong = Long.parseLong(targetDistanceTextField.getText());
                     newSetpoint = newSetpointLong.doubleValue();
                 }
 
-                if (newSetpoint <= 50 && newSetpoint >= 0)
-                {
+                if (newSetpoint <= 50 && newSetpoint >= 0) {
                     setpointLabel.setBackground(new Color(39, 44, 50));
 //                    previousSetpoint = setpoint;
 //                    setpoint = newSetpoint;
@@ -2641,8 +2516,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     setpointLabel.setText("Current setpoint: " + newSetpoint + "m");
                     System.out.println("targetDistance set to " + String.valueOf(newSetpoint));
                     this.client_ROV.sendCommand("cmd_targetDistance:" + String.valueOf(newSetpoint));
-                } else
-                {
+                } else {
                     targetDistanceTextField.setValue(null);
                     targetDistanceTextField.setText("");
                     JOptionPane.showMessageDialog(this,
@@ -2651,42 +2525,33 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                             JOptionPane.ERROR_MESSAGE);
                 }
 
-            } else
-            {
+            } else {
                 System.out.println("Invalid input entered.");
             }
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("IOException: " + ex.getMessage());
-        } catch (ParseException ex)
-        {
+        } catch (ParseException ex) {
             System.out.println("ParseException: " + ex.getMessage());
         }
     }//GEN-LAST:event_targetDistanceTextFieldActionPerformed
 
     private void lockButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_lockButtonActionPerformed
     {//GEN-HEADEREND:event_lockButtonActionPerformed
-        if (actuatorControlPS.getValue() != 127)
-        {
+        if (actuatorControlPS.getValue() != 127) {
             actuatorControlPS.setValue(127);
             actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-            try
-            {
+            try {
                 this.client_ROV.sendCommand("cmd_actuatorPS:" + String.valueOf(actuatorControlPS.getValue()));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("IOException: " + ex.getMessage());
             }
         }
-        if (actuatorControlSB.getValue() != 127)
-        {
+        if (actuatorControlSB.getValue() != 127) {
             actuatorControlSB.setValue(127);
             actuatorPosLabel.setText("<html>PS: " + String.valueOf(actuatorControlPS.getValue()) + "<br/><br/>SB: " + String.valueOf(actuatorControlSB.getValue()));
-            try
-            {
+            try {
                 this.client_ROV.sendCommand("cmd_actuatorSB:" + String.valueOf(actuatorControlSB.getValue()));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("IOException: " + ex.getMessage());
             }
         }
@@ -2694,10 +2559,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void clearImagesButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clearImagesButtonActionPerformed
     {//GEN-HEADEREND:event_clearImagesButtonActionPerformed
-        try
-        {
+        try {
             this.client_Camera.sendCommand("clearImages");
-            this.udpClient.sendResetIMGcommand();
+            this.udpServer.sendResetIMGcommand();
             int tempNum = data.getImageNumber();
             data.setImageNumber(0);
             imageNumberLabel.setText("0 / 1000");
@@ -2706,25 +2570,21 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                     "Cleared Images",
                     JOptionPane.PLAIN_MESSAGE);
             data.setImagesCleared(true);
-        } catch (IOException ioex)
-        {
+        } catch (IOException ioex) {
             System.out.println("IOException: " + ioex.getMessage());
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
         }
     }//GEN-LAST:event_clearImagesButtonActionPerformed
 
     private void calibrateMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_calibrateMenuItemActionPerformed
     {//GEN-HEADEREND:event_calibrateMenuItemActionPerformed
-        try
-        {
+        try {
             // TODO add your handling code here:
             // Kjør kalibrering!
             jMenuCalibrate.setText("Calibrated!");
             jMenuCalibrate.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("IOException when calibrating: " + ex.getMessage());
 
         }
@@ -2732,22 +2592,16 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void lightSwitchBlueLEDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_lightSwitchBlueLEDActionPerformed
     {//GEN-HEADEREND:event_lightSwitchBlueLEDActionPerformed
-        if (lightSwitchBlueLED.isSelected())
-        {
-            try
-            {
+        if (lightSwitchBlueLED.isSelected()) {
+            try {
                 client_ROV.sendCommand("cmd_BlueLED:1");
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error while turning the blue LEDs on: " + ex.getMessage());
             }
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 client_ROV.sendCommand("cmd_BlueLED:0");
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error while turning the blue LEDs off: " + ex.getMessage());
             }
         }
@@ -2755,11 +2609,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 
     private void InputControllerButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_InputControllerButtonActionPerformed
     {//GEN-HEADEREND:event_InputControllerButtonActionPerformed
-        if (data.isControllerEnabled())
-        {
+        if (data.isControllerEnabled()) {
             data.setControllerEnabled(false);
-        } else
-        {
+        } else {
             data.setControllerEnabled(true);
         }
     }//GEN-LAST:event_InputControllerButtonActionPerformed
@@ -2779,17 +2631,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
                 0, 40, TimeUnit.MILLISECONDS);
 
         Runtime.getRuntime()
-                .addShutdownHook(new Thread(new Runnable()
-                {
+                .addShutdownHook(new Thread(new Runnable() {
                     @Override
-                    public void run()
-                    {
-                        if (encoder != null)
-                        {
+                    public void run() {
+                        if (encoder != null) {
                             encoder.finishVideo();
                         }
-                        if (encoderThreadExecutor != null)
-                        {
+                        if (encoderThreadExecutor != null) {
                             encoderThreadExecutor.shutdown();
                         }
                     }
@@ -2798,11 +2646,9 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuLogger.setText("Logging!");
         jMenuItemStartLogging.setEnabled(false);
         jMenuItemStopLogging.setEnabled(true);
-        try
-        {
+        try {
             jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("Error setting icon: " + ex.getMessage());
         }
     }//GEN-LAST:event_jMenuItemStartLoggingActionPerformed
@@ -2819,19 +2665,15 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         jMenuItemStopLogging.setEnabled(false);
         jMenuItemStartLogging.setEnabled(true);
 
-        try
-        {
+        try {
             jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("Error setting icon: " + ex.getMessage());
         }
     }//GEN-LAST:event_jMenuItemStopLoggingActionPerformed
 
-    Action exitFullscreenAction = new AbstractAction()
-    {
-        public void actionPerformed(ActionEvent e)
-        {
+    Action exitFullscreenAction = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
             exitFullscreenButton.doClick();
         }
     };
@@ -2847,43 +2689,45 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 //
 //        }
 //    };
-    public static boolean isNumeric(String string)
-    {
+    /**
+     * Checks if the given string is numeric
+     *
+     * @param string the given string to check
+     * @return true if the given string is numeric, false if not
+     */
+    public static boolean isNumeric(String string) {
         boolean numeric = true;
-        try
-        {
+        try {
             Double num = Double.parseDouble(string);
-        } catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             numeric = false;
         }
         return numeric;
     }
 
-    public static boolean isInteger(String str)
-    {
-        if (str == null)
-        {
+    /**
+     * Checks if the given string is integer
+     *
+     * @param str the given string to check
+     * @return true if the given string is integer, false if not
+     */
+    public static boolean isInteger(String str) {
+        if (str == null) {
             return false;
         }
-        if (str.isEmpty())
-        {
+        if (str.isEmpty()) {
             return false;
         }
         int i = 0;
-        if (str.charAt(0) == '-')
-        {
-            if (1 == str.length())
-            {
+        if (str.charAt(0) == '-') {
+            if (1 == str.length()) {
                 return false;
             }
             i = 1;
         }
-        for (; i < str.length(); i++)
-        {
+        for (; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (c < '0' || c > '9')
-            {
+            if (c < '0' || c > '9') {
                 return false;
             }
         }
@@ -3020,15 +2864,15 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
     private javax.swing.JLabel wingLabel;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Runs the ROV frame thread.
+     */
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
             data.setVideoImage(videoImage);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(NTNUSubseaGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.showImage(videoImage);
@@ -3042,23 +2886,24 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
 //        }
     }
 
+    /**
+     * Updates the GUI by observing the shared resource Data class.
+     *
+     * @param o
+     * @param arg
+     */
     @Override
-    public void update(Observable o, Object arg)
-    {
+    public void update(Observable o, Object arg) {
         //actuatorDutyCycleBar1.setValue(data.getBarValue());
         //System.out.println(data.getPitchAngle());
-        if (data.getVideoImage() != null)
-        {
+        if (data.getVideoImage() != null) {
             this.showImage(data.getVideoImage());
         }
-        if (this.sounderThread == null)
-        {
+        if (this.sounderThread == null) {
             this.sounderThread = new Thread(this.sounder);
         }
-        if (data.isEmergencyMode() && !this.sounderThread.isAlive())
-        {
-            if (!this.sounder.isAlive())
-            {
+        if (data.isEmergencyMode() && !this.sounderThread.isAlive()) {
+            if (!this.sounder.isAlive()) {
                 this.sounderThread = new Thread(this.sounder);
                 this.sounderThread.setName("Sounder");
             }
@@ -3082,23 +2927,19 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         actuatorPSPosBar.setValue(data.getFb_actuatorPSPos());
         actuatorSBPosBar.setValue(data.getFb_actuatorSBPos());
 
-        if (data.isI2cError())
-        {
+        if (data.isI2cError()) {
             i2cErrorLabel.setText("I²C: ERROR!");
             i2cErrorLabel.setBackground(Color.red);
             data.setEmergencyMode(true);
-        } else
-        {
+        } else {
             i2cErrorLabel.setText("I²C: OK");
         }
 
-        if (data.getLeakStatus())
-        {
+        if (data.getLeakStatus()) {
             leakLabel.setText("LEAK DETECTED!");
             leakLabel.setBackground(Color.red);
             data.setEmergencyMode(true);
-        } else
-        {
+        } else {
             leakLabel.setText("No leak detected");
             leakLabel.setBackground(new Color(39, 46, 54));
         }
@@ -3108,68 +2949,50 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer
         pressureLabel.setText("Pressure: " + (data.getPressure() + " mBar"));
         rovDepthLabel.setText("ROV Depth: " + data.getRovDepth() + "m");
 
-        if (data.isRovReady())
-        {
-            try
-            {
+        if (data.isRovReady()) {
+            try {
                 jMenuRovReady.setText("ROV Ready!");
                 jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         }
 
-        if (data.getVoltage() < 28.00 && data.getVoltage() > 25.00)
-        {
-            try
-            {
+        if (data.getVoltage() < 28.00 && data.getVoltage() > 25.00) {
+            try {
                 jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
             data.setEmergencyMode(true);
-        } else if (data.getVoltage() > 28.00)
-        {
+        } else if (data.getVoltage() > 28.00) {
             jMenuVoltage.setText("Voltage: " + data.getVoltage() + " V");
-            try
-            {
+            try {
                 jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         }
 
-        if (this.client_Pinger.isConnected() && (data.getRovPing() == 0.00))
-        {
+        if (this.client_Pinger.isConnected() && (data.getRovPing() == 0.00)) {
             data.setEmergencyMode(true);
             jMenuPing.setText("Ping (ROV): Lost connection...");
-            try
-            {
+            try {
                 jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
-        } else if (this.client_Pinger.isConnected() && (data.getRovPing() != 999.99))
-        {
+        } else if (this.client_Pinger.isConnected() && (data.getRovPing() != 999.99)) {
             jMenuPing.setText("Ping (ROV): " + String.valueOf(data.getRovPing()) + " ms");
-            try
-            {
+            try {
                 jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         }

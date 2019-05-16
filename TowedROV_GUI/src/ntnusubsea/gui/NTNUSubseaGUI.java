@@ -1,36 +1,42 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
-import InputController.InputController;
 import basestation_rov.LogFileHandler;
 import basestation_rov.ReadSerialData;
-import java.awt.image.BufferedImage;
+import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
-import TCPCom.*;
 import basestation_rov.SerialDataHandler;
-import java.util.Map.Entry;
 import InputController.InputController;
 
 /**
  * Main class that launches the application and schedules the different threads
- *
  */
-public class NTNUSubseaGUI
-{
+public class NTNUSubseaGUI {
+//
+//    private static Thread readSerialData;
+//    private static Thread imuThread;
+//    private static Thread gpsThread;
+//    private static Thread echoSounderThread;
+//    private static Thread ROVDummyThread;
 
-    private static Thread readSerialData;
-    private static Thread imuThread;
-    private static Thread gpsThread;
-    private static Thread echoSounderThread;
-    private static Thread ROVDummyThread;
     private static Thread InputControllerThread;
+    private static Thread comPortFinderThread;
+
     protected static String ipAddress = "localHost";
     protected static int sendPort = 5057;
     protected static String IP_ROV = "192.168.0.101";
@@ -38,13 +44,15 @@ public class NTNUSubseaGUI
     protected static int Port_ROV = 8080;
     protected static int Port_cameraStream = 8083;
     protected static int Port_cameraCom = 9006;
+    protected static ROVFrame frame;
 
     /**
+     * Main class that launches the application and schedules the different
+     * threads
+     *
      * @param args the command line arguments
      */
-    public static void main(String[] args)
-    {
-        ClientManualTest cmt = new ClientManualTest();
+    public static void main(String[] args) {
 
         Data data = new Data();
         Sounder sounder = new Sounder();
@@ -54,9 +62,9 @@ public class NTNUSubseaGUI
         TCPpinger client_Pinger = new TCPpinger(IP_ROV, Port_ROV, data);
         TCPClient client_ROV = new TCPClient(IP_ROV, Port_ROV, data);
         TCPClient client_Camera = new TCPClient(IP_camera, Port_cameraCom, data);
-        UDPClient stream = new UDPClient(Port_cameraStream, data);
+        UDPServer stream = new UDPServer(Port_cameraStream, data);
         IOControlFrame io = new IOControlFrame(data, client_ROV);
-        ROVFrame frame = new ROVFrame(sonar, data, io, client_Pinger, client_ROV, client_Camera, stream, sounder, lgh);
+        frame = new ROVFrame(sonar, data, io, client_Pinger, client_ROV, client_Camera, stream, sounder, lgh);
         DataUpdater dataUpdater = new DataUpdater(client_ROV, client_Camera, data);
 
         ScheduledExecutorService executor
@@ -69,8 +77,6 @@ public class NTNUSubseaGUI
         data.addObserver(io);
         executor.scheduleAtFixedRate(lgh,
                 0, 100, TimeUnit.MILLISECONDS);
-        executor.scheduleAtFixedRate(cmt,
-                0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(sonar,
                 0, 100, TimeUnit.MILLISECONDS);
         executor.scheduleAtFixedRate(dataUpdater,
@@ -80,115 +86,84 @@ public class NTNUSubseaGUI
         InputControllerThread.start();
         InputControllerThread.setName("InputController");
 
-        // Start searching for com ports:
-        long timeDifference = 0;
-        long lastTime = 0;
-        long timeDelay = 5000;
-        boolean connected = false;
-        boolean foundComPort = false;
-        boolean listedCom = false;
+        comPortFinderThread = new Thread(new ComPortFinder(sdh, data));
+        comPortFinderThread.start();
+        comPortFinderThread.setName("ComPortFinder");
 
-        while (true)
-        {
-
-            if (!foundComPort)
-
-            {
-                System.out.println("Searching for com ports...");
-                sdh.findComPorts();
-                foundComPort = true;
-            }
-
-            if (!listedCom)
-            {
-                System.out.println("Com ports found:");
-
-                if (data.comPortList.isEmpty())
-                {
-                    System.out.println("None");
-                } else
-                {
-                    for (Entry e : data.comPortList.entrySet())
-                    {
-                        String comPortKey = (String) e.getKey();
-                        String comPortValue = (String) e.getValue();
-                        System.out.println(comPortKey + " : " + comPortValue);
-
-                    }
-                }
-                System.out.println("--End of com list--");
-                listedCom = true;
-
-                for (Entry e : data.comPortList.entrySet())
-                {
-                    String comPortKey = (String) e.getKey();
-                    String comPortValue = (String) e.getValue();
-                    if (comPortValue.contains("IMU"))
-                    {
-                        imuThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
-                        imuThread.start();
-                        imuThread.setName(comPortValue);
-
-                    }
-
-                    if (comPortValue.contains("GPS"))
-                    {
-                        gpsThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
-                        gpsThread.start();
-                        gpsThread.setName(comPortValue);
-
-                    }
-
-                    if (comPortValue.contains("EchoSounder"))
-                    {
-                        echoSounderThread = new Thread(new ReadSerialData(data, comPortKey, 4800, comPortValue));
-                        echoSounderThread.start();
-                        echoSounderThread.setName(comPortValue);
-                    }
-
-                    if (comPortValue.contains("ROVDummy"))
-                    {
-                        ROVDummyThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
-                        ROVDummyThread.start();
-                        ROVDummyThread.setName(comPortValue);
-                    }
-
-                }
-
-            }
-
-            try
-            {
-                if (!connected)
-                {
-                    cmt.connect("localhost");
-                    connected = true;
-
-                }
-                if (data.comPortList != null)
-                {
-                    System.out.println(data.comPortList);
-                }
-            } catch (Exception e)
-            {
-            }
-
-            timeDifference = System.currentTimeMillis() - lastTime;
-
-            if (timeDifference >= timeDelay)
-            {
-                try
-                {
-                    // System.out.println(cmt.sendData("ping"));
-                } catch (Exception e)
-                {
-                }
-
-                lastTime = System.currentTimeMillis();
-            }
-
-//            System.out.println("Pitch: : " + data.getPitchAngle()
-//                    + "    TestDepth: " + data.getTestDepth());
-        }
+//        // Start searching for com ports:
+//        long timeDifference = 0;
+//        long lastTime = 0;
+//        long timeDelay = 5000;
+//        boolean connected = false;
+//        boolean foundComPort = false;
+//        boolean listedCom = false;
+//
+//        while (true)
+//        {
+//
+//            if (!foundComPort)
+//
+//            {
+//                System.out.println("Searching for com ports...");
+//                sdh.findComPorts();
+//                foundComPort = true;
+//            }
+//
+//            if (!listedCom)
+//            {
+//                System.out.println("Com ports found:");
+//
+//                if (data.comPortList.isEmpty())
+//                {
+//                    System.out.println("None");
+//                } else
+//                {
+//                    for (Entry e : data.comPortList.entrySet())
+//                    {
+//                        String comPortKey = (String) e.getKey();
+//                        String comPortValue = (String) e.getValue();
+//                        System.out.println(comPortKey + " : " + comPortValue);
+//
+//                    }
+//                }
+//                System.out.println("--End of com list--");
+//                listedCom = true;
+//
+//                for (Entry e : data.comPortList.entrySet())
+//                {
+//                    String comPortKey = (String) e.getKey();
+//                    String comPortValue = (String) e.getValue();
+//                    if (comPortValue.contains("IMU"))
+//                    {
+//                        imuThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
+//                        imuThread.start();
+//                        imuThread.setName(comPortValue);
+//
+//                    }
+//
+//                    if (comPortValue.contains("GPS"))
+//                    {
+//                        gpsThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
+//                        gpsThread.start();
+//                        gpsThread.setName(comPortValue);
+//
+//                    }
+//
+//                    if (comPortValue.contains("EchoSounder"))
+//                    {
+//                        echoSounderThread = new Thread(new ReadSerialData(data, comPortKey, 4800, comPortValue));
+//                        echoSounderThread.start();
+//                        echoSounderThread.setName(comPortValue);
+//                    }
+//
+//                    if (comPortValue.contains("ROVDummy"))
+//                    {
+//                        ROVDummyThread = new Thread(new ReadSerialData(data, comPortKey, 115200, comPortValue));
+//                        ROVDummyThread.start();
+//                        ROVDummyThread.setName(comPortValue);
+//                    }
+//                }
+//            }
+//        }
     }
 }

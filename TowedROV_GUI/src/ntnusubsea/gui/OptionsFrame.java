@@ -1,31 +1,38 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import org.apache.commons.io.FileUtils;
 
 /**
  * This class allows the user to change options between every time the program
  * is loaded. It reads and writes from the ROV Options text file from the
  * program folder
- *
  */
-public class OptionsFrame extends javax.swing.JFrame
-{
+public class OptionsFrame extends javax.swing.JFrame {
 
-    File file = new File("C:\\TowedROV\\ROV Options.txt");
+    File file = new File("src\\ntnusubsea\\gui\\options\\ROV Options.txt");
     String IP_Rov;
     String IP_Camera;
     ArrayList channels = new ArrayList<String>();
@@ -39,10 +46,15 @@ public class OptionsFrame extends javax.swing.JFrame
      * Creates new form OptionsFrame
      *
      * @param data Data containing shared variables.
+     * @param client_ROV
      */
-    public OptionsFrame(Data data, TCPClient client_ROV)
-    {
+    public OptionsFrame(Data data, TCPClient client_ROV) {
         initComponents();
+        try {
+            FileUtils.touch(file);
+        } catch (IOException ex) {
+            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //setSize(640, 480);
         this.pack();
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -59,8 +71,7 @@ public class OptionsFrame extends javax.swing.JFrame
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         jLabelIPHeader = new javax.swing.JLabel();
         jButtonOK = new javax.swing.JButton();
@@ -114,30 +125,24 @@ public class OptionsFrame extends javax.swing.JFrame
 
         jButtonOK.setText("OK");
         jButtonOK.setPreferredSize(new java.awt.Dimension(65, 25));
-        jButtonOK.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButtonOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonOKActionPerformed(evt);
             }
         });
 
         jButtonApply.setText("Apply");
         jButtonApply.setPreferredSize(new java.awt.Dimension(65, 25));
-        jButtonApply.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButtonApply.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonApplyActionPerformed(evt);
             }
         });
 
         jButtonCanel.setText("Cancel");
         jButtonCanel.setPreferredSize(new java.awt.Dimension(65, 25));
-        jButtonCanel.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jButtonCanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCanelActionPerformed(evt);
             }
         });
@@ -173,19 +178,15 @@ public class OptionsFrame extends javax.swing.JFrame
         jTextFieldChannel3.setText("Channel 3");
 
         jTextFieldChannel5.setText("Channel 5");
-        jTextFieldChannel5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jTextFieldChannel5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldChannel5ActionPerformed(evt);
             }
         });
 
         jTextFieldChannel6.setText("Channel 6");
-        jTextFieldChannel6.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        jTextFieldChannel6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldChannel6ActionPerformed(evt);
             }
         });
@@ -391,8 +392,7 @@ public class OptionsFrame extends javax.swing.JFrame
 
     private void jButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKActionPerformed
         BufferedWriter writer = null;
-        try
-        {
+        try {
             writer = new BufferedWriter(new FileWriter(file, false));
             writer.write(jTextFieldIP_Rov.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldIP_Camera.getText() + System.getProperty("line.separator"));
@@ -424,16 +424,12 @@ public class OptionsFrame extends javax.swing.JFrame
             this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + KdTextField.getText());
             this.client_ROV.sendCommand("cmd_offsetROVdepth:" + KdTextField.getText());
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-        } finally
-        {
-            try
-            {
+        } finally {
+            try {
                 writer.close();
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -442,8 +438,7 @@ public class OptionsFrame extends javax.swing.JFrame
 
     private void jButtonApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonApplyActionPerformed
         BufferedWriter writer = null;
-        try
-        {
+        try {
             writer = new BufferedWriter(new FileWriter(file, false));
             writer.write(jTextFieldIP_Rov.getText() + System.getProperty("line.separator"));
             writer.write(jTextFieldIP_Camera.getText() + System.getProperty("line.separator"));
@@ -475,16 +470,12 @@ public class OptionsFrame extends javax.swing.JFrame
             this.client_ROV.sendCommand("cmd_offsetDepthBeneathROV:" + KdTextField.getText());
             this.client_ROV.sendCommand("cmd_offsetROVdepth:" + KdTextField.getText());
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-        } finally
-        {
-            try
-            {
+        } finally {
+            try {
                 writer.close();
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -493,16 +484,13 @@ public class OptionsFrame extends javax.swing.JFrame
     /**
      * Reads the option files and displays the current settings
      */
-    public void getOptionsFromFile()
-    {
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\TowedROV\\ROV Options.txt")))
-        {
+    public void getOptionsFromFile() {
+        try (BufferedReader br = new BufferedReader(new FileReader("src\\ntnusubsea\\gui\\options\\ROV Options.txt"))) {
             this.IP_Rov = br.readLine();
             jTextFieldIP_Rov.setText(this.IP_Rov);
             this.IP_Camera = br.readLine();
             jTextFieldIP_Camera.setText(this.IP_Camera);
-            for (int i = 0; i < 8; i++)
-            {
+            for (int i = 0; i < 8; i++) {
                 channels.add(i, br.readLine());
             }
             jTextFieldChannel1.setText((String) channels.get(0));
@@ -518,8 +506,7 @@ public class OptionsFrame extends javax.swing.JFrame
             KdTextField.setText(br.readLine());
             offset1TextField.setText(br.readLine());
             offset2TextField.setText(br.readLine());
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

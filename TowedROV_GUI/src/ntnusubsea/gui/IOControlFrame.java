@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
@@ -18,8 +26,7 @@ import javax.swing.JFrame;
  * new command whenever a button is pressed.
  *
  */
-public class IOControlFrame extends javax.swing.JFrame implements Runnable, Observer
-{
+public class IOControlFrame extends javax.swing.JFrame implements Runnable, Observer {
 
     private Data data;
     private TCPClient client;
@@ -32,8 +39,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
      * @param data Data containing shared variables
      * @param client TCP client that sends commands
      */
-    public IOControlFrame(Data data, TCPClient client)
-    {
+    public IOControlFrame(Data data, TCPClient client) {
         initComponents();
         this.pack();
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -799,169 +805,137 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     }// </editor-fold>//GEN-END:initComponents
 
     private void jToggleButtonChannel5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel5ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel5.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel5.isSelected()) {
                 setBit(4, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel5.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(4, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel5.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel5ActionPerformed
 
     private void jToggleButtonChannel6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel6ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel6.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel6.isSelected()) {
                 setBit(5, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel6.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(5, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel6.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel6ActionPerformed
 
     private void jToggleButtonChannel7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel7ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel7.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel7.isSelected()) {
                 setBit(6, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel7.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(6, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel7.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel7ActionPerformed
 
     private void jToggleButtonChannel8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel8ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel8.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel8.isSelected()) {
                 setBit(7, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel8.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(7, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel8.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel8ActionPerformed
 
     private void jToggleButtonChannel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel1ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel1.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel1.isSelected()) {
                 setBit(0, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel1.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(0, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel1.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel1ActionPerformed
 
     private void jToggleButtonChannel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel2ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel2.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel2.isSelected()) {
                 setBit(1, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel2.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(1, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel2.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel2ActionPerformed
 
     private void jToggleButtonChannel3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel3ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel3.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel3.isSelected()) {
                 setBit(2, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel3.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(2, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel3.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel3ActionPerformed
 
     private void jToggleButtonChannel4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonChannel4ActionPerformed
-        try
-        {
-            if (jToggleButtonChannel4.isSelected())
-            {
+        try {
+            if (jToggleButtonChannel4.isSelected()) {
                 setBit(3, 1);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel4.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-On.gif"))));
-            } else
-            {
+            } else {
                 setBit(3, 0);
                 //client.sendCommand(DIGITALOUTID + outputValue);
                 jLabelIndicatorChannel4.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/IO-Off.gif"))));
             }
             System.out.println(outputValue);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jToggleButtonChannel4ActionPerformed
@@ -969,8 +943,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     /**
      * Enables the I/O buttons
      */
-    public void enableIO()
-    {
+    public void enableIO() {
         jToggleButtonChannel1.setEnabled(true);
         jToggleButtonChannel2.setEnabled(true);
         jToggleButtonChannel3.setEnabled(true);
@@ -984,8 +957,7 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     /**
      * Disables the I/O buttons
      */
-    public void disableIO()
-    {
+    public void disableIO() {
         jToggleButtonChannel1.setEnabled(false);
         jToggleButtonChannel2.setEnabled(false);
         jToggleButtonChannel3.setEnabled(false);
@@ -1056,28 +1028,38 @@ public class IOControlFrame extends javax.swing.JFrame implements Runnable, Obse
     private javax.swing.JToggleButton jToggleButtonChannel8;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Runs the IOControlFrame thread.
+     */
     @Override
-    public void run()
-    {
+    public void run() {
         this.setVisible(false);
     }
 
+    /**
+     * Updates the channel values by observing the object
+     *
+     * @param o
+     * @param arg
+     */
     @Override
-    public void update(Observable o, Object arg)
-    {
+    public void update(Observable o, Object arg) {
         jLabelChannel1Value.setText(data.getChannel(1));
         jLabelChannel2Value.setText(data.getChannel(2));
         jLabelChannel3Value.setText(data.getChannel(3));
         jLabelChannel4Value.setText(data.getChannel(4));
     }
 
-    private void setBit(int bit, int value)
-    {
-        if (value == 0)
-        {
+    /**
+     * Sets the given value to the given bit
+     *
+     * @param bit the given bit
+     * @param value the given value
+     */
+    private void setBit(int bit, int value) {
+        if (value == 0) {
             outputValue = outputValue & ~(1 << bit);
-        } else
-        {
+        } else {
             outputValue = outputValue | (1 << bit);
         }
     }

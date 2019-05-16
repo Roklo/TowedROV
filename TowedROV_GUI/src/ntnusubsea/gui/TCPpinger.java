@@ -1,27 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Client class that handles the connection to the server, retrieves the video
  * stream and sends commands to the server
  *
  */
-public class TCPpinger implements Runnable
-{
+public class TCPpinger implements Runnable {
 
     boolean connectionResetError = false;
     private boolean connected = false;
@@ -37,25 +37,31 @@ public class TCPpinger implements Runnable
     BufferedReader inFromServer;
     PrintWriter outToServer;
 
-    public TCPpinger(String IP, int port, Data data)
-    {
+    /**
+     * The constructor of the TCPClient.
+     *
+     * @param IP the given IP to connect to
+     * @param port the given port to connect to
+     * @param data the shared resource Data class
+     */
+    public TCPpinger(String IP, int port, Data data) {
         this.data = data;
         this.port = port;
         this.IP = IP;
-        try
-        {
+        try {
             this.connect(this.IP, this.port);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("IOException: " + ex.getMessage());
         }
     }
 
+    /**
+     * Runs the TCPpinger thread. Connects to the TCP server, and reconnects if
+     * the connection is lost.
+     */
     @Override
-    public void run()
-    {
-        if (this.isConnected())
-        {
+    public void run() {
+        if (this.isConnected()) {
             data.setRovPing(this.getPing());
             //System.out.println("Ping (ROV): " + data.getRovPing());
         }
@@ -66,11 +72,11 @@ public class TCPpinger implements Runnable
      * port to the global variables IP and port
      *
      * @param IP IP of the server to connect to
+     * @param port
      * @throws IOException Throws an IOException when the connection is
      * unsuccessful
      */
-    public void connect(String IP, int port) throws IOException
-    {
+    public void connect(String IP, int port) throws IOException {
         clientSocket = new Socket(IP, port);
         clientSocket.setSoTimeout(3000);
         outToServer = new PrintWriter(
@@ -88,17 +94,19 @@ public class TCPpinger implements Runnable
      * @throws IOException Throws IOException if there is a problem with the
      * connection
      */
-    public void disconnect() throws IOException
-    {
-        if (clientSocket != null)
-        {
+    public void disconnect() throws IOException {
+        if (clientSocket != null) {
             clientSocket.close();
         }
         connected = false;
     }
 
-    public Double getPing()
-    {
+    /**
+     * Sends a ping command to the TCP server.
+     *
+     * @return the ping of the connection
+     */
+    public Double getPing() {
         double pingValue = 0.00;
         double elapsedTimer = 0;
         double elapsedTimerNano = 0;
@@ -107,36 +115,36 @@ public class TCPpinger implements Runnable
         String ping = "<Ping:null>";
         lastTime = System.nanoTime();
         String serverResponse = sendData("ping");
-        if (serverResponse != null && serverResponse.equals("<ping:true>"))
-        {
+        if (serverResponse != null && serverResponse.equals("<ping:true>")) {
             elapsedTimerNano = (System.nanoTime() - lastTime);
             elapsedTimer = elapsedTimerNano / 1000000;
             pingValue = elapsedTimer;
             //System.out.println("<Ping: " + elapsedTimer + ">");
 
             elapsedTimer = 0;
-        } else
-        {
+        } else {
             pingValue = 0.00;
             ping = "<Ping:null>";
         }
         return pingValue;
     }
 
-    public String sendData(String sentence)
-    {
-        try
-        {
+    /**
+     * Sends the given data string to the TCP server.
+     *
+     * @param sentence the given string
+     * @return the server response
+     */
+    public String sendData(String sentence) {
+        try {
             outToServer.println(sentence);
             //System.out.println("Data is sent...");
             outToServer.flush();
             serverResponse = inFromServer.readLine();
 
-        } catch (SocketTimeoutException ste)
-        {
+        } catch (SocketTimeoutException ste) {
             System.out.println("SocketTimeoutException: " + ste.getMessage());
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
         }
         return serverResponse;
@@ -147,28 +155,43 @@ public class TCPpinger implements Runnable
      *
      * @return The connection status of the socket
      */
-    public boolean isConnected()
-    {
+    public boolean isConnected() {
         return connected;
     }
 
-    public int getPort()
-    {
+    /**
+     * Returns the port of the server
+     *
+     * @return the port of the server
+     */
+    public int getPort() {
         return port;
     }
 
-    public void setPort(int port)
-    {
+    /**
+     * Sets the port of the server
+     *
+     * @param port the port of the server
+     */
+    public void setPort(int port) {
         this.port = port;
     }
 
-    public String getIP()
-    {
+    /**
+     * Returns the IP of the server
+     *
+     * @return the IP of the server
+     */
+    public String getIP() {
         return IP;
     }
 
-    public void setIP(String IP)
-    {
+    /**
+     * Sets the IP of the server
+     *
+     * @param IP the IP of the server
+     */
+    public void setIP(String IP) {
         this.IP = IP;
     }
 }

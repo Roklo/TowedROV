@@ -1,18 +1,29 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -28,13 +39,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * Frame to display a graph panel
- *
  */
-public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Observer
-{
+public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Observer {
 
     private Data data;
-    private GraphPanel graph;
     private XYPlot plot;
 
     /**
@@ -42,8 +50,7 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
      *
      * @param data Data containing shared variables
      */
-    public EchoSounderFrame(Data data)
-    {
+    public EchoSounderFrame(Data data) {
         super("XY Line Chart Example with JFreechart");
         initComponents();
         this.data = data;
@@ -60,12 +67,16 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
         this.pack();
     }
 
-    private JPanel createChartPanel()
-    {
+    /**
+     * Creates the chart panel.
+     *
+     * @return the chart panel
+     */
+    private JPanel createChartPanel() {
         String chartTitle = "ROV Depth Chart";
-        String xAxisLabel = "Time";
+        String xAxisLabel = "Time (s)";
         String yAxisLabel = "Depth";
-        XYDataset dataset = createDataset();
+        XYDataset dataset = createDatasetFromFile();
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle,
                 xAxisLabel, yAxisLabel, dataset);
         plot = chart.getXYPlot();
@@ -78,87 +89,82 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
         return new ChartPanel(chart);
     }
 
-    private XYDataset createDataset()
-    {
+    /**
+     * Creates the dataset from a dataset file.
+     *
+     * @return the dataset from a dataset file
+     */
+    private XYDataset createDatasetFromFile() {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries series1 = new XYSeries("ROV Depth");
-        XYSeries series2 = new XYSeries("Seafloor");
+        XYSeries series1 = new XYSeries("Seafloor");
+        XYSeries series2 = new XYSeries("ROV Depth");
         XYSeries series3 = new XYSeries("Surface");
 
-        series1.add(0.0, 0.0);
-        series1.add(5.0, 0.2);
-        series1.add(9.0, 0.5);
-        series1.add(12.0, 0.1);
-        series1.add(16.0, -0.1);
-        series1.add(20.0, 0.2);
+        try {
+            InputStream depthtoseafloorList = new FileInputStream(new File("C:\\depthtoseafloor.txt"));
+            InputStream rovdepthList = new FileInputStream(new File("C:\\rovdepth.txt"));
+            BufferedReader reader1 = new BufferedReader(new InputStreamReader(depthtoseafloorList));
+            BufferedReader reader2 = new BufferedReader(new InputStreamReader(rovdepthList));
 
-        series2.add(0.0, 0.0);
-        series2.add(30.0, 0.0);
+            String line = "";
+            int i = 0;
+            double t = 0.0;
+            while ((line = reader1.readLine()) != null) {
+                series1.add(t, Double.parseDouble(line));
+                series3.add(t, 0.01);
+                i++;
+                t = t + 0.1;
+            }
+            i = 0;
+            t = 0.0;
+            while ((line = reader2.readLine()) != null) {
+                series2.add(t, Double.parseDouble(line) * -1);
+                i++;
+                t = t + 0.1;
+            }
 
-        series3.add(0.0, -20.0);
-        series3.add(5.0, -18.0);
-        series3.add(9.0, -15.0);
-        series3.add(12.0, -19.0);
-        series3.add(16.0, -22.0);
-        series3.add(20.0, -17.0);
+        } catch (Exception e) {
+            System.out.println("error");
+        }
 
-//        dataset.addSeries(series1);
+        dataset.addSeries(series1);
         dataset.addSeries(series2);
-//        dataset.addSeries(series3);
+        dataset.addSeries(series3);
 
         return dataset;
     }
 
-    private XYDataset createDataset_2()
-    {
+    /**
+     * Creates the dataset from the depth data.
+     *
+     * @return the dataset from the depth data.
+     */
+    private XYDataset createDatasetLive() {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series1 = new XYSeries("ROV Depth");
         XYSeries series2 = new XYSeries("Seafloor");
         XYSeries series3 = new XYSeries("Surface");
 
         Iterator it = data.rovDepthDataList.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             String s = it.next().toString();
             String[] data = s.split(":");
             series1.add(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
         }
 
         Iterator it2 = data.depthBeneathBoatDataList.iterator();
-        while (it2.hasNext())
-        {
+        while (it2.hasNext()) {
             String s = it2.next().toString();
             String[] data = s.split(":");
             series2.add(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
             series3.add(Double.parseDouble(data[0]), 0.01);
         }
-        
+
         dataset.addSeries(series1);
         dataset.addSeries(series2);
         dataset.addSeries(series3);
-        
+
         return dataset;
-    }
-
-    /**
-     * Draws and displays the graphs
-     */
-    public void showGraph()
-    {
-        graph.createAndShowGraph();
-    }
-
-    /**
-     * |- Not finished -| Refreshes the graphs with the given depth and position
-     * of the 2nd graph in the x axis x-axis
-     *
-     * @param position X position of second graph
-     * @param depth Depth of the graphs
-     */
-    public void refreshGraph(int position, int depth)
-    {
-        graph.drawGraph(position, depth);
-        graph.repaint();
     }
 
     /**
@@ -231,18 +237,19 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         String cableLength = (String) JOptionPane.showInputDialog(this, "Enten current cable length (Meters)", "Calibration", JOptionPane.PLAIN_MESSAGE, null, null, "100.000");
-        try
-        {
+        try {
             System.out.println(Float.valueOf(cableLength));
-        } catch (NumberFormatException | NullPointerException ex)
-        {
+        } catch (NumberFormatException | NullPointerException ex) {
             System.out.println("Invalid or no input");
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    /**
+     * Runs the EchoSounderFrame thread.
+     */
     @Override
-    public void run()
-    {
+    public void run() {
+
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
         double time = 0.0;
@@ -254,20 +261,18 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
         double amount = -1.0;
         double amount2 = -0.1;
 
-        while (true)
-        {
+        while (true) {
 //            for (int i = 1; i < 10; i++)
 //            {
 //                
-            try
-            {
+            try {
 
                 data.updateRovDepthDataList(String.valueOf(df.format(time)), rovDepthValue);
                 data.updateDepthBeneathBoatDataList(String.valueOf(df.format(time2)), depthBeneathBoatValue);
                 Thread.sleep(100);
                 time = time + 0.1;
                 time2 = time + data.getTimeBetweenBoatAndRov();
-                
+
                 rovDepthValue = String.valueOf(df.format(data.getRovDepth()));
                 depthBeneathBoatValue = String.valueOf(df.format(data.getDepthBeneathBoat()));
 
@@ -302,13 +307,11 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
 //                    amount2 = -0.1;
 //                }
 //                // -----------------------------------------------------------------------
-                this.plot.setDataset(createDataset_2());
+                this.plot.setDataset(createDatasetLive());
 
-            } catch (InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 Logger.getLogger(EchoSounderFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
 
@@ -322,9 +325,14 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * This is from last year. Not used.
+     *
+     * @param o
+     * @param arg
+     */
     @Override
-    public void update(Observable o, Object arg)
-    {
+    public void update(Observable o, Object arg) {
         //int depth = Math.round(data.getDepth() * 100);
         // refreshGraph(0, depth);
     }

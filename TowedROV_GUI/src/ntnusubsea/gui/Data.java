@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ntnusubsea.gui;
 
@@ -18,17 +26,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 /**
  * The data class is a storage box that let's the different threads change and
  * retrieve various data. The data class is a subclass of the java class
  * Observable, which makes it possible for observers to subscribe and update
- * their values whenever they change. Data is made thread safe by the use of
- * synchronized methods.
+ * their values whenever they change.
  *
  */
-public final class Data extends Observable
-{
+public final class Data extends Observable {
 
     public HashMap<String, String> comPortList = new HashMap<>();
     public ConcurrentHashMap<String, Boolean> completeAlarmListDh = new ConcurrentHashMap<>();
@@ -95,7 +102,6 @@ public final class Data extends Observable
 
     // Feedback from GUI
     public boolean startLogging = true;
-
     public ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
     public List<String> rovDepthDataList = new ArrayList<>();
     public List<String> depthBeneathBoatDataList = new ArrayList<>();
@@ -110,9 +116,14 @@ public final class Data extends Observable
     private float channel2 = 0;
     private float channel3 = 0;
     private float channel4 = 0;
+    private float channel5 = 0;
+    private float channel6 = 0;
+    private float channel7 = 0;
+    private float channel8 = 0;
+    private float channel9 = 0;
     private byte actuatorStatus = 0;
     private ArrayList<String> labels = new ArrayList();
-    private float[] channelValues = new float[4];
+    private float[] channelValues = new float[9];
     private String IP_Rov = "";
     private String IP_Camera = "";
     private BufferedImage videoImage;
@@ -136,35 +147,57 @@ public final class Data extends Observable
     /**
      * Creates an object of the class Data.
      */
-    public Data()
-    {
-        try
-        {
-            BufferedReader br = new BufferedReader(new FileReader("C:\\TowedROV\\ROV Options.txt"));
-            //this.updateRovDepthDataList();
-            IP_Rov = br.readLine();
-            IP_Camera = br.readLine();
-            labels.add(0, br.readLine());
-            labels.add(1, br.readLine());
-            labels.add(2, br.readLine());
-            labels.add(3, br.readLine());
-            labels.add(4, br.readLine());
-            labels.add(5, br.readLine());
-            labels.add(6, br.readLine());
-            labels.add(7, br.readLine());
-            this.setKp(br.readLine());
-            this.setKi(br.readLine());
-            this.setKd(br.readLine());
-            this.setOffsetDepthBeneathROV(br.readLine());
-            this.setOffsetROVdepth(br.readLine());
+    public Data() {
+        try {
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader("src\\ntnusubsea\\gui\\options\\ROV Options.txt"));
+                //this.updateRovDepthDataList();
+                IP_Rov = br.readLine();
+                IP_Camera = br.readLine();
+                labels.add(0, br.readLine());
+                labels.add(1, br.readLine());
+                labels.add(2, br.readLine());
+                labels.add(3, br.readLine());
+                labels.add(4, br.readLine());
+                labels.add(5, br.readLine());
+                labels.add(6, br.readLine());
+                labels.add(7, br.readLine());
+                this.setKp(br.readLine());
+                this.setKi(br.readLine());
+                this.setKd(br.readLine());
+                this.setOffsetDepthBeneathROV(br.readLine());
+                this.setOffsetROVdepth(br.readLine());
+            } catch (Exception e) {
+                System.out.println("Error getting the ROV Options.txt file.");
+                IP_Rov = "0";
+                IP_Camera = "0";
+                labels.add(0, "1");
+                labels.add(1, "2");
+                labels.add(2, "3");
+                labels.add(3, "4");
+                labels.add(4, "5");
+                labels.add(5, "6");
+                labels.add(6, "7");
+                labels.add(7, "8");
+                this.setKp("0");
+                this.setKi("0");
+                this.setKd("0");
+                this.setOffsetDepthBeneathROV("0");
+                this.setOffsetROVdepth("0");
+            }
+
             channelValues[0] = channel1;
             channelValues[1] = channel2;
             channelValues[2] = channel3;
             channelValues[3] = channel4;
-//            videoImage = ImageIO.read(new File("C:\\Users\\marno\\OneDrive\\Documents\\NetBeansProjects\\NTNUSubsea GUI\\src\\ntnusubsea\\gui\\Images\\rsz_rovside.png"));
+            channelValues[4] = channel5;
+            channelValues[5] = channel6;
+            channelValues[6] = channel7;
+            channelValues[7] = channel8;
+            channelValues[8] = channel9;
             videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -174,8 +207,7 @@ public final class Data extends Observable
      *
      * @param ip The default ROV IP
      */
-    public synchronized void setIP_Rov(String ip)
-    {
+    public synchronized void setIP_Rov(String ip) {
         this.IP_Rov = ip;
         setChanged();
         notifyObservers();
@@ -186,8 +218,7 @@ public final class Data extends Observable
      *
      * @return The default ROV IP
      */
-    public synchronized String getIP_Rov()
-    {
+    public synchronized String getIP_Rov() {
         return IP_Rov;
     }
 
@@ -196,8 +227,7 @@ public final class Data extends Observable
      *
      * @param ip The default Camera IP
      */
-    public synchronized void setIP_Camera(String ip)
-    {
+    public synchronized void setIP_Camera(String ip) {
         this.IP_Camera = ip;
         setChanged();
         notifyObservers();
@@ -208,58 +238,97 @@ public final class Data extends Observable
      *
      * @return The default Camera IP
      */
-    public synchronized String getIP_Camera()
-    {
+    public synchronized String getIP_Camera() {
         return IP_Camera;
     }
 
-    public void setKp(String value)
-    {
+    /**
+     * Sets the Kp parameter of the PID
+     *
+     * @param value the Kp parameter of the PID
+     */
+    public void setKp(String value) {
         this.Kp = value;
     }
 
-    public synchronized String getKp()
-    {
+    /**
+     * Returns the Kp parameter of the PID
+     *
+     * @return the Kp parameter of the PID
+     */
+    public synchronized String getKp() {
         return Kp;
     }
 
-    public void setKi(String value)
-    {
+    /**
+     * Sets the Ki parameter of the PID
+     *
+     * @param value the Ki parameter of the PID
+     */
+    public void setKi(String value) {
         this.Ki = value;
     }
 
-    public synchronized String getKi()
-    {
+    /**
+     * Returns the Ki parameter of the PID
+     *
+     * @return the Ki parameter of the PID
+     */
+    public synchronized String getKi() {
         return Ki;
     }
 
-    public void setKd(String value)
-    {
+    /**
+     * Sets the Kd parameter of the PID
+     *
+     * @param value the Kd parameter of the PID
+     */
+    public void setKd(String value) {
         this.Kd = value;
     }
 
-    public synchronized String getKd()
-    {
+    /**
+     * Returns the Kd parameter of the PID
+     *
+     * @return the Kd parameter of the PID
+     */
+    public synchronized String getKd() {
         return Kd;
     }
 
-    public String getOffsetDepthBeneathROV()
-    {
+    /**
+     * Returns the depth beneath the ROV offset
+     *
+     * @return the depth beneath the ROV offset
+     */
+    public String getOffsetDepthBeneathROV() {
         return offsetDepthBeneathROV;
     }
 
-    public void setOffsetDepthBeneathROV(String offsetDepthBeneathROV)
-    {
+    /**
+     * Sets the depth beneath the ROV offset
+     *
+     * @param offsetDepthBeneathROV the depth beneath the ROV offset
+     */
+    public void setOffsetDepthBeneathROV(String offsetDepthBeneathROV) {
         this.offsetDepthBeneathROV = offsetDepthBeneathROV;
     }
 
-    public String getOffsetROVdepth()
-    {
+    /**
+     * Returns the ROV depth offset
+     *
+     * @return the ROV depth offset
+     */
+    public String getOffsetROVdepth() {
         return offsetROVdepth;
     }
 
-    public void setOffsetROVdepth(String offsetROVdepth)
-    {
+    /**
+     * Sets the ROV depth offset
+     *
+     * @param offsetROVdepth the ROV offset
+     */
+    public void setOffsetROVdepth(String offsetROVdepth) {
         this.offsetROVdepth = offsetROVdepth;
     }
 
@@ -275,8 +344,7 @@ public final class Data extends Observable
      * @param c7 Channel 7 label
      * @param c8 Channel 8 label
      */
-    public synchronized void setIOLabels(String c1, String c2, String c3, String c4, String c5, String c6, String c7, String c8)
-    {
+    public synchronized void setIOLabels(String c1, String c2, String c3, String c4, String c5, String c6, String c7, String c8) {
         labels.set(0, c1);
         labels.set(1, c2);
         labels.set(2, c3);
@@ -296,21 +364,16 @@ public final class Data extends Observable
      * @param channel Index of channel to return
      * @return String containing label and value
      */
-    public synchronized String getChannel(int channel)
-    {
-        if (channel > 0 && channel < 9)
-        {
-            if (channel < 5)
-            {
+    public synchronized String getChannel(int channel) {
+        if (channel > 0 && channel < 9) {
+            if (channel < 5) {
                 String channelString = labels.get(channel - 1) + ": ";
                 channelString += channelValues[channel - 1];
                 return channelString;
-            } else
-            {
+            } else {
                 return labels.get(channel - 1);
             }
-        } else
-        {
+        } else {
             return null;
         }
     }
@@ -321,13 +384,10 @@ public final class Data extends Observable
      * @param channel Index of channel
      * @return Value of the channel as float
      */
-    public synchronized float getChannelValue(int channel)
-    {
-        if (channel < 0 && channel > 5)
-        {
+    public synchronized float getChannelValue(int channel) {
+        if (channel < 0 && channel > 5) {
             return channelValues[channel - 1];
-        } else
-        {
+        } else {
             return (float) 0.001;
         }
     }
@@ -338,10 +398,8 @@ public final class Data extends Observable
      * @param value Value of the channel
      * @param channel Index of the channel
      */
-    public synchronized void setChannel(float value, int channel)
-    {
-        if (channel < 0 && channel > 5)
-        {
+    public synchronized void setChannel(float value, int channel) {
+        if (channel < 0 && channel > 5) {
             channelValues[channel - 1] = value;
         }
         setChanged();
@@ -353,8 +411,7 @@ public final class Data extends Observable
      *
      * @param angle Current pitch angle of the ROV
      */
-    public synchronized void setPitchAngle(double angle)
-    {
+    public synchronized void setPitchAngle(double angle) {
         pitchAngle = angle;
         setChanged();
         notifyObservers();
@@ -365,8 +422,7 @@ public final class Data extends Observable
      *
      * @return Current pitch angle of the ROV
      */
-    public synchronized double getPitchAngle()
-    {
+    public synchronized double getPitchAngle() {
         return pitchAngle;
     }
 
@@ -375,8 +431,7 @@ public final class Data extends Observable
      *
      * @param angle Current roll angle of the ROV
      */
-    public synchronized void setRollAngle(double angle)
-    {
+    public synchronized void setRollAngle(double angle) {
         rollAngle = angle;
         setChanged();
         notifyObservers();
@@ -387,8 +442,7 @@ public final class Data extends Observable
      *
      * @return Current roll angle of the ROV
      */
-    public synchronized double getRollAngle()
-    {
+    public synchronized double getRollAngle() {
         return rollAngle;
     }
 
@@ -397,8 +451,7 @@ public final class Data extends Observable
      *
      * @param angle Current wing angle of the ROV
      */
-    public synchronized void setWingAngle(float angle)
-    {
+    public synchronized void setWingAngle(float angle) {
         wingAngle = angle;
         setChanged();
         notifyObservers();
@@ -409,8 +462,7 @@ public final class Data extends Observable
      *
      * @return Current wing angle of the ROV
      */
-    public synchronized float getWingAngle()
-    {
+    public synchronized float getWingAngle() {
         return wingAngle;
     }
 
@@ -419,8 +471,7 @@ public final class Data extends Observable
      *
      * @param heading Current heading of the ROV
      */
-    public synchronized void setHeading(float heading)
-    {
+    public synchronized void setHeading(float heading) {
         this.heading = heading;
         setChanged();
         notifyObservers();
@@ -431,8 +482,7 @@ public final class Data extends Observable
      *
      * @return Current heading of the ROV
      */
-    public synchronized float getHeading()
-    {
+    public synchronized float getHeading() {
         return heading;
     }
 
@@ -441,8 +491,7 @@ public final class Data extends Observable
      *
      * @param latitude Current latitude of the ROV
      */
-    public synchronized void setLatitude(float latitude)
-    {
+    public synchronized void setLatitude(float latitude) {
         this.latitude = latitude;
         setChanged();
         notifyObservers();
@@ -453,8 +502,7 @@ public final class Data extends Observable
      *
      * @return Current latitude of the ROV
      */
-    public synchronized float getLatitude()
-    {
+    public synchronized float getLatitude() {
         return latitude;
     }
 
@@ -463,8 +511,7 @@ public final class Data extends Observable
      *
      * @param longitude Current longitude of the ROV
      */
-    public synchronized void setLongitude(float longitude)
-    {
+    public synchronized void setLongitude(float longitude) {
         this.longitude = longitude;
         setChanged();
         notifyObservers();
@@ -475,8 +522,7 @@ public final class Data extends Observable
      *
      * @return Current longitude of the ROV
      */
-    public synchronized float getLongitude()
-    {
+    public synchronized float getLongitude() {
         return longitude;
     }
 
@@ -485,8 +531,7 @@ public final class Data extends Observable
      *
      * @param depth Current depth of the ROV
      */
-    public synchronized void setDepth(float depth)
-    {
+    public synchronized void setDepth(float depth) {
         this.depth = depth;
         setChanged();
         notifyObservers();
@@ -497,28 +542,34 @@ public final class Data extends Observable
      *
      * @return Current depth of the ROV
      */
-    public synchronized float getDepth()
-    {
+    public synchronized float getDepth() {
         return depth;
     }
 
-    public double getTimeBetweenBoatAndRov()
-    {
+    /**
+     * Returns the time between the boat and the ROV
+     *
+     * @return the time between the boat and the ROV
+     */
+    public double getTimeBetweenBoatAndRov() {
         return timeBetweenBoatAndRov;
     }
 
-    public void setTimeBetweenBoatAndRov(double timeBetweenBoatAndRov)
-    {
+    /**
+     * Sets the time between the boat and the ROV
+     *
+     * @param timeBetweenBoatAndRov the time between the boat and the ROV
+     */
+    public void setTimeBetweenBoatAndRov(double timeBetweenBoatAndRov) {
         this.timeBetweenBoatAndRov = timeBetweenBoatAndRov;
     }
 
     /**
-     * Updates the current depth beneath the ROV
+     * Updates the current depth beneath the ROV and notifies observers
      *
      * @param depth Depth beneath the ROV
      */
-    public synchronized void setDepthBeneathRov(double depth)
-    {
+    public synchronized void setDepthBeneathRov(double depth) {
         depthBeneathRov = depth;
         setChanged();
         notifyObservers();
@@ -529,18 +580,16 @@ public final class Data extends Observable
      *
      * @return Depth beneath the ROV
      */
-    public synchronized double getDepthBeneathRov()
-    {
+    public synchronized double getDepthBeneathRov() {
         return depthBeneathRov;
     }
 
     /**
-     * Updates the current depth beneath the vessel
+     * Updates the current depth beneath the vessel and notifies observers
      *
      * @param depth Depth beneath the vessel
      */
-    public synchronized void setDepthBeneathBoat(double depth)
-    {
+    public synchronized void setDepthBeneathBoat(double depth) {
         depthBeneathBoat = depth;
         setChanged();
         notifyObservers();
@@ -551,8 +600,7 @@ public final class Data extends Observable
      *
      * @return Depth beneath the vessel
      */
-    public synchronized double getDepthBeneathBoat()
-    {
+    public synchronized double getDepthBeneathBoat() {
         return depthBeneathBoat;
     }
 
@@ -561,8 +609,7 @@ public final class Data extends Observable
      *
      * @param image New image in the video stream
      */
-    public synchronized void setVideoImage(BufferedImage image)
-    {
+    public synchronized void setVideoImage(BufferedImage image) {
         videoImage = null;
         videoImage = image;
         setChanged();
@@ -575,8 +622,7 @@ public final class Data extends Observable
      *
      * @param status Current status of the actuators
      */
-    public synchronized void setActuatorStatus(byte status)
-    {
+    public synchronized void setActuatorStatus(byte status) {
         this.actuatorStatus = status;
         setChanged();
         notifyObservers();
@@ -588,13 +634,10 @@ public final class Data extends Observable
      *
      * @return Current status of the actuators
      */
-    public synchronized boolean getActuatorStatus()
-    {
-        if (actuatorStatus == 1)
-        {
+    public synchronized boolean getActuatorStatus() {
+        if (actuatorStatus == 1) {
             return true;
-        } else
-        {
+        } else {
             return false;
         }
     }
@@ -605,11 +648,9 @@ public final class Data extends Observable
      *
      * @param leak Current leak status of the ROV
      */
-    public synchronized void setLeakStatus(boolean leak)
-    {
+    public synchronized void setLeakStatus(boolean leak) {
         leakStatus = leak;
-        if (!leak)
-        {
+        if (!leak) {
             setEmergencyMode(false);
         }
         setChanged();
@@ -622,18 +663,16 @@ public final class Data extends Observable
      *
      * @return Current leak status of the ROV
      */
-    public synchronized boolean getLeakStatus()
-    {
+    public synchronized boolean getLeakStatus() {
         return leakStatus;
     }
 
     /**
-     * Updates the temperature of the water
+     * Updates the temperature of the water and notifies observers
      *
      * @param temp Temperature of the water
      */
-    public synchronized void setTemperature(float temp)
-    {
+    public synchronized void setTemperature(float temp) {
         temperature = temp;
         setChanged();
         notifyObservers();
@@ -644,18 +683,16 @@ public final class Data extends Observable
      *
      * @return Temperature of the water
      */
-    public synchronized float getTemperature()
-    {
+    public synchronized float getTemperature() {
         return temperature;
     }
 
     /**
-     * Updates the pressure surrounding the ROV
+     * Updates the pressure surrounding the ROV and notifies observers
      *
      * @param pres Pressure surrounding the ROV
      */
-    public synchronized void setPressure(double pres)
-    {
+    public synchronized void setPressure(double pres) {
         pressure = pres;
         setChanged();
         notifyObservers();
@@ -666,48 +703,70 @@ public final class Data extends Observable
      *
      * @return Current pressure around the ROV
      */
-    public synchronized double getPressure()
-    {
+    public synchronized double getPressure() {
         return pressure;
     }
 
-    public double getOutsideTemp()
-    {
+    /**
+     * Returns the temperature in the sea
+     *
+     * @return the temperature in the sea
+     */
+    public double getOutsideTemp() {
         return outsideTemp;
     }
 
-    public void setOutsideTemp(double outsideTemp)
-    {
+    /**
+     * Sets the temperature in the sea
+     *
+     * @param outsideTemp the temperature in the sea
+     */
+    public void setOutsideTemp(double outsideTemp) {
         this.outsideTemp = outsideTemp;
     }
 
-    public double getInsideTemp()
-    {
+    /**
+     * Returns the temperature inside the camera housing
+     *
+     * @return the temperature inside the camera housing
+     */
+    public double getInsideTemp() {
         return insideTemp;
     }
 
-    public void setInsideTemp(double insideTemp)
-    {
+    /**
+     * Sets the temperature inside the camera housing
+     *
+     * @param insideTemp the temperature inside the camera housing
+     */
+    public void setInsideTemp(double insideTemp) {
         this.insideTemp = insideTemp;
     }
 
-    public double getHumidity()
-    {
+    /**
+     * Returns the humidity in the camera housing
+     *
+     * @return the humidity in the camera housing
+     */
+    public double getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(double humidity)
-    {
+    /**
+     * Sets the humidity in the camera housing
+     *
+     * @param humidity the humidity in the camera housing
+     */
+    public void setHumidity(double humidity) {
         this.humidity = humidity;
     }
 
     /**
-     * Sets the current speed of the vessel
+     * Sets the current speed of the vessel and notifies observers
      *
      * @param speed Current speed of the vessel
      */
-    public synchronized void setSpeed(float speed)
-    {
+    public synchronized void setSpeed(float speed) {
         this.speed = speed;
         setChanged();
         notifyObservers();
@@ -718,8 +777,7 @@ public final class Data extends Observable
      *
      * @return Current speed of the vessel
      */
-    public synchronized float getSpeed()
-    {
+    public synchronized float getSpeed() {
         return speed;
     }
 
@@ -728,8 +786,7 @@ public final class Data extends Observable
      *
      * @return Current image in the video stream
      */
-    public synchronized BufferedImage getVideoImage()
-    {
+    public synchronized BufferedImage getVideoImage() {
         return videoImage;
     }
 
@@ -738,8 +795,7 @@ public final class Data extends Observable
      *
      * @return the state of the photoMode variable, true or false
      */
-    public boolean isPhotoMode()
-    {
+    public boolean isPhotoMode() {
         return photoMode;
     }
 
@@ -748,8 +804,7 @@ public final class Data extends Observable
      *
      * @param photoMode the state of the photoMode variable, true or false
      */
-    public void setPhotoMode(boolean photoMode)
-    {
+    public void setPhotoMode(boolean photoMode) {
         this.photoMode = photoMode;
     }
 
@@ -758,30 +813,36 @@ public final class Data extends Observable
      *
      * @return the photo mode delay
      */
-    public double getPhotoModeDelay()
-    {
+    public double getPhotoModeDelay() {
         return photoModeDelay;
     }
 
     /**
-     * Sets the photo mode delay
+     * Sets the photo mode delay and notifies observers
      *
-     * @param photoMode the photo mode delay
+     * @param photoModeDelay
      */
-    public void setPhotoModeDelay(double photoModeDelay)
-    {
+    public void setPhotoModeDelay(double photoModeDelay) {
         this.photoModeDelay = photoModeDelay;
         setChanged();
         notifyObservers();
     }
 
-    public double getPhotoModeDelay_FB()
-    {
+    /**
+     * Returns the photo mode delay feedback
+     *
+     * @return the photo mode delay feedback
+     */
+    public double getPhotoModeDelay_FB() {
         return photoModeDelay_FB;
     }
 
-    public void setPhotoModeDelay_FB(double photoModeDelay_FB)
-    {
+    /**
+     * Sets the photo mode delay feedback and notifies observers
+     *
+     * @param photoModeDelay_FB
+     */
+    public void setPhotoModeDelay_FB(double photoModeDelay_FB) {
         this.photoModeDelay_FB = photoModeDelay_FB;
         setChanged();
         notifyObservers();
@@ -792,18 +853,16 @@ public final class Data extends Observable
      *
      * @return the camera pitch value
      */
-    public int getCameraPitchValue()
-    {
+    public int getCameraPitchValue() {
         return cameraPitchValue;
     }
 
     /**
      * Sets the camera pitch value
      *
-     * @param photoMode the camera pitch value
+     * @param cameraPitchValue
      */
-    public void setCameraPitchValue(int cameraPitchValue)
-    {
+    public void setCameraPitchValue(int cameraPitchValue) {
         this.cameraPitchValue = cameraPitchValue;
     }
 
@@ -812,38 +871,43 @@ public final class Data extends Observable
      *
      * @return the image number value
      */
-    public int getImageNumber()
-    {
+    public int getImageNumber() {
         return imageNumber;
     }
 
     /**
-     * Sets the image number value
+     * Sets the image number value and notifies observers
      *
      * @param imageNumber the image number value
      */
-    public void setImageNumber(int imageNumber)
-    {
+    public void setImageNumber(int imageNumber) {
         this.imageNumber = imageNumber;
         setChanged();
         notifyObservers();
     }
 
-    public boolean isImagesCleared()
-    {
+    /**
+     * Returns the images cleared status
+     *
+     * @return the images cleared status
+     */
+    public boolean isImagesCleared() {
         return imagesCleared;
     }
 
-    public void setImagesCleared(boolean imagesCleared)
-    {
+    /**
+     * Sets the images cleared status
+     *
+     * @param imagesCleared the images cleared status
+     */
+    public void setImagesCleared(boolean imagesCleared) {
         this.imagesCleared = imagesCleared;
     }
 
     /**
-     * Increases the image number by one
+     * Increases the image number by one and notifies observers
      */
-    public void increaseImageNumberByOne()
-    {
+    public void increaseImageNumberByOne() {
         this.imageNumber++;
         setChanged();
         notifyObservers();
@@ -855,8 +919,7 @@ public final class Data extends Observable
      *
      * @return thread status
      */
-    public boolean shouldThreadRun()
-    {
+    public boolean shouldThreadRun() {
         return threadStatus;
     }
 
@@ -865,348 +928,593 @@ public final class Data extends Observable
      *
      * @param threadStatus
      */
-    public void setThreadStatus(boolean threadStatus)
-    {
+    public void setThreadStatus(boolean threadStatus) {
         this.threadStatus = threadStatus;
     }
 
-    public byte[] getDataFromArduino()
-    {
+    /**
+     * Returns the data from the arduino
+     *
+     * @return the data from the arduino
+     */
+    public byte[] getDataFromArduino() {
         return dataFromArduino;
     }
 
     /**
+     * Returns true if there is new data available, false if not
      *
      * @return true if new data available, false if not
      */
-    public synchronized boolean isDataFromArduinoAvailable()
-    {
+    public synchronized boolean isDataFromArduinoAvailable() {
         return this.dataFromArduinoAvailable;
     }
 
-    public void setEmergencyMode(boolean status)
-    {
+    /**
+     * Sets the emergency mode status
+     *
+     * @param status the emergency mode status
+     */
+    public void setEmergencyMode(boolean status) {
         this.emergencyMode = status;
 //        setChanged();
 //        notifyObservers();
     }
 
-    public boolean isEmergencyMode()
-    {
+    /**
+     * Returns the emergency mode status
+     *
+     * @return the emergency mode status
+     */
+    public boolean isEmergencyMode() {
         return this.emergencyMode;
     }
 
-    public boolean isStreaming()
-    {
+    /**
+     * Returns the streaming status
+     *
+     * @return the streaming status
+     */
+    public boolean isStreaming() {
         return streaming;
     }
 
-    public void setStreaming(boolean streaming)
-    {
+    /**
+     * Sets the streaming status
+     *
+     * @param streaming the streaming status
+     */
+    public void setStreaming(boolean streaming) {
         this.streaming = streaming;
     }
 
-    public boolean isManualMode()
-    {
+    /**
+     * Returns the manual mode status
+     *
+     * @return the manual mode status
+     */
+    public boolean isManualMode() {
         return manualMode;
     }
 
-    public void setManualMode(boolean manualMode)
-    {
+    /**
+     * Sets the manual mode status
+     *
+     * @param manualMode the manual mode status
+     */
+    public void setManualMode(boolean manualMode) {
         this.manualMode = manualMode;
     }
 
-    public synchronized boolean isDataUpdated()
-    {
+    /**
+     * Returns the data updated status
+     *
+     * @return the data updated status
+     */
+    public synchronized boolean isDataUpdated() {
         return dataUpdated;
     }
 
-    public synchronized void setDataUpdated(boolean dataUpdated)
-    {
+    /**
+     * Sets the data updated status
+     *
+     * @param dataUpdated the data updated status
+     */
+    public synchronized void setDataUpdated(boolean dataUpdated) {
         this.dataUpdated = dataUpdated;
     }
 
-    public boolean isControllerEnabled()
-    {
+    /**
+     * Returns the controller enabled status
+     *
+     * @return the controller enabled status
+     */
+    public boolean isControllerEnabled() {
         return controllerEnabled;
     }
 
-    public void setControllerEnabled(boolean controllerEnabled)
-    {
+    /**
+     * Sets the controller enabled status
+     *
+     * @param controllerEnabled the controller enabled status
+     */
+    public void setControllerEnabled(boolean controllerEnabled) {
         this.controllerEnabled = controllerEnabled;
     }
 
-    public synchronized int getSatellites()
-    {
+    /**
+     * Returns the number of satellites
+     *
+     * @return the number of satellites
+     */
+    public synchronized int getSatellites() {
         return satellites;
     }
 
-    public synchronized void setSatellites(int satellites)
-    {
+    /**
+     * Sets the number of satellites
+     *
+     * @param satellites the number of satellites
+     */
+    public synchronized void setSatellites(int satellites) {
         this.satellites = satellites;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized float getAltitude()
-    {
+    /**
+     * Returns the altitude
+     *
+     * @returnthe altitude
+     */
+    public synchronized float getAltitude() {
         return altitude;
     }
 
-    public synchronized void setAltitude(float altitude)
-    {
+    /**
+     * Sets the altitude
+     *
+     * @param altitude the altitude
+     */
+    public synchronized void setAltitude(float altitude) {
         this.altitude = altitude;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized double getGPSAngle()
-    {
+    /**
+     * Returns the GPS angle
+     *
+     * @return the GPS angle
+     */
+    public synchronized double getGPSAngle() {
         return gpsAngle;
     }
 
-    public synchronized void setGPSAngle(double angle)
-    {
+    /**
+     * Sets the GPS angle
+     *
+     * @param angle the GPS angle
+     */
+    public synchronized void setGPSAngle(double angle) {
         this.gpsAngle = angle;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized double getRoll()
-    {
+    /**
+     * Returns the roll if the ROV
+     *
+     * @return the roll if the ROV
+     */
+    public synchronized double getRoll() {
         return roll;
     }
 
-    public synchronized void setRoll(double roll)
-    {
+    /**
+     * Sets the roll if the ROV
+     *
+     * @param roll the roll if the ROV
+     */
+    public synchronized void setRoll(double roll) {
         this.roll = roll;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized double getPitch()
-    {
+    /**
+     * Returns the pitch of the ROV
+     *
+     * @return the pitch of the ROV
+     */
+    public synchronized double getPitch() {
         return pitch;
     }
 
-    public synchronized void setPitch(double pitch)
-    {
+    /**
+     * Sets the pitch of the ROV
+     *
+     * @param pitch the pitch of the ROV
+     */
+    public synchronized void setPitch(double pitch) {
         this.pitch = pitch;
         setChanged();
         notifyObservers();
     }
 
-    public synchronized double getVoltage()
-    {
+    /**
+     * Returns the voltage supply value
+     *
+     * @return the voltage supply value
+     */
+    public synchronized double getVoltage() {
         return voltage;
     }
 
-    public synchronized void setVoltage(double voltage)
-    {
+    /**
+     * Sets the voltage supply value
+     *
+     * @param voltage the voltage supply value
+     */
+    public synchronized void setVoltage(double voltage) {
         this.voltage = voltage;
         setChanged();
         notifyObservers();
     }
 
-    public boolean getStartLogging()
-    {
+    /**
+     * Returns the start logging status
+     *
+     * @return the start logging status
+     */
+    public boolean getStartLogging() {
         return startLogging;
     }
 
-    public void setStartLogging(boolean startLogging)
-    {
+    /**
+     * Sets the start logging status
+     *
+     * @param startLogging the start logging status
+     */
+    public void setStartLogging(boolean startLogging) {
         this.startLogging = startLogging;
         setChanged();
         notifyObservers();
     }
 
-    public Double getRovPing()
-    {
+    /**
+     * Returns the ROV ping
+     *
+     * @return the ROV ping
+     */
+    public Double getRovPing() {
         return rovPing;
     }
 
-    public void setRovPing(Double rovPing)
-    {
+    /**
+     * Sets the ROV ping
+     *
+     * @param rovPing the ROV ping
+     */
+    public void setRovPing(Double rovPing) {
         this.rovPing = rovPing;
         setChanged();
         notifyObservers();
     }
 
-    public boolean isRovReady()
-    {
+    /**
+     * Returns the ROV ready status
+     *
+     * @return the ROV ready status
+     */
+    public boolean isRovReady() {
         return rovReady;
     }
 
-    public void setRovReady(boolean rovReady)
-    {
+    /**
+     * Sets the ROV ready status
+     *
+     * @param rovReady the ROV ready status
+     */
+    public void setRovReady(boolean rovReady) {
         this.rovReady = rovReady;
     }
 
-    public boolean isI2cError()
-    {
+    /**
+     * Returns the i2c error status
+     *
+     * @return the i2c error status
+     */
+    public boolean isI2cError() {
         return i2cError;
     }
 
-    public void setI2cError(boolean i2cError)
-    {
+    /**
+     * Sets the i2c error status
+     *
+     * @param i2cError the i2c error status
+     */
+    public void setI2cError(boolean i2cError) {
         this.i2cError = i2cError;
     }
 
-    public Double getRovDepth()
-    {
+    /**
+     * Returns the ROV depth
+     *
+     * @return the ROV depth
+     */
+    public Double getRovDepth() {
         return rovDepth;
     }
 
-    public void setRovDepth(Double rovDepth)
-    {
+    /**
+     * Sets the ROV depth
+     *
+     * @param rovDepth the ROV depth
+     */
+    public void setRovDepth(Double rovDepth) {
         this.rovDepth = rovDepth;
     }
 
-    public int getFb_actuatorPSPos()
-    {
+    /**
+     * Returns the PS actuator position
+     *
+     * @return the PS actuator position
+     */
+    public int getFb_actuatorPSPos() {
         return fb_actuatorPSPos;
     }
 
-    public void setFb_actuatorPSPos(int fb_actuatorPSPos)
-    {
+    /**
+     * Sets the PS actuator position
+     *
+     * @param fb_actuatorPSPos the PS actuator position
+     */
+    public void setFb_actuatorPSPos(int fb_actuatorPSPos) {
         this.fb_actuatorPSPos = fb_actuatorPSPos;
     }
 
-    public int getFb_actuatorSBPos()
-    {
+    /**
+     * Returns the SB actuator position
+     *
+     * @return the SB actuator position
+     */
+    public int getFb_actuatorSBPos() {
         return fb_actuatorSBPos;
     }
 
-    public void setFb_actuatorSBPos(int fb_actuatorSBPos)
-    {
+    /**
+     * Sets the SB actuator position
+     *
+     * @param fb_actuatorSBPos the SB actuator position
+     */
+    public void setFb_actuatorSBPos(int fb_actuatorSBPos) {
         this.fb_actuatorSBPos = fb_actuatorSBPos;
     }
 
-    public int getFb_actuatorPSMinPos()
-    {
+    /**
+     * Returns the PS minimum actuator position
+     *
+     * @return the PS minimum actuator position
+     */
+    public int getFb_actuatorPSMinPos() {
         return fb_actuatorPSMinPos;
     }
 
-    public void setFb_actuatorPSMinPos(int fb_actuatorPSMinPos)
-    {
+    /**
+     * Sets the PS minimum actuator position
+     *
+     * @param fb_actuatorPSMinPos the PS minimum actuator position
+     */
+    public void setFb_actuatorPSMinPos(int fb_actuatorPSMinPos) {
         this.fb_actuatorPSMinPos = fb_actuatorPSMinPos;
     }
 
-    public int getFb_actuatorSBMinPos()
-    {
+    /**
+     * Returns the SB minimum actuator position
+     *
+     * @return the SB minimum actuator position
+     */
+    public int getFb_actuatorSBMinPos() {
         return fb_actuatorSBMinPos;
     }
 
-    public void setFb_actuatorSBMinPos(int fb_actuatorSBMinPos)
-    {
+    /**
+     * Sets the SB minimum actuator position
+     *
+     * @param fb_actuatorSBMinPos the SB minimum actuator position
+     */
+    public void setFb_actuatorSBMinPos(int fb_actuatorSBMinPos) {
         this.fb_actuatorSBMinPos = fb_actuatorSBMinPos;
     }
 
-    public int getFb_actuatorPSMaxPos()
-    {
+    /**
+     * Returns the PS maximum actuator position
+     *
+     * @return the PS maximum actuator position
+     */
+    public int getFb_actuatorPSMaxPos() {
         return fb_actuatorPSMaxPos;
     }
 
-    public void setFb_actuatorPSMaxPos(int fb_actuatorPSMaxPos)
-    {
+    /**
+     * Sets the PS maximum actuator position
+     *
+     * @param fb_actuatorPSMaxPos the PS maximum actuator position
+     */
+    public void setFb_actuatorPSMaxPos(int fb_actuatorPSMaxPos) {
         this.fb_actuatorPSMaxPos = fb_actuatorPSMaxPos;
     }
 
-    public int getFb_actuatorSBMaxPos()
-    {
+    /**
+     * Returns the SB maximum actuator position
+     *
+     * @return the SB maximum actuator position
+     */
+    public int getFb_actuatorSBMaxPos() {
         return fb_actuatorSBMaxPos;
     }
 
-    public void setFb_actuatorSBMaxPos(int fb_actuatorSBMaxPos)
-    {
+    /**
+     * Sets the SB maximum actuator position
+     *
+     * @param fb_actuatorSBMaxPos the PS maximum actuator position
+     */
+    public void setFb_actuatorSBMaxPos(int fb_actuatorSBMaxPos) {
         this.fb_actuatorSBMaxPos = fb_actuatorSBMaxPos;
     }
 
-    public double getFb_tempElBoxFront()
-    {
+    /**
+     * Returns the temperature in the front of the electronics box
+     *
+     * @return the temperature in the front of the electronics box
+     */
+    public double getFb_tempElBoxFront() {
         return fb_tempElBoxFront;
     }
 
-    public void setFb_tempElBoxFront(double fb_tempElBoxFront)
-    {
+    /**
+     * Sets the temperature in the front of the electronics box
+     *
+     * @param fb_tempElBoxFront the temperature in the front of the electronics
+     * box
+     */
+    public void setFb_tempElBoxFront(double fb_tempElBoxFront) {
         this.fb_tempElBoxFront = fb_tempElBoxFront;
     }
 
-    public double getFb_tempElBoxRear()
-    {
+    /**
+     * Returns the temperature in the rear of the electronics box
+     *
+     * @return the temperature in the rear of the electronics box
+     */
+    public double getFb_tempElBoxRear() {
         return fb_tempElBoxRear;
     }
 
-    public void setFb_tempElBoxRear(double fb_tempElBoxRear)
-    {
+    /**
+     * Sets the temperature in the rear of the electronics box
+     *
+     * @param fb_tempElBoxRear the temperature in the rear of the electronics
+     * box
+     */
+    public void setFb_tempElBoxRear(double fb_tempElBoxRear) {
         this.fb_tempElBoxRear = fb_tempElBoxRear;
     }
 
-    public long getPSActuatorMaxToMinTime()
-    {
+    /**
+     * Returns PS the actuator max-to-min time
+     *
+     * @return the PS actuator max-to-min time
+     */
+    public long getPSActuatorMaxToMinTime() {
         return PSActuatorMaxToMinTime;
     }
 
-    public void setPSActuatorMaxToMinTime(long PSActuatorMaxToMinTime)
-    {
+    /**
+     * Sets the PS actuator max-to-min time
+     *
+     * @param PSActuatorMaxToMinTime
+     */
+    public void setPSActuatorMaxToMinTime(long PSActuatorMaxToMinTime) {
         this.PSActuatorMaxToMinTime = PSActuatorMaxToMinTime;
     }
 
-    public long getSBActuatorMaxToMinTime()
-    {
+    /**
+     * Returns the SB actuator max-to-min time
+     *
+     * @return the SB actuator max-to-min time
+     */
+    public long getSBActuatorMaxToMinTime() {
         return SBActuatorMaxToMinTime;
     }
 
-    public void setSBActuatorMaxToMinTime(long SBActuatorMaxToMinTime)
-    {
+    /**
+     * Sets the SB actuator max-to-min time
+     *
+     * @param SBActuatorMaxToMinTime
+     */
+    public void setSBActuatorMaxToMinTime(long SBActuatorMaxToMinTime) {
         this.SBActuatorMaxToMinTime = SBActuatorMaxToMinTime;
     }
 
-    public void updateRovDepthDataList(String time, String value)
-    {
-        if (rovDepthDataList.size() >= 260)
-        {
+    /**
+     * Updates the ROV depth data list
+     *
+     * @param time the time variable
+     * @param value the value at that time
+     */
+    public void updateRovDepthDataList(String time, String value) {
+        if (rovDepthDataList.size() >= 260) {
             rovDepthDataList.remove(0);
         }
         this.rovDepthDataList.add(time + ":" + value);
     }
 
-    public void updateDepthBeneathBoatDataList(String time, String value)
-    {
-        if (depthBeneathBoatDataList.size() >= 300)
-        {
+    /**
+     * Updates the depth beneath the boat data list
+     *
+     * @param time the time variable
+     * @param value the value at that time
+     */
+    public void updateDepthBeneathBoatDataList(String time, String value) {
+        if (depthBeneathBoatDataList.size() >= 300) {
             depthBeneathBoatDataList.remove(0);
         }
         this.depthBeneathBoatDataList.add(time + ":" + value);
     }
 
-    public int getFb_actuatorPScmd()
-    {
+    /**
+     * Returns the PS actuator command
+     *
+     * @return the PS actuator command
+     */
+    public int getFb_actuatorPScmd() {
         return fb_actuatorPScmd;
     }
 
-    public void setFb_actuatorPScmd(int fb_actuatorPScmd)
-    {
+    /**
+     * Sets the PS actuator command
+     *
+     * @param fb_actuatorPScmd the PS actuator command
+     */
+    public void setFb_actuatorPScmd(int fb_actuatorPScmd) {
         this.fb_actuatorPScmd = fb_actuatorPScmd;
     }
 
-    public int getFb_actuatorSBcmd()
-    {
+    /**
+     * Returns the SB actuator command
+     *
+     * @return the SB actuator command
+     */
+    public int getFb_actuatorSBcmd() {
         return fb_actuatorSBcmd;
     }
 
-    public void setFb_actuatorSBcmd(int fb_actuatorSBcmd)
-    {
+    /**
+     * Sets the SB actuator command
+     *
+     * @param fb_actuatorSBcmd the SB actuator command
+     */
+    public void setFb_actuatorSBcmd(int fb_actuatorSBcmd) {
         this.fb_actuatorSBcmd = fb_actuatorSBcmd;
     }
 
-    public double getTestDepth()
-    {
+    /**
+     * Returns the test depth
+     *
+     * @return the test depth
+     */
+    public double getTestDepth() {
         return TestDepth;
     }
 
-    public void setTestDepth(double TestDepth)
-    {
+    /**
+     * Sets the test depth
+     *
+     * @param TestDepth the test depth
+     */
+    public void setTestDepth(double TestDepth) {
         this.TestDepth = TestDepth;
         this.setRovDepth(TestDepth);
     }
