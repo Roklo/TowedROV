@@ -1,9 +1,16 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
-//test
 package ROV;
 
 import I2CCom.*;
@@ -23,8 +30,7 @@ import java.util.Observer;
  * This class handels the actuator logic of the ROV and any other tasks that has
  * a crucial update rate
  */
-public class Logic implements Runnable, Observer
-{
+public class Logic implements Runnable, Observer {
 
     Data data = null;
     I2CRW i2cRw = null;
@@ -61,8 +67,7 @@ public class Logic implements Runnable, Observer
      * @param data the shared recource data class
      * @param i2cRw the I2C class for handeling I2C commands
      */
-    public Logic(Data data, I2CRW i2cRw)
-    {
+    public Logic(Data data, I2CRW i2cRw) {
         this.data = data;
         this.i2cRw = i2cRw;
 
@@ -80,54 +85,44 @@ public class Logic implements Runnable, Observer
      * Updates the gatherFbData list so it is ready to be sent to the GUI
      */
     @Override
-    public void run()
-    {
-        try
-        {
-            if (old_cmd_actuatorPS_2 != data.getCmd_actuatorPS())
-            {
+    public void run() {
+        try {
+            if (old_cmd_actuatorPS_2 != data.getCmd_actuatorPS()) {
                 System.out.println("Actuator PS FB : " + data.fb_actuatorPSPos);
                 if (data.fb_actuatorPSPos >= data.getCmd_actuatorPS() - actuatorPShysteresis
-                        && data.fb_actuatorPSPos <= data.getCmd_actuatorPS() + actuatorPShysteresis)
-                {
+                        && data.fb_actuatorPSPos <= data.getCmd_actuatorPS() + actuatorPShysteresis) {
                     i2cRw.sendI2CData("ActuatorPS_stopMotor", (byte) 0);
                     old_cmd_actuatorPS_2 = data.getCmd_actuatorPS();
                 }
             }
-            if (old_cmd_actuatorSB_2 != data.getCmd_actuatorSB())
-            {
+            if (old_cmd_actuatorSB_2 != data.getCmd_actuatorSB()) {
                 System.out.println("Actuator SB FB : : " + data.fb_actuatorSBPos);
 //                System.out.println("Distance to target(SB): " + (data.getFb_actuatorSBPos() - data.getCmd_actuatorSB()));
                 if (data.fb_actuatorSBPos >= data.getCmd_actuatorSB() - actuatorSBhysteresis
-                        && data.fb_actuatorSBPos <= data.getCmd_actuatorSB() + actuatorSBhysteresis)
-                {
+                        && data.fb_actuatorSBPos <= data.getCmd_actuatorSB() + actuatorSBhysteresis) {
                     i2cRw.sendI2CData("ActuatorSB_stopMotor", (byte) 0);
                     old_cmd_actuatorSB_2 = data.getCmd_actuatorSB();
                 }
             }
-            if (data.isCmd_ping())
-            {
+            if (data.isCmd_ping()) {
                 data.setClientConnected(true);
                 elapsedTimer = 0;
                 data.setCmd_ping(false);
             }
             elapsedTimerNano = (System.nanoTime() - lastTime);
             elapsedTimer = elapsedTimerNano / 1000000;
-            if (elapsedTimer > 5000 && data.isClientConnected())
-            {
+            if (elapsedTimer > 5000 && data.isClientConnected()) {
                 //System.out.println("Lost connection go to emergency");                
             }
 
             elapsedTimerNano_sendData = (System.nanoTime() - lastTime_sendData);
             elapsedTimer_sendData = elapsedTimerNano_sendData / 1000000;
-            if (elapsedTimerNano_sendData > 50)
-            {
+            if (elapsedTimerNano_sendData > 50) {
                 gatherFbData();
                 lastTime_sendData = 0;
             }
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
     }
@@ -140,50 +135,39 @@ public class Logic implements Runnable, Observer
      * @param arg the observer arguments
      */
     @Override
-    public void update(Observable o, Object arg)
-    {
+    public void update(Observable o, Object arg) {
         //Commands
-        if (data.getcmd_targetMode() != 2)
-        {
-            if (old_cmd_actuatorPS != data.getCmd_actuatorPS())
-            {
+        if (data.getcmd_targetMode() != 2) {
+            if (old_cmd_actuatorPS != data.getCmd_actuatorPS()) {
                 old_cmd_actuatorPS = data.getCmd_actuatorPS();
                 i2cRw.sendI2CData("ActuatorPS_setTarget", data.cmd_actuatorPS);
             }
 
-            if (old_cmd_actuatorSB != data.getCmd_actuatorSB())
-            {
+            if (old_cmd_actuatorSB != data.getCmd_actuatorSB()) {
                 old_cmd_actuatorSB = data.getCmd_actuatorSB();
                 i2cRw.sendI2CData("ActuatorSB_setTarget", data.cmd_actuatorSB);
             }
-        } else
-        {
+        } else {
             if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB()
-                    || old_cmd_actuatorPS_man != data.getCmd_actuatorPS())
-            {
-                try
-                {
-                    if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB())
-                    {
+                    || old_cmd_actuatorPS_man != data.getCmd_actuatorPS()) {
+                try {
+                    if (old_cmd_actuatorSB_man != data.getCmd_actuatorSB()) {
                         i2cRw.sendI2CData("ActuatorSB_setTarget", data.getCmd_actuatorSB());
                     }
 
                     Thread.sleep(50);
-                    if (old_cmd_actuatorPS_man != data.getCmd_actuatorPS())
-                    {
+                    if (old_cmd_actuatorPS_man != data.getCmd_actuatorPS()) {
                         i2cRw.sendI2CData("ActuatorPS_setTarget", data.getCmd_actuatorPS());
                     }
                     old_cmd_actuatorSB_man = data.getCmd_actuatorSB();
                     old_cmd_actuatorPS_man = data.getCmd_actuatorPS();
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                 }
 
             }
 
         }
-        if (old_cmd_BlueLED != data.getCmd_BlueLED())
-        {
+        if (old_cmd_BlueLED != data.getCmd_BlueLED()) {
             BlueLED_PIN.toggle();
             old_cmd_BlueLED = data.getCmd_BlueLED();
         }
@@ -193,8 +177,7 @@ public class Logic implements Runnable, Observer
      * This method is responsible to update the newDataToSend list so the data
      * is ready to be sendt to the GUI
      */
-    public void gatherFbData()
-    {
+    public void gatherFbData() {
 
         newDataToSend.put("Fb_actuatorPSPos", String.valueOf(data.getFb_actuatorPSPos()));
         newDataToSend.put("Fb_actuatorSBPos", String.valueOf(data.getFb_actuatorSBPos()));
@@ -207,8 +190,7 @@ public class Logic implements Runnable, Observer
         newDataToSend.put("ERROR_I2C", String.valueOf(data.ERROR_I2C));
 
         String dataToSend = "<";
-        for (Map.Entry e : newDataToSend.entrySet())
-        {
+        for (Map.Entry e : newDataToSend.entrySet()) {
             String key = (String) e.getKey();
             String value = (String) e.getValue();
             dataToSend = dataToSend + key + ":" + value + ":";

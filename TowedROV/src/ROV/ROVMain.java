@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ROV;
 
@@ -21,8 +29,7 @@ import java.util.concurrent.ScheduledExecutorService;
  *
  * @author Robin S. Thorholm
  */
-public class ROVMain
-{
+public class ROVMain {
 
     private final static int serverPort = 8080;
     private static Thread serialRW;
@@ -45,12 +52,12 @@ public class ROVMain
     private static Thread ArduinoActuatorFBThread;
 
     /**
-     * The main method of th ROV. Starts up the threads and 
-     * instnaciates necessary tasks.
+     * The main method of th ROV. Starts up the threads and instnaciates
+     * necessary tasks.
+     *
      * @param args the command line arguments
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         boolean foundComPort = false;
 
         ScheduledExecutorService executor
@@ -59,15 +66,12 @@ public class ROVMain
         String osName = System.getProperty("os.name");
 
         String[] portNames = SerialPortList.getPortNames();
-        for (int i = 0; i < portNames.length; i++)
-        {
+        for (int i = 0; i < portNames.length; i++) {
             System.out.println(portNames[i]);
         }
-        if (!osName.contains("Windows"))
-        {
+        if (!osName.contains("Windows")) {
 
-        } else
-        {
+        } else {
             System.out.println("OS is windows, does not start raspberry libraries");
         }
         dh = new Data();
@@ -93,20 +97,16 @@ public class ROVMain
         Server.start();
         Server.setName("Server");
         int inputData = 0;
-        if (!foundComPort)
-
-        {
+        if (!foundComPort) {
             System.out.println("Searching for com ports...");
             sdh.findComPorts();
             foundComPort = true;
         }
 
-        for (Map.Entry e : dh.comPortList.entrySet())
-        {
+        for (Map.Entry e : dh.comPortList.entrySet()) {
             String comPortKey = (String) e.getKey();
             String comPortValue = (String) e.getValue();
-            if (comPortValue.contains("IMU"))
-            {
+            if (comPortValue.contains("IMU")) {
                 imuThread = new Thread(new ReadSerialData(dh, comPortKey, 115200, comPortValue));
                 imuThread.start();
                 imuThread.setName(comPortValue);
@@ -114,8 +114,7 @@ public class ROVMain
 
             }
 
-            if (comPortValue.contains("EchoSounder"))
-            {
+            if (comPortValue.contains("EchoSounder")) {
                 ArduinoIOThread = new Thread(new ReadSerialData(dh, comPortKey, 4800, comPortValue));
                 ArduinoIOThread.start();
                 ArduinoIOThread.setName(comPortValue);
@@ -123,8 +122,7 @@ public class ROVMain
 
             }
 
-            if (comPortValue.contains("ActuatorFBArduino"))
-            {
+            if (comPortValue.contains("ActuatorFBArduino")) {
                 ArduinoActuatorFBThread = new Thread(new ReadSerialData(dh, comPortKey, 38400, comPortValue));
                 ArduinoActuatorFBThread.start();
                 ArduinoActuatorFBThread.setName(comPortValue);
@@ -136,22 +134,17 @@ public class ROVMain
         System.out.println("Done");
 
         dh.setFb_ROVReady(true);
-        try
-        {
+        try {
             dh.setCmd_BlueLED(1);
             Thread.sleep(500);
             dh.setCmd_BlueLED(0);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
-        while (true)
-        {
-            try
-            {
+        while (true) {
+            try {
 
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
             }
         }
 

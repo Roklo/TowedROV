@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ROV;
 
@@ -11,11 +19,10 @@ import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This class is used for storing and sharing all variables 
- * and resources between the threads
+ * This class is used for storing and sharing all variables and resources
+ * between the threads
  */
-public class Data extends Observable
-{
+public class Data extends Observable {
 
     //Internal variables for ROV
     boolean ERROR_I2C = false;
@@ -116,8 +123,7 @@ public class Data extends Observable
      *
      * @return ack status
      */
-    public boolean isCmd_ack()
-    {
+    public boolean isCmd_ack() {
         return cmd_ack;
     }
 
@@ -126,8 +132,7 @@ public class Data extends Observable
      *
      * @param cmd_ack the current ack status
      */
-    public void setCmd_ack(boolean cmd_ack)
-    {
+    public void setCmd_ack(boolean cmd_ack) {
         this.cmd_ack = cmd_ack;
     }
 
@@ -137,18 +142,16 @@ public class Data extends Observable
      *
      * @return depth beneath the ROV in meters
      */
-    public double getFb_depthBeneathROV()
-    {
+    public double getFb_depthBeneathROV() {
         return fb_depthBeneathROV;
     }
 
     /**
      * Sets the depth beneath the ROV in meters
      *
-     * @param fb_depthBeneathROV the depth beneath the ROV in meters 
+     * @param fb_depthBeneathROV the depth beneath the ROV in meters
      */
-    public void setFb_depthBeneathROV(double fb_depthBeneathROV)
-    {
+    public void setFb_depthBeneathROV(double fb_depthBeneathROV) {
         this.fb_depthBeneathROV = fb_depthBeneathROV;
     }
 
@@ -157,8 +160,7 @@ public class Data extends Observable
      *
      * @return the depth below the boat in meters
      */
-    public double getFb_depthBeneathBoat()
-    {
+    public double getFb_depthBeneathBoat() {
         return fb_depthBeneathBoat;
     }
 
@@ -167,8 +169,7 @@ public class Data extends Observable
      *
      * @param fb_depthBeneathBoat the depth beaneath the boat
      */
-    public void setFb_depthBeneathBoat(double fb_depthBeneathBoat)
-    {
+    public void setFb_depthBeneathBoat(double fb_depthBeneathBoat) {
         this.fb_depthBeneathBoat = fb_depthBeneathBoat;
     }
 
@@ -177,8 +178,7 @@ public class Data extends Observable
      *
      * @return the speed through water
      */
-    public int getFb_speedThroughWather()
-    {
+    public int getFb_speedThroughWather() {
         return fb_speedThroughWather;
     }
 
@@ -187,8 +187,7 @@ public class Data extends Observable
      *
      * @param fb_speedThroughWather the speed through water
      */
-    public void setFb_speedThroughWather(int fb_speedThroughWather)
-    {
+    public void setFb_speedThroughWather(int fb_speedThroughWather) {
         this.fb_speedThroughWather = fb_speedThroughWather;
     }
 
@@ -197,8 +196,7 @@ public class Data extends Observable
      *
      * @return the water temperature
      */
-    public int getFb_waterTemperature()
-    {
+    public int getFb_waterTemperature() {
         return fb_waterTemperature;
     }
 
@@ -207,8 +205,7 @@ public class Data extends Observable
      *
      * @param fb_waterTemperature the water temperature
      */
-    public void setFb_waterTemperature(int fb_waterTemperature)
-    {
+    public void setFb_waterTemperature(int fb_waterTemperature) {
         this.fb_waterTemperature = fb_waterTemperature;
     }
 
@@ -217,8 +214,7 @@ public class Data extends Observable
      *
      * @return the PS actuator position
      */
-    public int getFb_actuatorPSPos()
-    {
+    public int getFb_actuatorPSPos() {
 
         return fb_actuatorPSPos;
     }
@@ -227,9 +223,8 @@ public class Data extends Observable
      * Sets the PS actuator position
      *
      * @param fb_actuatorPSPos the PS actuator position
-     */ 
-    public void setFb_actuatorPSPos(int fb_actuatorPSPos)
-    {
+     */
+    public void setFb_actuatorPSPos(int fb_actuatorPSPos) {
 //        setChanged();
 //        notifyObservers();
         this.fb_actuatorPSPos = fb_actuatorPSPos + PS_ACTUATOR_ANGLEADJUST;
@@ -240,8 +235,7 @@ public class Data extends Observable
      *
      * @return the SB actuator feedback
      */
-    public int getFb_actuatorSBPos()
-    {
+    public int getFb_actuatorSBPos() {
         return fb_actuatorSBPos;
     }
 
@@ -250,8 +244,7 @@ public class Data extends Observable
      *
      * @param fb_actuatorSBPos the SB actuator position
      */
-    public void setFb_actuatorSBPos(int fb_actuatorSBPos)
-    {
+    public void setFb_actuatorSBPos(int fb_actuatorSBPos) {
 //        setChanged();
 //        notifyObservers();
         this.fb_actuatorSBPos = fb_actuatorSBPos + SB_ACTUATOR_ANGLEADJUST;
@@ -263,8 +256,7 @@ public class Data extends Observable
      *
      * @return the temperature in the front of the main electronic box
      */
-    public double getFb_tempMainElBoxFront()
-    {
+    public double getFb_tempMainElBoxFront() {
         return fb_tempMainElBoxFront;
     }
 
@@ -274,8 +266,7 @@ public class Data extends Observable
      * @param fb_tempMainElBoxFront the temperature in front of the in the main
      * electronic box
      */
-    public void setFb_tempMainElBoxFront(double fb_tempMainElBoxFront)
-    {
+    public void setFb_tempMainElBoxFront(double fb_tempMainElBoxFront) {
         this.fb_tempMainElBoxFront = fb_tempMainElBoxFront;
     }
 
@@ -284,8 +275,7 @@ public class Data extends Observable
      *
      * @return the remperature in the rear of the main electronic box
      */
-    public double getFb_tempMainElBoxRear()
-    {
+    public double getFb_tempMainElBoxRear() {
         return fb_tempMainElBoxRear;
     }
 
@@ -295,8 +285,7 @@ public class Data extends Observable
      * @param fb_tempMainElBoxRear the remperature in the rear of the main
      * electronic box
      */
-    public void setFb_tempMainElBoxRear(double fb_tempMainElBoxRear)
-    {
+    public void setFb_tempMainElBoxRear(double fb_tempMainElBoxRear) {
         this.fb_tempMainElBoxRear = fb_tempMainElBoxRear;
     }
 
@@ -305,8 +294,7 @@ public class Data extends Observable
      *
      * @return the current draw
      */
-    public int getFb_currentDraw()
-    {
+    public int getFb_currentDraw() {
         return fb_currentDraw;
     }
 
@@ -315,8 +303,7 @@ public class Data extends Observable
      *
      * @param fb_currentDraw the current draw
      */
-    public void setFb_currentDraw(int fb_currentDraw)
-    {
+    public void setFb_currentDraw(int fb_currentDraw) {
         this.fb_currentDraw = fb_currentDraw;
     }
 
@@ -325,8 +312,7 @@ public class Data extends Observable
      *
      * @return the pitch andgle of the ROV
      */
-    public double getFb_pitchAngle()
-    {
+    public double getFb_pitchAngle() {
         return fb_pitchAngle + getCmd_imuCalibratePitch();
     }
 
@@ -336,8 +322,7 @@ public class Data extends Observable
      * @param fb_pitchAngle the pitch andgle of the ROV
      *
      */
-    public void setFb_pitchAngle(double fb_pitchAngle)
-    {
+    public void setFb_pitchAngle(double fb_pitchAngle) {
 //        setChanged();
 //        notifyObservers();
         this.fb_pitchAngle = fb_pitchAngle;
@@ -348,8 +333,7 @@ public class Data extends Observable
      *
      * @return the roll angle of the ROV
      */
-    public double getFb_rollAngle()
-    {
+    public double getFb_rollAngle() {
 
         return fb_rollAngle + getCmd_imuCalibrateRoll();
     }
@@ -359,8 +343,7 @@ public class Data extends Observable
      *
      * @param fb_rollAngle the roll angle of the ROV
      */
-    public void setFb_rollAngle(double fb_rollAngle)
-    {
+    public void setFb_rollAngle(double fb_rollAngle) {
 //        setChanged();
 //        notifyObservers();
         this.fb_rollAngle = fb_rollAngle;
@@ -371,8 +354,7 @@ public class Data extends Observable
      *
      * @return the heading of the ROV
      */
-    public int getFb_heading()
-    {
+    public int getFb_heading() {
         return fb_heading;
     }
 
@@ -381,8 +363,7 @@ public class Data extends Observable
      *
      * @param fb_heading the heading of the ROV
      */
-    public void setFb_heading(int fb_heading)
-    {
+    public void setFb_heading(int fb_heading) {
         this.fb_heading = fb_heading;
     }
 
@@ -391,8 +372,7 @@ public class Data extends Observable
      *
      * @return the light mode of the ROV
      */
-    public int getCmd_lightMode()
-    {
+    public int getCmd_lightMode() {
         return cmd_lightMode;
     }
 
@@ -401,8 +381,7 @@ public class Data extends Observable
      *
      * @param cmd_lightMode the light mode of the ROV
      */
-    public void setCmd_lightMode(int cmd_lightMode)
-    {
+    public void setCmd_lightMode(int cmd_lightMode) {
         this.cmd_lightMode = this.cmd_lightMode;
     }
 
@@ -411,8 +390,7 @@ public class Data extends Observable
      *
      * @return the PS actuator target command
      */
-    public int getCmd_actuatorPS()
-    {
+    public int getCmd_actuatorPS() {
         return cmd_actuatorPS;
     }
 
@@ -421,8 +399,7 @@ public class Data extends Observable
      *
      * @param cmd_actuatorPS the PS actuator target command
      */
-    public void setCmd_actuatorPS(int cmd_actuatorPS)
-    {
+    public void setCmd_actuatorPS(int cmd_actuatorPS) {
         this.cmd_actuatorPS = cmd_actuatorPS;
         setChanged();
         notifyObservers();
@@ -434,8 +411,7 @@ public class Data extends Observable
      *
      * @return the SB actuator target command
      */
-    public int getCmd_actuatorSB()
-    {
+    public int getCmd_actuatorSB() {
         return cmd_actuatorSB;
     }
 
@@ -445,8 +421,7 @@ public class Data extends Observable
      * @param cmd_actuatorSB the SB actuator target command and notifiy the
      * observers
      */
-    public void setCmd_actuatorSB(int cmd_actuatorSB)
-    {
+    public void setCmd_actuatorSB(int cmd_actuatorSB) {
         this.cmd_actuatorSB = cmd_actuatorSB;
         setChanged();
         notifyObservers();
@@ -457,8 +432,7 @@ public class Data extends Observable
      *
      * @return the command target mode
      */
-    public int getcmd_targetMode()
-    {
+    public int getcmd_targetMode() {
         return cmd_targetMode;
     }
 
@@ -467,8 +441,7 @@ public class Data extends Observable
      *
      * @param cmd_targetMode the command target mode and notifiy the observers
      */
-    public void setcmd_targetMode(int cmd_targetMode)
-    {
+    public void setcmd_targetMode(int cmd_targetMode) {
         this.cmd_targetMode = cmd_targetMode;
         setChanged();
         notifyObservers();
@@ -479,8 +452,7 @@ public class Data extends Observable
      *
      * @return the command value for the PID P value
      */
-    public double getCmd_pid_p()
-    {
+    public double getCmd_pid_p() {
         return cmd_pid_p;
     }
 
@@ -489,8 +461,7 @@ public class Data extends Observable
      *
      * @param cmd_pid_p the command value for the PID P value
      */
-    public void setCmd_pid_p(double cmd_pid_p)
-    {
+    public void setCmd_pid_p(double cmd_pid_p) {
         this.cmd_pid_p = cmd_pid_p;
     }
 
@@ -499,8 +470,7 @@ public class Data extends Observable
      *
      * @return the command value for the PID I value
      */
-    public double getCmd_pid_i()
-    {
+    public double getCmd_pid_i() {
         return cmd_pid_i;
     }
 
@@ -509,8 +479,7 @@ public class Data extends Observable
      *
      * @param cmd_pid_i the command value for the PID I value
      */
-    public void setCmd_pid_i(double cmd_pid_i)
-    {
+    public void setCmd_pid_i(double cmd_pid_i) {
         this.cmd_pid_i = cmd_pid_i;
     }
 
@@ -519,8 +488,7 @@ public class Data extends Observable
      *
      * @return the command value for the PID D value
      */
-    public double getCmd_pid_d()
-    {
+    public double getCmd_pid_d() {
         return cmd_pid_d;
     }
 
@@ -529,8 +497,7 @@ public class Data extends Observable
      *
      * @param cmd_pid_d the command value for the PID D value
      */
-    public void setCmd_pid_d(double cmd_pid_d)
-    {
+    public void setCmd_pid_d(double cmd_pid_d) {
         this.cmd_pid_d = cmd_pid_d;
     }
 
@@ -539,8 +506,7 @@ public class Data extends Observable
      *
      * @return the command value for the PID gain value
      */
-    public double getCmd_pid_gain()
-    {
+    public double getCmd_pid_gain() {
         return cmd_pid_gain;
     }
 
@@ -549,8 +515,7 @@ public class Data extends Observable
      *
      * @param cmd_pid_gain the command value for the PID gain value
      */
-    public void setCmd_pid_gain(double cmd_pid_gain)
-    {
+    public void setCmd_pid_gain(double cmd_pid_gain) {
         this.cmd_pid_gain = cmd_pid_gain;
     }
 
@@ -559,8 +524,7 @@ public class Data extends Observable
      *
      * @return the emergency surface value of the ROV
      */
-    public boolean isCmd_emergencySurface()
-    {
+    public boolean isCmd_emergencySurface() {
         return cmd_emergencySurface;
     }
 
@@ -569,8 +533,7 @@ public class Data extends Observable
      *
      * @param cmd_emergencySurface the emergency surface value of the ROV
      */
-    public void setCmd_emergencySurface(boolean cmd_emergencySurface)
-    {
+    public void setCmd_emergencySurface(boolean cmd_emergencySurface) {
         this.cmd_emergencySurface = cmd_emergencySurface;
     }
 
@@ -579,8 +542,7 @@ public class Data extends Observable
      *
      * @return the ROV current depth
      */
-    public double getCmd_currentROVdepth()
-    {
+    public double getCmd_currentROVdepth() {
         return cmd_currentROVdepth;
     }
 
@@ -589,8 +551,7 @@ public class Data extends Observable
      *
      * @param cmd_currentROVdepth the ROV current depth
      */
-    public void setCmd_currentROVdepth(double cmd_currentROVdepth)
-    {
+    public void setCmd_currentROVdepth(double cmd_currentROVdepth) {
         this.cmd_currentROVdepth = cmd_currentROVdepth + cmd_offsetDepthBeneathROV;
         setChanged();
         notifyObservers();
@@ -602,8 +563,7 @@ public class Data extends Observable
      *
      * @return the counter value
      */
-    public int getCounter()
-    {
+    public int getCounter() {
         return counter;
     }
 
@@ -612,8 +572,7 @@ public class Data extends Observable
      *
      * @param counter the counter value
      */
-    public void setCounter(int counter)
-    {
+    public void setCounter(int counter) {
         this.counter = counter;
     }
 
@@ -622,8 +581,7 @@ public class Data extends Observable
      *
      * @return the value of analog input channel 1
      */
-    public double getAnalogInputChannel_1()
-    {
+    public double getAnalogInputChannel_1() {
         return analogInputChannel_1;
     }
 
@@ -632,8 +590,7 @@ public class Data extends Observable
      *
      * @param analogInputChannel_1 the value of analog input channel 1
      */
-    public void setAnalogInputChannel_1(double analogInputChannel_1)
-    {
+    public void setAnalogInputChannel_1(double analogInputChannel_1) {
         this.analogInputChannel_1 = analogInputChannel_1;
     }
 
@@ -643,8 +600,7 @@ public class Data extends Observable
      *
      * @return the value of analog input channel 2
      */
-    public double getAnalogInputChannel_2()
-    {
+    public double getAnalogInputChannel_2() {
         return analogInputChannel_2;
     }
 
@@ -653,8 +609,7 @@ public class Data extends Observable
      *
      * @param analogInputChannel_2 the value of analog input channel 2
      */
-    public void setAnalogInputChannel_2(double analogInputChannel_2)
-    {
+    public void setAnalogInputChannel_2(double analogInputChannel_2) {
         this.analogInputChannel_2 = analogInputChannel_2;
     }
 
@@ -663,8 +618,7 @@ public class Data extends Observable
      *
      * @return the value of digital input 3
      */
-    public boolean isDigitalInputChannel_3()
-    {
+    public boolean isDigitalInputChannel_3() {
         return digitalInputChannel_3;
     }
 
@@ -673,8 +627,7 @@ public class Data extends Observable
      *
      * @param digitalInputChannel_3 the value of digital input 3
      */
-    public void setDigitalInputChannel_3(boolean digitalInputChannel_3)
-    {
+    public void setDigitalInputChannel_3(boolean digitalInputChannel_3) {
         this.digitalInputChannel_3 = digitalInputChannel_3;
     }
 
@@ -683,8 +636,7 @@ public class Data extends Observable
      *
      * @return the value of digital input 4
      */
-    public boolean isDigitalInputChannel_4()
-    {
+    public boolean isDigitalInputChannel_4() {
         return digitalInputChannel_4;
     }
 
@@ -693,8 +645,7 @@ public class Data extends Observable
      *
      * @param digitalInputChannel_4 the value of digital input 4
      */
-    public void setDigitalInputChannel_4(boolean digitalInputChannel_4)
-    {
+    public void setDigitalInputChannel_4(boolean digitalInputChannel_4) {
         this.digitalInputChannel_4 = digitalInputChannel_4;
     }
 
@@ -703,8 +654,7 @@ public class Data extends Observable
      *
      * @return the IMU Roll calobratio value
      */
-    public double getCmd_imuCalibrateRoll()
-    {
+    public double getCmd_imuCalibrateRoll() {
         return cmd_imuCalibrateRoll;
     }
 
@@ -713,8 +663,7 @@ public class Data extends Observable
      *
      * @param cmd_imuCalibrateRoll the IMU Roll calobratio value
      */
-    public void setCmd_imuCalibrateRoll(double cmd_imuCalibrateRoll)
-    {
+    public void setCmd_imuCalibrateRoll(double cmd_imuCalibrateRoll) {
         this.cmd_imuCalibrateRoll = cmd_imuCalibrateRoll;
     }
 
@@ -723,8 +672,7 @@ public class Data extends Observable
      *
      * @return the IMU Pitch calobratio value
      */
-    public double getCmd_imuCalibratePitch()
-    {
+    public double getCmd_imuCalibratePitch() {
         return cmd_imuCalibratePitch;
     }
 
@@ -733,8 +681,7 @@ public class Data extends Observable
      *
      * @param cmd_imuCalibratePitch the IMU Pitch calobratio value
      */
-    public void setCmd_imuCalibratePitch(double cmd_imuCalibratePitch)
-    {
+    public void setCmd_imuCalibratePitch(double cmd_imuCalibratePitch) {
         this.cmd_imuCalibratePitch = cmd_imuCalibratePitch;
     }
 
@@ -743,8 +690,7 @@ public class Data extends Observable
      *
      * @return the command value for the blue LED
      */
-    public int getCmd_BlueLED()
-    {
+    public int getCmd_BlueLED() {
         return cmd_BlueLED;
     }
 
@@ -754,8 +700,7 @@ public class Data extends Observable
      * @param cmd_BlueLED the command value for the blue LED and notify the
      * observers
      */
-    public void setCmd_BlueLED(int cmd_BlueLED)
-    {
+    public void setCmd_BlueLED(int cmd_BlueLED) {
         this.cmd_BlueLED = cmd_BlueLED;
         setChanged();
         notifyObservers();
@@ -766,8 +711,7 @@ public class Data extends Observable
      *
      * @return the ROV ready value
      */
-    public boolean getFb_ROVReady()
-    {
+    public boolean getFb_ROVReady() {
 //        setChanged();
 //        notifyObservers();
         return fb_ROVReady;
@@ -778,8 +722,7 @@ public class Data extends Observable
      *
      * @param fb_ROVReady the ROV ready value
      */
-    public void setFb_ROVReady(boolean fb_ROVReady)
-    {
+    public void setFb_ROVReady(boolean fb_ROVReady) {
         this.fb_ROVReady = fb_ROVReady;
     }
 
@@ -788,8 +731,7 @@ public class Data extends Observable
      *
      * @return the I2C error value
      */
-    public boolean getERROR_I2C()
-    {
+    public boolean getERROR_I2C() {
         return ERROR_I2C;
     }
 
@@ -798,8 +740,7 @@ public class Data extends Observable
      *
      * @param ERROR_I2C the I2C error value
      */
-    public void setERROR_I2C(boolean ERROR_I2C)
-    {
+    public void setERROR_I2C(boolean ERROR_I2C) {
         this.ERROR_I2C = ERROR_I2C;
     }
 
@@ -808,8 +749,7 @@ public class Data extends Observable
      *
      * @return the dataToSend
      */
-    public String getDataToSend()
-    {
+    public String getDataToSend() {
         return dataToSend;
     }
 
@@ -818,8 +758,7 @@ public class Data extends Observable
      *
      * @param dataToSend the dataToSend
      */
-    public void setDataToSend(String dataToSend)
-    {
+    public void setDataToSend(String dataToSend) {
         this.dataToSend = dataToSend;
     }
 
@@ -828,8 +767,7 @@ public class Data extends Observable
      *
      * @return the status of gatheringDataToSend
      */
-    public boolean isGatheringDataToSend()
-    {
+    public boolean isGatheringDataToSend() {
         return gatheringDataToSend;
     }
 
@@ -839,8 +777,7 @@ public class Data extends Observable
      * @param gatheringDataToSend the status of gatheringDataToSend and notify
      * the observers
      */
-    public void setGatheringDataToSend(boolean gatheringDataToSend)
-    {
+    public void setGatheringDataToSend(boolean gatheringDataToSend) {
         this.gatheringDataToSend = gatheringDataToSend;
         setChanged();
         notifyObservers();
@@ -851,8 +788,7 @@ public class Data extends Observable
      *
      * @return the command value for both the actuators
      */
-    public int getCmd_bothActuators()
-    {
+    public int getCmd_bothActuators() {
         return cmd_bothActuators;
     }
 
@@ -862,8 +798,7 @@ public class Data extends Observable
      * @param cmd_bothActuators the command value for both the actuators and
      * notify the observers
      */
-    public void setCmd_bothActuators(int cmd_bothActuators)
-    {
+    public void setCmd_bothActuators(int cmd_bothActuators) {
         this.cmd_bothActuators = cmd_bothActuators;
         setChanged();
         notifyObservers();
@@ -874,8 +809,7 @@ public class Data extends Observable
      *
      * @return the actuator difference
      */
-    public int getActuatorDifference()
-    {
+    public int getActuatorDifference() {
         return actuatorDifference;
     }
 
@@ -884,8 +818,7 @@ public class Data extends Observable
      *
      * @param actuatorDifference the actuator difference
      */
-    public void setActuatorDifference(int actuatorDifference)
-    {
+    public void setActuatorDifference(int actuatorDifference) {
         this.actuatorDifference = actuatorDifference;
     }
 
@@ -894,8 +827,7 @@ public class Data extends Observable
      *
      * @return the target distance command
      */
-    public double getCmd_targetDistance()
-    {
+    public double getCmd_targetDistance() {
         return cmd_targetDistance;
     }
 
@@ -904,8 +836,7 @@ public class Data extends Observable
      *
      * @param cmd_targetDistance the target distance command
      */
-    public void setCmd_targetDistance(double cmd_targetDistance)
-    {
+    public void setCmd_targetDistance(double cmd_targetDistance) {
         this.cmd_targetDistance = cmd_targetDistance;
     }
 
@@ -914,8 +845,7 @@ public class Data extends Observable
      *
      * @return the disable motor controllers command
      */
-    public boolean getCmd_disableMotors()
-    {
+    public boolean getCmd_disableMotors() {
         return cmd_disableMotors;
     }
 
@@ -924,8 +854,7 @@ public class Data extends Observable
      *
      * @param cmd_disableMotors the disable motor controllers command
      */
-    public void setCmd_disableMotors(boolean cmd_disableMotors)
-    {
+    public void setCmd_disableMotors(boolean cmd_disableMotors) {
         this.cmd_disableMotors = cmd_disableMotors;
     }
 
@@ -934,8 +863,7 @@ public class Data extends Observable
      *
      * @return the offset depth beneath the ROV
      */
-    public double getCmd_offsetDepthBeneathROV()
-    {
+    public double getCmd_offsetDepthBeneathROV() {
         return cmd_offsetDepthBeneathROV;
     }
 
@@ -944,8 +872,7 @@ public class Data extends Observable
      *
      * @param cmd_offsetDepthBeneathROV the offset depth beneath the ROV
      */
-    public void setCmd_offsetDepthBeneathROV(double cmd_offsetDepthBeneathROV)
-    {
+    public void setCmd_offsetDepthBeneathROV(double cmd_offsetDepthBeneathROV) {
         this.cmd_offsetDepthBeneathROV = cmd_offsetDepthBeneathROV;
     }
 
@@ -954,8 +881,7 @@ public class Data extends Observable
      *
      * @return the offset depth of the ROV
      */
-    public double getCmd_offsetROVdepth()
-    {
+    public double getCmd_offsetROVdepth() {
         return cmd_offsetROVdepth;
     }
 
@@ -964,8 +890,7 @@ public class Data extends Observable
      *
      * @param cmd_offsetROVdepth the offset depth of the ROV
      */
-    public void setCmd_offsetROVdepth(double cmd_offsetROVdepth)
-    {
+    public void setCmd_offsetROVdepth(double cmd_offsetROVdepth) {
         this.cmd_offsetROVdepth = cmd_offsetROVdepth;
     }
 
@@ -974,8 +899,7 @@ public class Data extends Observable
      *
      * @return the ping value
      */
-    public boolean isCmd_ping()
-    {
+    public boolean isCmd_ping() {
         return cmd_ping;
     }
 
@@ -984,8 +908,7 @@ public class Data extends Observable
      *
      * @param cmd_ping the ping value
      */
-    public void setCmd_ping(boolean cmd_ping)
-    {
+    public void setCmd_ping(boolean cmd_ping) {
         this.cmd_ping = cmd_ping;
     }
 
@@ -993,8 +916,7 @@ public class Data extends Observable
      * Returns  the client connected status
      * @return the client connected status
      */
-    public boolean isClientConnected()
-    {
+    public boolean isClientConnected() {
         return clientConnected;
     }
 
@@ -1003,8 +925,7 @@ public class Data extends Observable
      *
      * @param clientConnected the client connected status
      */
-    public void setClientConnected(boolean clientConnected)
-    {
+    public void setClientConnected(boolean clientConnected) {
         this.clientConnected = clientConnected;
     }
 }

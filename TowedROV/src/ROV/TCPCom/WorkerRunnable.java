@@ -1,3 +1,16 @@
+/*
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
+ */
 package ROV.TCPCom;
 
 import java.io.BufferedReader;
@@ -20,8 +33,7 @@ import java.util.Map.Entry;
  * client commands are listed in the switch case
  *
  */
-public class WorkerRunnable implements Runnable
-{
+public class WorkerRunnable implements Runnable {
 
     protected Socket clientSocket = null;
 
@@ -39,8 +51,7 @@ public class WorkerRunnable implements Runnable
      *
      * @param dh the shared recource data class
      */
-    public WorkerRunnable(Socket clientSocket, Data dh)
-    {
+    public WorkerRunnable(Socket clientSocket, Data dh) {
         this.clientSocket = clientSocket;
 
         this.dh = dh;
@@ -51,12 +62,10 @@ public class WorkerRunnable implements Runnable
      * Responsible for handling data from the client and answering the client.
      * All client commands are listed in the switch case
      */
-    public void run()
-    {
+    public void run() {
         boolean clientOnline = true;
 //        boolean welcomeMessageIsSent = false;
-        try
-        {
+        try {
             BufferedReader inFromClient = new BufferedReader(
                     new InputStreamReader(
                             this.clientSocket.getInputStream()));
@@ -67,41 +76,32 @@ public class WorkerRunnable implements Runnable
             InputStream input = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
 
-            while (clientOnline)
-            {
-                if (inFromClient.ready())
-                {
+            while (clientOnline) {
+                if (inFromClient.ready()) {
                     String key = "";
                     String value = "";
                     String inputData = inFromClient.readLine();
-                    if (inputData.contains("<") && inputData.contains(">"))
-                    {
+                    if (inputData.contains("<") && inputData.contains(">")) {
                         inputData = inputData.substring(inputData.indexOf(start_char) + 1);
                         inputData = inputData.substring(0, inputData.indexOf(end_char));
                         inputData = inputData.replace("?", "");
-                        if (inputData.contains(":"))
-                        {
+                        if (inputData.contains(":")) {
                             String[] data = inputData.split(sep_char);
                             key = data[0];
                             value = data[1];
-                        } else
-                        {
+                        } else {
                             String[] data = inputData.split(sep_char);
                             key = data[0];
                         }
 
-                    } else
-                    {
+                    } else {
                         key = (String) inputData;
                     }
-                    if (!dh.getFb_ROVReady())
-                    {
+                    if (!dh.getFb_ROVReady()) {
                         outToClient.println("Server: ROV not ready");
-                    } else
-                    {
+                    } else {
 
-                        switch (key)
-                        {
+                        switch (key) {
                             //Commands
 
                             case "cmd_lightMode":
@@ -271,8 +271,7 @@ public class WorkerRunnable implements Runnable
 
                             case "get_ROVComPorts":
                                 String portListString = "<";
-                                for (Entry e : dh.comPortList.entrySet())
-                                {
+                                for (Entry e : dh.comPortList.entrySet()) {
                                     String comPortKey = (String) e.getKey();
                                     String comPortValue = (String) e.getValue();
                                     portListString = portListString + comPortKey + ":" + comPortValue + ":";
@@ -290,11 +289,9 @@ public class WorkerRunnable implements Runnable
                                 break;
 
                             case "ack":
-                                if (dh.isCmd_ack())
-                                {
+                                if (dh.isCmd_ack()) {
                                     dh.setCmd_ack(false);
-                                } else
-                                {
+                                } else {
                                     dh.setCmd_ack(true);
                                 }
                                 outToClient.println("Ack: " + dh.isCmd_ack());
@@ -303,14 +300,11 @@ public class WorkerRunnable implements Runnable
                             case "getAlarms":
                                 String completeAlarmListString = "<";
 
-                                for (Map.Entry e : dh.completeAlarmListDh.entrySet())
-                                {
+                                for (Map.Entry e : dh.completeAlarmListDh.entrySet()) {
                                     key = (String) e.getKey();
-                                    if (e.getValue().equals(true))
-                                    {
+                                    if (e.getValue().equals(true)) {
                                         value = "true";
-                                    } else
-                                    {
+                                    } else {
                                         value = "false";
                                     }
 
@@ -335,36 +329,29 @@ public class WorkerRunnable implements Runnable
 
             }
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             //report exception somewhere.
             System.out.println("Exception: " + e);
             e.printStackTrace();
         }
     }
 
-    private boolean parseStringToBoolean(String value)
-    {
+    private boolean parseStringToBoolean(String value) {
         Boolean result = false;
-        try
-        {
+        try {
             result = Boolean.valueOf(value);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Exception while parsing to double");
         }
         return result;
     }
 
-    private Integer parseStringToInt(String value)
-    {
+    private Integer parseStringToInt(String value) {
         Integer result = 0;
 
-        try
-        {
+        try {
             result = Integer.valueOf(value);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Exception while parsing to integer");
         }
 

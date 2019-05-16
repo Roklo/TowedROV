@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package ROV;
 
@@ -13,10 +21,9 @@ import java.util.concurrent.atomic.*;
 /**
  * This class is responisble for the PID controller and its output to the
  * actuators
- * 
+ *
  */
-public class PID implements Runnable, Observer
-{
+public class PID implements Runnable, Observer {
 
     Data data = null;
     MiniPID miniPID;
@@ -30,10 +37,10 @@ public class PID implements Runnable, Observer
 
     /**
      * The constructor of the PID class. Creates a miniPID instance.
+     *
      * @param data the shared recource data class
      */
-    public PID(Data data)
-    {
+    public PID(Data data) {
         this.data = data;
         miniPID = new MiniPID(data.getCmd_pid_p(), data.getCmd_pid_i(), data.getCmd_pid_d());
         miniPID.setOutputLimits(0, 254);
@@ -44,18 +51,14 @@ public class PID implements Runnable, Observer
      * Run methods gathers the input data and calculates an output value
      */
     @Override
-    public void run()
-    {
+    public void run() {
 
-        if (data.getcmd_targetMode() != 2)
-        {
-            if (data.getcmd_targetMode() == 0)
-            {
+        if (data.getcmd_targetMode() != 2) {
+            if (data.getcmd_targetMode() == 0) {
                 //Goal: Get to desired depth
                 actual = data.getCmd_currentROVdepth();
             }
-            if (data.getcmd_targetMode() == 1)
-            {
+            if (data.getcmd_targetMode() == 1) {
                 //Goal: Get to desired elevation above seafloor
                 actual = data.getFb_depthBeneathROV();
             }
@@ -64,7 +67,7 @@ public class PID implements Runnable, Observer
 
             miniPID.setSetpoint(target);
             output = miniPID.getOutput(actual, target);
-            
+
             data.setCmd_bothActuators(output.intValue());
         }
     }
@@ -75,9 +78,7 @@ public class PID implements Runnable, Observer
      * @param arg the arguments for the observer
      */
     @Override
-    public void update(Observable o, Object arg)
-
-    {
+    public void update(Observable o, Object arg) {
 //        target = data.getCmd_setDepth();
 //        actual = data.getFb_depthFromPressure();
 

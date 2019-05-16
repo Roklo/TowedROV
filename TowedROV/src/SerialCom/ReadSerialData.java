@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package SerialCom;
 
@@ -19,8 +27,7 @@ import ROV.Data;
  *
  *
  */
-public class ReadSerialData implements Runnable
-{
+public class ReadSerialData implements Runnable {
 
     // Filter values
     int actuatorFbFilter = 1; // 1 equals off
@@ -52,8 +59,7 @@ public class ReadSerialData implements Runnable
      * @param baudRate the baud rate of the com port
      * @param myName the name of the com device it should connect to
      */
-    public ReadSerialData(Data data, String comPort, int baudRate, String myName)
-    {
+    public ReadSerialData(Data data, String comPort, int baudRate, String myName) {
         this.comPort = comPort;
         this.myName = myName;
         this.baudRate = baudRate;
@@ -64,16 +70,12 @@ public class ReadSerialData implements Runnable
      * Run command loops through the readData
      */
     @Override
-    public void run()
-    {
-        while (true)
-        {
-            try
-            {
+    public void run() {
+        while (true) {
+            try {
 
                 readData(comPort, baudRate);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
             }
 
         }
@@ -85,8 +87,7 @@ public class ReadSerialData implements Runnable
      * @param comPort the com port it should connect to
      * @param baudRate the boud rate of the com port
      */
-    public void readData(String comPort, int baudRate)
-    {
+    public void readData(String comPort, int baudRate) {
 
         boolean recievedData = false;
         //Declare special symbol used in serial data stream from Arduino
@@ -96,31 +97,24 @@ public class ReadSerialData implements Runnable
 
         SerialPort serialPort = new SerialPort(comPort);
 
-        if (!portIsOpen)
-        {
-            try
-            {
+        if (!portIsOpen) {
+            try {
                 serialPort.openPort();
                 portIsOpen = true;
-            } catch (SerialPortException ex)
-            {
+            } catch (SerialPortException ex) {
                 System.out.println(ex);
             }
         }
 
-        while (recievedData == false)
-        {
-            try
-            {
+        while (recievedData == false) {
+            try {
                 Thread.sleep(50);
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
 
             }
             String buffer;
 
-            try
-            {
+            try {
                 serialPort.setParams(baudRate, 8, 1, 0);
                 buffer = serialPort.readString();
 
@@ -128,18 +122,15 @@ public class ReadSerialData implements Runnable
                 boolean dataNotNull = false;
                 boolean dataHasFormat = false;
 
-                if ((buffer != null))
-                {
+                if ((buffer != null)) {
                     dataHasFormat = true;
-                } else
-                {
+                } else {
                     dataHasFormat = false;
                     dataNotNull = false;
 
                 }
 
-                if (dataHasFormat)
-                {
+                if (dataHasFormat) {
                     String dataStream = buffer;
 
                     dataStream = dataStream.substring(dataStream.indexOf(startChar) + 1);
@@ -147,8 +138,7 @@ public class ReadSerialData implements Runnable
                     dataStream = dataStream.replace("?", "");
                     String[] data = dataStream.split(seperationChar);
 
-                    for (int i = 0; i < data.length; i = i + 2)
-                    {
+                    for (int i = 0; i < data.length; i = i + 2) {
                         //this.data.data.put(data[i], data[i + 1]);
                         incommingData.put(data[i], data[i + 1]);
 
@@ -167,23 +157,19 @@ public class ReadSerialData implements Runnable
 //                System.out.println("Data is recieved in: " + elapsedTimer + " millis"
 //                        + " or with: unlimited Hz!");
 //            }
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 // System.out.println("Lost connection to " + myName);
             }
 
         }
     }
 
-    private void sendIncommingDataToDataHandler()
-    {
-        for (Map.Entry e : incommingData.entrySet())
-        {
+    private void sendIncommingDataToDataHandler() {
+        for (Map.Entry e : incommingData.entrySet()) {
             String key = (String) e.getKey();
             String value = (String) e.getValue();
 
-            switch (key)
-            {
+            switch (key) {
 
                 case "D":
                     double doubleValue = Double.parseDouble(value) * -1;
@@ -200,42 +186,34 @@ public class ReadSerialData implements Runnable
                     break;
 
                 case "ch3":
-                    if (value.equals("1.00"))
-                    {
+                    if (value.equals("1.00")) {
                         data.setDigitalInputChannel_3(true);
-                    } else
-                    {
+                    } else {
                         data.setDigitalInputChannel_3(false);
                     }
                     break;
                 case "ch4":
-                    if (value.equals("1.00"))
-                    {
+                    if (value.equals("1.00")) {
                         data.setDigitalInputChannel_4(true);
-                    } else
-                    {
+                    } else {
                         data.setDigitalInputChannel_4(false);
                     }
                     break;
 
                 case "PsActuatorFb":
                     int tempValuePs = Integer.parseInt(value);
-                    if (tempValuePs < 0)
-                    {
+                    if (tempValuePs < 0) {
                         tempValuePs = 0;
                     }
-                    if (tempValuePs > 254)
-                    {
+                    if (tempValuePs > 254) {
                         tempValuePs = 254;
                     }
 
-                    if (actuatorPSFbFilterCounter <= actuatorFbFilter)
-                    {
+                    if (actuatorPSFbFilterCounter <= actuatorFbFilter) {
                         actuatorPSFbFilterStorage = actuatorPSFbFilterStorage + tempValuePs;
                         actuatorPSFbFilterCounter++;
 
-                    } else
-                    {
+                    } else {
                         actuatorPSFbFilterStorage = actuatorPSFbFilterStorage / actuatorFbFilter;
                         actuatorPSFbFilterCounter = 0;
 
@@ -245,22 +223,18 @@ public class ReadSerialData implements Runnable
 
                 case "SbActuatorFb":
                     int tempValueSb = Integer.parseInt(value);
-                    if (tempValueSb < 0)
-                    {
+                    if (tempValueSb < 0) {
                         tempValueSb = 0;
                     }
-                    if (tempValueSb > 254)
-                    {
+                    if (tempValueSb > 254) {
                         tempValueSb = 254;
                     }
 
-                    if (actuatorSBFbFilterCounter <= actuatorFbFilter)
-                    {
+                    if (actuatorSBFbFilterCounter <= actuatorFbFilter) {
                         actuatorSBFbFilterStorage = actuatorSBFbFilterStorage + tempValueSb;
                         actuatorSBFbFilterCounter++;
 
-                    } else
-                    {
+                    } else {
                         actuatorSBFbFilterStorage = actuatorSBFbFilterStorage / actuatorFbFilter;
                         actuatorSBFbFilterCounter = 0;
 

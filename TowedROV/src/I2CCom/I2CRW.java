@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This code is for the bachelor thesis named "Towed-ROV".
+ * The purpose is to build a ROV which will be towed behind a surface vessel
+ * and act as a multi-sensor platform, were it shall be easy to place new 
+ * sensors. There will also be a video stream from the ROV.
+ * 
+ * The system consists of two Raspberry Pis in the ROV that is connected to
+ * several Arduino micro controllers. These micro controllers are connected to
+ * feedback from the actuators, the echo sounder and extra optional sensors.
+ * The external computer which is on the surface vessel is connected to a GPS,
+ * echo sounder over USB, and the ROV over ethernet. It will present and
+ * log data in addition to handle user commands for controlling the ROV.
  */
 package I2CCom;
 
@@ -11,11 +19,11 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 /**
- * This class is responsible for sending and reciving data from and to 
- * I2C devices.
+ * This class is responsible for sending and reciving data from and to I2C
+ * devices.
  */
-public class I2CRW implements Runnable
-{
+public class I2CRW implements Runnable {
+
     protected static Data data;
 
     I2CDevice arduinoIO;
@@ -45,16 +53,14 @@ public class I2CRW implements Runnable
     String sep_char = ":";
 
     /**
-     * Constructor of the i2CRW class
-     * Initiates the bus and adds slaves
+     * Constructor of the i2CRW class Initiates the bus and adds slaves
+     *
      * @param data the shared recource data class
      */
-    public I2CRW(Data data)
-    {
+    public I2CRW(Data data) {
         this.data = data;
 
-        try
-        {
+        try {
             //System.out.println("Creatingbus");
             I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_3);
             //System.out.println("Creatingdevices");
@@ -62,58 +68,46 @@ public class I2CRW implements Runnable
             actuatorSB = bus.getDevice(SB_ACTUATOR_ADDRESS);
             actuatorPS = bus.getDevice(PS_ACTUATOR_ADDRESS);
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Failed to instansiate I2 Bus");
         }
 
     }
 
-
     /**
      * The run method does nothing in this class
      */
     @Override
-    public void run()
-    {
-        while (true)
-        {
+    public void run() {
+        while (true) {
 
         }
     }
 
-
     /**
      * This method is responsible for sending data to an I2C device
-     * 
+     *
      * @param device the device the data should be sent to
      * @param commandValue the command value that should be sent
      */
-    public void sendI2CData(String device, int commandValue)
-    {
-        if (!data.getCmd_disableMotors())
-        {
-            try
-            {
-                switch (device)
-                {
+    public void sendI2CData(String device, int commandValue) {
+        if (!data.getCmd_disableMotors()) {
+            try {
+                switch (device) {
                     case "ActuatorPS_setTarget":
 
                         if (commandValue > data.getFb_actuatorPSPos()
                                 && commandValue > 0
-                                && commandValue <= 254)
-                        {
+                                && commandValue <= 254) {
                             actuatorPS.write(JRK_setTargetLowResFwd, (byte) PS_ACTUATOR_SPEED);
                         }
 
                         if (commandValue < data.getFb_actuatorPSPos()
                                 && commandValue > 0
-                                && commandValue <= 254)
-                        {
+                                && commandValue <= 254) {
                             actuatorPS.write(JRK_setTargetLowResRev, (byte) PS_ACTUATOR_SPEED);
                         }
-                        if (commandValue == 0)
-                        {
+                        if (commandValue == 0) {
                             actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
                         }
                         break;
@@ -121,49 +115,40 @@ public class I2CRW implements Runnable
 
                         if (commandValue > data.getFb_actuatorSBPos()
                                 && commandValue > 0
-                                && commandValue <= 254)
-                        {
+                                && commandValue <= 254) {
                             actuatorSB.write(JRK_setTargetLowResFwd, (byte) SB_ACTUATOR_SPEED);
                         }
 
                         if (commandValue < data.getFb_actuatorSBPos()
                                 && commandValue > 0
-                                && commandValue <= 254)
-                        {
+                                && commandValue <= 254) {
                             actuatorSB.write(JRK_setTargetLowResRev, (byte) SB_ACTUATOR_SPEED);
                         }
 
-
-                        if (commandValue == 0)
-                        {
+                        if (commandValue == 0) {
                             actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
                         }
                         break;
                     case "ActuatorSB_stopMotor":
                         //actuatorSB.write((byte) ACTUATOR_STOP);
-                        try
-                        {
+                        try {
                             Thread.sleep(10);
-                        } catch (Exception e)
-                        {
+                        } catch (Exception e) {
                         }
 
                         actuatorSB.write(JRK_setTargetLowResRev, (byte) 0);
                         break;
                     case "ActuatorPS_stopMotor":
-                        try
-                        {
+                        try {
                             Thread.sleep(10);
-                        } catch (Exception e)
-                        {
+                        } catch (Exception e) {
                         }
                         //actuatorPS.write((byte) ACTUATOR_STOP);
                         actuatorPS.write(JRK_setTargetLowResRev, (byte) 0);
                         break;
 
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.setERROR_I2C(true);
                 System.out.println("Error at I2C read write");
                 System.out.println(e);
@@ -174,20 +159,17 @@ public class I2CRW implements Runnable
 
     /**
      * Reads I2C data from an device
-     * 
+     *
      * Not used!
-     * 
+     *
      * @param device the device it should gather data from
      */
-    public void readI2CData(String device)
-    {
+    public void readI2CData(String device) {
         byte[] inputDataRaw = new byte[32];
 
         String dataRecieved = "";
-        try
-        {
-            switch (device)
-            {
+        try {
+            switch (device) {
 
                 case "ActuatorSB_Feedback":
 
@@ -214,10 +196,8 @@ public class I2CRW implements Runnable
                     //arduinoIO.read(inputDataRaw, 0, 6);
                     int sizeOfRecievedData = 0;
 
-                    for (byte b : inputDataRaw)
-                    {
-                        if (b != -1)
-                        {
+                    for (byte b : inputDataRaw) {
+                        if (b != -1) {
                             sizeOfRecievedData++;
                         }
                     }
@@ -230,8 +210,7 @@ public class I2CRW implements Runnable
                     break;
 
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e);
         }
 
