@@ -1974,7 +1974,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         setpointLabel.setBackground(new Color(255, 0, 0));
         manualControlButton.doClick();
         try {
-            this.client_ROV.sendCommand("cmd_emergencySurface:true");
             this.client_ROV.sendCommand("cmd_targetMode:2");
             this.client_ROV.sendCommand("cmd_actuatorPS:254");
             this.client_ROV.sendCommand("cmd_actuatorSB:254");
@@ -2903,6 +2902,19 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
             this.sounderThread = new Thread(this.sounder);
         }
         if (data.isEmergencyMode() && !this.sounderThread.isAlive()) {
+
+            targetDistanceTextField.setText("0.00");
+            setpointLabel.setText("EMERGENCY STOP: " + targetDistanceTextField.getText() + "m");
+            setpointLabel.setBackground(new Color(255, 0, 0));
+            manualControlButton.doClick();
+            try {
+                this.client_ROV.sendCommand("cmd_targetMode:2");
+                this.client_ROV.sendCommand("cmd_actuatorPS:254");
+                this.client_ROV.sendCommand("cmd_actuatorSB:254");
+            } catch (IOException ex) {
+                System.out.println("IOException in emergencyStopButtonActionPerformed: " + ex.getMessage());
+            }
+
             if (!this.sounder.isAlive()) {
                 this.sounderThread = new Thread(this.sounder);
                 this.sounderThread.setName("Sounder");
