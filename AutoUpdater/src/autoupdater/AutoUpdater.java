@@ -46,7 +46,7 @@ public class AutoUpdater
             System.out.println("Starting to download file...");
             try
             {
-              //  URLReader.copyURLToFile(url, filezip);
+               URLReader.copyURLToFile(url, filezip);
                 connectedToInternet = true;
             } catch (Exception e)
             {
