@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +33,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class OptionsFrame extends javax.swing.JFrame {
 
-    File file = new File("src\\ntnusubsea\\gui\\options\\ROV Options.txt");
+    File file = null;
     String IP_Rov;
     String IP_Camera;
     ArrayList channels = new ArrayList<String>();
@@ -51,6 +52,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     public OptionsFrame(Data data, TCPClient client_ROV) {
         initComponents();
         try {
+            this.file = new File("ROV Options.txt");
             FileUtils.touch(file);
         } catch (IOException ex) {
             Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -485,7 +487,7 @@ public class OptionsFrame extends javax.swing.JFrame {
      * Reads the option files and displays the current settings
      */
     public void getOptionsFromFile() {
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\ntnusubsea\\gui\\options\\ROV Options.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File("ROV Options.txt")))) {
             this.IP_Rov = br.readLine();
             jTextFieldIP_Rov.setText(this.IP_Rov);
             this.IP_Camera = br.readLine();
