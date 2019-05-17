@@ -15,8 +15,12 @@ package ntnusubsea.gui;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,7 +155,7 @@ public final class Data extends Observable {
         try {
             BufferedReader br = null;
             try {
-                br = new BufferedReader(new FileReader("src\\ntnusubsea\\gui\\options\\ROV Options.txt"));
+                br = new BufferedReader(new FileReader(new File("ROV Options.txt")));
                 //this.updateRovDepthDataList();
                 IP_Rov = br.readLine();
                 IP_Camera = br.readLine();

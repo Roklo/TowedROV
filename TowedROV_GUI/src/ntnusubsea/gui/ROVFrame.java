@@ -1974,7 +1974,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         setpointLabel.setBackground(new Color(255, 0, 0));
         manualControlButton.doClick();
         try {
-            this.client_ROV.sendCommand("cmd_emergencySurface:true");
             this.client_ROV.sendCommand("cmd_targetMode:2");
             this.client_ROV.sendCommand("cmd_actuatorPS:254");
             this.client_ROV.sendCommand("cmd_actuatorSB:254");
@@ -2031,7 +2030,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
                 Thread.sleep(10);
                 this.client_ROV.sendCommand("cmd_offsetROVdepth:" + data.getOffsetROVdepth());
                 jMenuConnect.setText("Connected 2/2");
-                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))));
                 jMenuItemDisconnect.setEnabled(true);
                 jMenuItemConnect.setEnabled(false);
                 JOptionPane.showMessageDialog(this,
@@ -2061,7 +2060,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
                 Thread.sleep(10);
                 this.client_ROV.sendCommand("cmd_offsetROVdepth:" + data.getOffsetROVdepth());
                 jMenuConnect.setText("Connected 1/2");
-                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
                 jMenuItemDisconnect.setEnabled(true);
                 jMenuItemConnect.setEnabled(false);
                 JOptionPane.showMessageDialog(this,
@@ -2081,7 +2080,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
                 delayTextField.setEnabled(true);
 
                 jMenuConnect.setText("Connected 1/2");
-                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
                 jMenuItemDisconnect.setEnabled(true);
                 jMenuItemConnect.setEnabled(false);
                 JOptionPane.showMessageDialog(this,
@@ -2106,7 +2105,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         } catch (Exception ex) {
             jMenuConnect.setText("Connect");
             try {
-                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuConnect.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
             } catch (IOException ex1) {
                 System.out.println("IOException: " + ex.getMessage());
             }
@@ -2153,12 +2152,12 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
             jMenuItemDisconnect.setEnabled(false);
             jMenuItemConnect.setEnabled(true);
             jMenuConnect.setText("Connect");
-            jMenuConnect.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+            jMenuConnect.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
             JOptionPane.showMessageDialog(this,
                     "Successfully disconnected from the ROV RPi and the camera RPi.",
                     "Disconnected",
                     JOptionPane.PLAIN_MESSAGE);
-            videoImage = ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/TowedROV.jpg"));
+            videoImage = ImageIO.read(getClass().getResource("ntnusubsea/gui/Images/TowedROV.jpg"));
             data.setVideoImage(videoImage);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this,
@@ -2583,7 +2582,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
             // TODO add your handling code here:
             // Kjør kalibrering!
             jMenuCalibrate.setText("Calibrated!");
-            jMenuCalibrate.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+            jMenuCalibrate.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))));
         } catch (IOException ex) {
             System.out.println("IOException when calibrating: " + ex.getMessage());
 
@@ -2647,7 +2646,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         jMenuItemStartLogging.setEnabled(false);
         jMenuItemStopLogging.setEnabled(true);
         try {
-            jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+            jMenuLogger.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))));
         } catch (IOException ex) {
             System.out.println("Error setting icon: " + ex.getMessage());
         }
@@ -2666,7 +2665,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         jMenuItemStartLogging.setEnabled(true);
 
         try {
-            jMenuLogger.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+            jMenuLogger.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
         } catch (IOException ex) {
             System.out.println("Error setting icon: " + ex.getMessage());
         }
@@ -2903,6 +2902,19 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
             this.sounderThread = new Thread(this.sounder);
         }
         if (data.isEmergencyMode() && !this.sounderThread.isAlive()) {
+
+            targetDistanceTextField.setText("0.00");
+            setpointLabel.setText("EMERGENCY STOP: " + targetDistanceTextField.getText() + "m");
+            setpointLabel.setBackground(new Color(255, 0, 0));
+            manualControlButton.doClick();
+            try {
+                this.client_ROV.sendCommand("cmd_targetMode:2");
+                this.client_ROV.sendCommand("cmd_actuatorPS:254");
+                this.client_ROV.sendCommand("cmd_actuatorSB:254");
+            } catch (IOException ex) {
+                System.out.println("IOException in emergencyStopButtonActionPerformed: " + ex.getMessage());
+            }
+
             if (!this.sounder.isAlive()) {
                 this.sounderThread = new Thread(this.sounder);
                 this.sounderThread.setName("Sounder");
@@ -2952,13 +2964,13 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         if (data.isRovReady()) {
             try {
                 jMenuRovReady.setText("ROV Ready!");
-                jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+                jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))));
             } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         } else {
             try {
-                jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuRovReady.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
             } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
@@ -2966,7 +2978,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
 
         if (data.getVoltage() < 28.00 && data.getVoltage() > 25.00) {
             try {
-                jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
             } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
@@ -2974,7 +2986,7 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         } else if (data.getVoltage() > 28.00) {
             jMenuVoltage.setText("Voltage: " + data.getVoltage() + " V");
             try {
-                jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+                jMenuVoltage.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))));
             } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
@@ -2984,14 +2996,14 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
             data.setEmergencyMode(true);
             jMenuPing.setText("Ping (ROV): Lost connection...");
             try {
-                jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/NotCalibrated.gif"))));
+                jMenuPing.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/NotCalibrated.gif"))));
             } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         } else if (this.client_Pinger.isConnected() && (data.getRovPing() != 999.99)) {
             jMenuPing.setText("Ping (ROV): " + String.valueOf(data.getRovPing()) + " ms");
             try {
-                jMenuPing.setIcon(new ImageIcon(ImageIO.read(new File("src/ntnusubsea/gui/Images/Calibrated.gif"))));
+                jMenuPing.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/ntnusubsea/gui/Images/Calibrated.gif"))));
             } catch (IOException ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
