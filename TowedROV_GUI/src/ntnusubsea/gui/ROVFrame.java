@@ -117,11 +117,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
 //        depthInputTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "sendInput");
         exitFullscreenButton.getActionMap().put("exitFullscreen", exitFullscreenAction);
 //        depthInputTextField.getActionMap().put("sendInput", sendInputAction);
-        try {
-            this.client_Camera.sendCommand("setPitch:57");
-        } catch (IOException ex) {
-            System.out.println("IOException setPitch in ROVFrame constructor: " + ex.getMessage());
-        }
 
         if (this.debugMode) {
             // ROV RPi:
