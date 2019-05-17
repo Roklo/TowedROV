@@ -76,7 +76,7 @@ public class EchoSounderFrame extends javax.swing.JFrame implements Runnable, Ob
         String chartTitle = "ROV Depth Chart";
         String xAxisLabel = "Time (s)";
         String yAxisLabel = "Depth";
-        XYDataset dataset = createDatasetFromFile();
+        XYDataset dataset = createDatasetLive();
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle,
                 xAxisLabel, yAxisLabel, dataset);
         plot = chart.getXYPlot();
