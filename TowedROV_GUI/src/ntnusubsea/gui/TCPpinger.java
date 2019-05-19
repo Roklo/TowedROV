@@ -58,14 +58,14 @@ public class TCPpinger implements Runnable {
      */
     @Override
     public void run() {
-        if (!this.isConnected())
-        {
-            try {
-                this.connect(this.IP, this.port);
-            } catch (IOException ex) {
-                Logger.getLogger(TCPpinger.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        if (!this.isConnected())
+//        {
+//            try {
+//                this.connect(this.IP, this.port);
+//            } catch (IOException ex) {
+//                Logger.getLogger(TCPpinger.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
         if (this.isConnected()) {
             data.setRovPing(this.getPing());
             //System.out.println("Ping (ROV): " + data.getRovPing());

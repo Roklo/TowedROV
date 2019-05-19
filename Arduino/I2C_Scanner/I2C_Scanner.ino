@@ -5,7 +5,7 @@
 //    This program (or code that looks like it)
 //    can be found in many places.
 //    For example on the Arduino.cc forum.
-//    The original author is not know.
+//    The original author is not known.
 // Version 2, Juni 2012, Using Arduino 1.0.1
 //     Adapted to be as simple as possible by Arduino.cc user Krodal
 // Version 3, Feb 26  2013
@@ -26,7 +26,7 @@
 // This sketch tests the standard 7-bit addresses
 // Devices with higher bit address might not be seen properly.
 //
- 
+ //I2C library
 #include <Wire.h>
  
  
@@ -42,6 +42,8 @@ void setup()
  
 void loop()
 {
+
+  // Scans for i2c adderesses
   byte error, address;
   int nDevices;
  
@@ -55,7 +57,9 @@ void loop()
     // a device did acknowledge to the address.
     Wire.beginTransmission(address);
     error = Wire.endTransmission();
- 
+
+
+    // Print I2C addresses
     if (error == 0)
     {
       Serial.print("I2C device found at address 0x");

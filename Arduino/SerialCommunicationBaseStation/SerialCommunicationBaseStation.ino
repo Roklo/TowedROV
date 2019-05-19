@@ -1,4 +1,10 @@
 
+// SerialCommunicationBaseStation.ino
+
+// This class handles the NMEA sentences from the GPS, reads the voltage
+// of the batteries, builds a string of all the data and sends it as a
+// byte array over serial.
+
 #include <Adafruit_GPS.h> // Adafruit GPS library
 #include <SoftwareSerial.h> // Software serial library
 

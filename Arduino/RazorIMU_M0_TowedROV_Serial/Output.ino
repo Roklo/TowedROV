@@ -1,6 +1,3 @@
-
-//Robin Changes//
-
 // Not used. The method used is "output_angles()".
 void sendMyData()
 {
@@ -12,22 +9,9 @@ void sendMyData()
   String dataToSend = "<Pitch:" + (String) myPitch + ":Roll:" + (String) myRoll + ">";
   Serial.print("Send data over I2C: ");
   Serial.println(dataToSend);
-
-
-// Old i2c method:
-//  //val = val + 1.5;
-//  //String dataToSend = String(val);
-//  float myPitch = 0;
-//  float myRoll = 0;
-//  String dataToSend = "<Pitch:" + (String) myPitch + ":Roll:" + (String) myRoll + ">";
-//   Serial.print("Send data over I2C: ");
-//  Serial.println(dataToSend);
-//  char buffer[32];
-//  dataToSend.toCharArray(buffer, 32);
-//  Wire.write(buffer);
 }
 
-//End Robins changes//
+
 
 
 /* This file is part of the Razor AHRS Firmware */
@@ -38,13 +22,14 @@ void output_angles()
   if (output_format == OUTPUT__FORMAT_BINARY)
   {
     float ypr[3];
-    ypr[0] = TO_DEG(yaw);
+    ypr[0] = TO_DEG(yaw); // convert data to degrees
     ypr[1] = TO_DEG(pitch);
     ypr[2] = TO_DEG(roll);
-    
+
+    //Convert data to <Key:Value> format 
     String dataToSend = "<Pitch:" + (String) ypr[1] + ":Roll:" + (String) ypr[2] + ":Yaw:" + (String) ypr[3] + ">";
     Serial.print("Send data over I2C: ");
-    Serial.println(dataToSend);
+    Serial.println(dataToSend); //Print data and send. 
     
     LOG_PORT.write((byte*) ypr, 12);  // No new-line
   }
@@ -60,13 +45,13 @@ void output_angles()
 
     for (int i = 0; i <= 1000; i++)
     {
-      float degHeading = MAG_Heading * 57.2957795131;
+      float degHeading = MAG_Heading * 57.2957795131; // calibration of heading value
       degHeading = round(degHeading);
-      filteredDegHeading   = filteredDegHeading + degHeading;
+      filteredDegHeading   = filteredDegHeading + degHeading; // add the calibrated value to the heading value
     }
     filteredDegHeading = filteredDegHeading / 1000;
 
-
+    // Makes sure the value is between 0 and 360 degrees.
     if (filteredDegHeading < 0)
     {
       filteredDegHeading = filteredDegHeading + 360;
@@ -75,10 +60,12 @@ void output_angles()
     int roundedFilteredDegHeading = round(filteredDegHeading);
     //LOG_PORT.println("Heading: " + String(MAG_Heading * 57.2957795131));
     // LOG_PORT.println("Heading: " + String(roundedFilteredDegHeading));
-    int roundedPitch = round(TO_DEG(pitch));
+    // rounds of values
+    int roundedPitch = round(TO_DEG(pitch)); 
     int roundedRoll = round(TO_DEG(roll));
     int roundedHeading = round(TO_DEG(filteredDegHeading));
 
+    // Construct <Key:Value> string
     String dataToSend = "<Heading:" + String(round(filteredDegHeading)) + ":Roll:" + String(roundedRoll) + ":Pitch:" + String(roundedPitch) + ">";
     //Serial.print("Send data over I2C: ");
     //Serial.println(dataToSend);
