@@ -15,6 +15,8 @@ package ntnusubsea.gui;
 
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Client class that handles the connection to the server, retrieves the video
@@ -48,11 +50,6 @@ public class TCPpinger implements Runnable {
         this.data = data;
         this.port = port;
         this.IP = IP;
-        try {
-            this.connect(this.IP, this.port);
-        } catch (IOException ex) {
-            System.out.println("IOException: " + ex.getMessage());
-        }
     }
 
     /**
@@ -61,6 +58,14 @@ public class TCPpinger implements Runnable {
      */
     @Override
     public void run() {
+        if (!this.isConnected())
+        {
+            try {
+                this.connect(this.IP, this.port);
+            } catch (IOException ex) {
+                Logger.getLogger(TCPpinger.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         if (this.isConnected()) {
             data.setRovPing(this.getPing());
             //System.out.println("Ping (ROV): " + data.getRovPing());
