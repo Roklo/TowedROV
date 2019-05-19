@@ -1982,8 +1982,6 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
         try {
 
             this.clientThreadExecutor = Executors.newScheduledThreadPool(4);
-            clientThreadExecutor.scheduleAtFixedRate(client_Pinger,
-                    0, 1000, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(client_ROV,
                     0, 100, TimeUnit.MILLISECONDS);
             clientThreadExecutor.scheduleAtFixedRate(client_Camera,
@@ -1994,6 +1992,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
 
             if (client_ROV.isConnected() && client_Camera.isConnected()) {
                 // ROV RPi:
+                clientThreadExecutor.scheduleAtFixedRate(client_Pinger,
+                        0, 1000, TimeUnit.MILLISECONDS);
                 lightSwitch_lbl.setEnabled(true);
                 emergencyStopButton.setEnabled(true);
                 lightSwitchBlueLED.setEnabled(true);
@@ -2034,6 +2034,8 @@ public class ROVFrame extends javax.swing.JFrame implements Runnable, Observer {
                         JOptionPane.PLAIN_MESSAGE);
             } else if (client_ROV.isConnected() && !client_Camera.isConnected()) {
                 // ROV RPi:
+                clientThreadExecutor.scheduleAtFixedRate(client_Pinger,
+                        0, 1000, TimeUnit.MILLISECONDS);
                 emergencyStopButton.setEnabled(true);
                 lightSwitchBlueLED.setEnabled(true);
                 targetDistanceTextField.setEnabled(true);
